@@ -127,14 +127,6 @@ public:
    return d[i];
  }
 
- T operator()(int i) const {
-   return d[i];
- }
-
- T& operator()(int i) {
-   return d[i];
- }
-
  const R& data() const {
    return d;
  }
@@ -167,6 +159,106 @@ void realloc(int new_size) {
 
  int nrow() const {
    return nrows;
+ }
+
+
+
+
+
+
+
+
+ // Vector
+ // subsetting at RHS
+ // ================================================================
+
+ /*
+ start and end
+ */
+ VEC<double> operator()(int start, int end) {
+   VEC<double> t;
+   start--;
+   end--;
+   t.d.resize(end - start + 1);
+
+   for(int i = 0; i < t.d.size(); i++) {
+     t.d[i] = d[i + start];
+   }
+   return t;
+ }
+
+
+ /*
+ desired positions
+ */
+ VEC<double> operator()(VEC<double>&& ip) {
+
+   VEC<double> t;
+   int start = ip[0] - 1;
+   int end = ip.d.back() - 1;
+
+   t.d.resize((end -1) - (start -1) + 1);
+   for(int i = 0; i < t.d.size(); i++) {
+     t.d[i] = d[start + i];
+   }
+   return t;
+ }
+
+ /*
+ desired positions
+ */
+ VEC<double> operator()(VEC<double> ip) {
+
+   VEC<double> t;
+   int start = ip[0] - 1;
+   int end = ip.d.back() - 1;
+
+   t.d.resize((end -1) - (start -1) + 1);
+   for(int i = 0; i < t.d.size(); i++) {
+     t.d[i] = d[start + i];
+   }
+   return t;
+ }
+
+ /*
+ desired positions
+ */
+ VEC<double> operator()(std::vector<double>&& ip) {
+
+   VEC<double> t;
+   int start = ip[0] - 1;
+   int end = ip.back() - 1;
+
+   t.d.resize((end -1) - (start -1) + 1);
+   for(int i = 0; i < t.d.size(); i++) {
+     t.d[i] = d[start + i];
+   }
+   return t;
+ }
+
+ /*
+ desired positions
+ */
+ VEC<double> operator()(std::vector<double> ip) {
+
+   VEC<double> t;
+   int start = ip[0] - 1;
+   int end = ip.back() - 1;
+
+   t.d.resize((end -1) - (start -1) + 1);
+   for(int i = 0; i < t.d.size(); i++) {
+     t.d[i] = d[start + i];
+   }
+   return t;
+ }
+
+
+ /*
+ one position
+ */
+ double operator()(int pos) {
+   pos--;
+   return d[pos];
  }
 
 }; // end class VEC

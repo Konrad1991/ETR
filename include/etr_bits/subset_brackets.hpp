@@ -15,27 +15,19 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with pso
+You should have received a copy of the GNU General Public License along with etr
 If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 */
 
-#ifndef A2A_H
-#define A2A_H
 
-#include "etr_bits/header.hpp"
-#include "etr_bits/util.hpp"
-#include "etr_bits/pointer_storage.hpp"
-#include "etr_bits/vec.hpp"
-#include "etr_bits/add.hpp"
-#include "etr_bits/subtract.hpp"
-#include "etr_bits/mul.hpp"
-#include "etr_bits/divide.hpp"
-#include "etr_bits/print.hpp"
-#include "etr_bits/subset.hpp"
-#include "etr_bits/concatenate.hpp"
-#include "etr_bits/colon.hpp"
+#ifndef SUBSETTING_brackets
+#define SUBSETTING_brackets
 
-#define vec VEC<double>
-#define mat VEC<double>
+#include "vec.hpp"
+
+
+
+
+
 
 #endif
