@@ -129,6 +129,33 @@ double subset(VEC<double>& inp, int pos) {
   return inp[pos];
 }
 
+
+
+/*
+desired positions
+*/
+VEC<double> subset(VEC<double>&inp, VEC<double>& rows_, VEC<double>& cols_) {
+
+  if(inp.ismatrix == false) {
+    std::cerr << "incorrect number of dimensions" << std::endl;
+    exit(0);
+  }
+
+  VEC<double> ret( (rows_.size())*(cols_.size()));
+
+  for(int i = 0; i < rows_.size(); i++) {
+     for(int j = 0; j < cols_.size(); j++) {
+       ret[i*static_cast<int>(rows_.size()) + j] = inp.d[i *static_cast<int>(rows_.size()) + j];
+     }
+  }
+
+  ret.ismatrix = true;
+  ret.ncols = cols_.size();
+  ret.nrows = rows_.size();
+
+  return ret;
+}
+
 // subsetting at LHS
 // ================================================================
 /*

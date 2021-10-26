@@ -52,6 +52,7 @@ int length(VEC<T>& inp) {
   return inp.size();
 }
 
+template<typename T>
 VEC<double> dim(VEC<T>& inp) {
   if(inp.im() == false) {
     std::cerr << "dim can only be called with matrix" << std::endl;

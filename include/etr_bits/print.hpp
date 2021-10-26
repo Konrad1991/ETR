@@ -51,7 +51,7 @@ void print(bool inp) {
 // Vector & matrix
 // print fct
 // ================================================================
-void print(VEC<double>& inp) { // const
+void print(const VEC<double>& inp) { // const
 
     if(inp.ismatrix == false) {
       for(int i = 0; i < inp.size(); i++) {
@@ -66,6 +66,7 @@ void print(VEC<double>& inp) { // const
       }
     }
 }
+
 
 
 #endif

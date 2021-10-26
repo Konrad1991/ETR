@@ -45,18 +45,34 @@ int main() {
   print(m3);
 
 
-  m3(1, 1) = m3(1) -100.;
+  m3(1, 1) = m3(1) +100.;
   print();
   print(m3);
   print();
   vec v(16, 200.);
-  m3 = 100000. + m3 + v -3.14 + v/2.;
+  m3 = 100000. + m3 + v +3.14 + v+2.;
   print(m3);
 
   m3 = 1. + 2.;
 
   print(m3);
 
+  mat m4(6,6, 5.6);
+  vec sub1 = colon(1, 4);
+
+  vec sub2 = colon(2, 5);
+
+  mat m5;
+
+  print(sub1);
+  print();
+  print(sub2);
+
+  print();
+
+  m5 = subset(m4, sub1, sub2);
+  print(dim(m5));
+  print(m5);
 
 
 }

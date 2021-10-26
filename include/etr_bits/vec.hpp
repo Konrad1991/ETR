@@ -51,7 +51,7 @@ public:
   VEC(const int n, const double value) : d(n, value), subsetted(0), ismatrix(0) {}
   VEC(const R& other_vec) : d(other_vec), subsetted(0), ismatrix(0) {}
 
-  VEC(const R& mat, int nrows_, int ncols_) : d(mat), subsetted(0), ncols(ncols_), nrows(nrows_), ismatrix(0) {}
+  //VEC(const R& mat, int nrows_, int ncols_) : d(mat), subsetted(0), ncols(ncols_), nrows(nrows_), ismatrix(0) {}
   VEC() : subsetted(0), d(0), nrows(0), ncols(0), ismatrix(0) {}
   VEC(const std::vector<T> inp) : subsetted(0), d(inp), nrows(0), ncols(0), ismatrix(0) {}
 
@@ -121,6 +121,13 @@ public:
     }
 
     subsetted = false;
+
+    if(other_vec.im() == true) {
+      this -> ismatrix = true;
+      this -> ncols = other_vec.nc();
+      this -> nrows = other_vec.nr();
+    }
+
     return *this;
   }
 
@@ -218,24 +225,6 @@ int nr() const {
  // Vector
  // subsetting at RHS
  // ================================================================
-
- /*
- start and end
- */
- /*
- VEC<double> operator()(int start, int end) {
-   VEC<double> t;
-   start--;
-   end--;
-   t.d.resize(end - start + 1);
-
-   for(int i = 0; i < t.d.size(); i++) {
-     t.d[i] = d[i + start];
-   }
-   return t;
- }
- */
-
  /*
  desired positions
  */
@@ -268,38 +257,6 @@ int nr() const {
    return t;
  }
 
- /*
- desired positions
- */
- VEC<double> operator()(std::vector<double>&& ip) {
-
-   VEC<double> t;
-   int start = ip[0] - 1;
-   int end = ip.back() - 1;
-
-   t.d.resize((end -1) - (start -1) + 1);
-   for(int i = 0; i < t.d.size(); i++) {
-     t.d[i] = d[start + i];
-   }
-   return t;
- }
-
- /*
- desired positions
- */
- VEC<double> operator()(std::vector<double> ip) {
-
-   VEC<double> t;
-   int start = ip[0] - 1;
-   int end = ip.back() - 1;
-
-   t.d.resize((end -1) - (start -1) + 1);
-   for(int i = 0; i < t.d.size(); i++) {
-     t.d[i] = d[start + i];
-   }
-   return t;
- }
-
 
  /*
  one position
@@ -307,6 +264,33 @@ int nr() const {
  T& operator()(int pos) {
    pos--;
    return d[pos];
+ }
+
+
+
+
+
+ /*
+ desired positions
+ */
+ VEC<double> operator()(VEC<double>& rows_, VEC<double>& cols_) {
+
+   if(this -> ismatrix == false) {
+     std::cerr << "incorrect number of dimensions" << std::endl;
+     exit(0);
+   }
+
+   VEC<double> ret( (rows_.size() -1)*(cols_.size() -1) + 1);
+   for(int i = 0; i < rows_.nrows; i++) {
+      for(int j = 0; j < cols_.ncols; j++) {
+        ret[i*static_cast<int>(rows_.nrows) + j] = this -> d[i*static_cast<int>(rows_.nrows) + j];
+        std::cerr << ret[i*static_cast<int>(rows_.nrows) + j] << std::endl;
+      }
+   }
+
+   ret.ismatrix = true;
+
+   return ret;
  }
 
  /*
