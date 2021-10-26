@@ -46,8 +46,11 @@ int main() {
 
 
   m3(1, 1) = m3(1) -100.;
-
-
+  print();
+  print(m3);
+  print();
+  vec v(16, 200.);
+  m3 = 100000. + m3 + v -3.14 + v/2.;
   print(m3);
 
 

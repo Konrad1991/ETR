@@ -168,9 +168,50 @@ VEC< T, VSPLUS< T, L, R > > operator+(const VEC<T, L>& a, const R& b) {
     return VEC<T, VSPLUS<T, L, R> > (VSPLUS<T, L, R>(a.data(), b, a.im(), a.nr(), a.nc() ) );
 }
 
+
+
+
 template<typename T, typename L, typename R>
-VEC< T, VSPLUS< T, L, R > > operator+(const L& a, const VEC<T, R>&  b) {
-    return VEC<T, VSPLUS<T, L, R> > (VSPLUS<T, L, R>(a, b.data(), b.im(), b.nr(), b.nc() ) );
+class SVPLUS {
+
+private:
+  const L& l;
+  const R& r;
+  const bool ismatrix;
+  const int nrows;
+  const int ncols;
+
+public:
+  SVPLUS(const R& a, const L &b, bool ismatrix_, int nrows_, int ncols_ ) :
+     r(a), l(b), ismatrix(ismatrix_), nrows(nrows_), ncols(ncols_) { }
+
+   T operator[](const int i) const {
+     return l[i] + r;
+   }
+
+   int size() const {
+     return l.size();
+   }
+
+
+   bool im() const {
+     return ismatrix;
+   }
+
+   int nc() const {
+     return ncols;
+   }
+
+   int nr() const {
+     return nrows;
+   }
+
+};
+
+
+template<typename T, typename L, typename R>
+VEC< T, SVPLUS< T, L, R > > operator+(const R& a, const VEC<T, L>&  b) {
+    return VEC<T, SVPLUS<T, L, R> > (SVPLUS<T, L, R>(a, b.data(), b.im(), b.nr(), b.nc() ) );
 }
 
 
