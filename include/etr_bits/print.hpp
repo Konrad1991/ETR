@@ -34,6 +34,10 @@ void print(std::string inp) {
   std::cout << inp << std::endl;
 }
 
+void print(const char* inp) {
+  std::cout << inp << std::endl;
+}
+
 
 void print(double inp){
   std::cout << inp << std::endl;

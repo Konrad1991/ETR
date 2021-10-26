@@ -79,10 +79,18 @@ int main() {
   print(dim(m5));
   //print(subset(m5, ' ', sub3));
 
+  /*
   for(auto& i: m1) {
     print(i);
   }
-
+  */
+  print();
+  for(auto& i: colon(1, 6)) {
+    print(i);
+    print();
+    print(m1(i));
+    print();
+  }
 
 
 

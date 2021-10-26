@@ -50,6 +50,7 @@ public:
   VEC(const int n) : d(n), subsetted(0), ismatrix(0) {}
   VEC(const int n, const double value) : d(n, value), subsetted(0), ismatrix(0) {}
   VEC(const R& other_vec) : d(other_vec), subsetted(0), ismatrix(0) {}
+  //VEC(const R&& other_vec) : d(other_vec), subsetted(0), ismatrix(0) {} // not correct?
 
   //VEC(const R& mat, int nrows_, int ncols_) : d(mat), subsetted(0), ncols(ncols_), nrows(nrows_), ismatrix(0) {}
   VEC() : subsetted(0), d(0), nrows(0), ncols(0), ismatrix(0) {}
@@ -101,7 +102,6 @@ public:
     return *this;
   }
 
-
   VEC& operator=(const VEC& other_vec) {
 
     if(other_vec.size() > d.size()) {
@@ -130,7 +130,6 @@ public:
 
     return *this;
   }
-
 
   template<typename T2, typename R2>
   VEC& operator=(const VEC<T2, R2> &other_vec) {

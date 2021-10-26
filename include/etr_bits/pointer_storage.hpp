@@ -53,6 +53,24 @@ public:
   bool allocated = false;
 
   // Constructors
+  STORE(const STORE<T>& other) {
+    if(allocated == true) {
+      delete [] p;
+      p = nullptr;
+    }
+
+    sz = other.sz;
+    capacity = other.sz;
+    p = new T[other.sz];
+    for(int i = 0; i < other.sz; i++) {
+      *(p + i) = other.p[i];
+    }
+    todelete = true;
+    allocated = true;
+  }
+
+
+
   STORE() {
 
     if(allocated == true) {
@@ -165,8 +183,10 @@ public:
   // Destructors
   ~STORE() {
     if(todelete == true) {
+      if(p != nullptr) {
         delete [] p;
         p = nullptr;
+      }
     }
   }
 
