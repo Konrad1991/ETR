@@ -302,6 +302,18 @@ int nr() const {
    return d[rows*nrows + cols];
  }
 
+ auto begin() const {
+   return It<T>{d.p};
+ }
+
+ auto end() const {
+   return It<T>{d.p + this -> size()};
+ }
+
+ T& back() {
+   return d.p[this -> size()];
+ }
+
 
 }; // end class VEC
 

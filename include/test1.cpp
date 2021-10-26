@@ -77,7 +77,11 @@ int main() {
   print();
   vec sub3 = colon(1, 2);
   print(dim(m5));
-  print(subset(m5, ' ', sub3));
+  //print(subset(m5, ' ', sub3));
+
+  for(auto& i: m1) {
+    print(i);
+  }
 
 
 
