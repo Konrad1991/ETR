@@ -1,11 +1,11 @@
 /*
-R package etr
+R package ast2ast
 Copyright (C) 2021 Konrad Krämer
 
-This file is part of R package etr
+This file is part of R package ast2ast
 
 
-etr is free software; you can redistribute it and/or
+ast2ast is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
@@ -15,7 +15,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with etr
+You should have received a copy of the GNU General Public License along with ast2ast
 If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 */
 
@@ -41,9 +41,6 @@ void appending(VEC<T>& v1, const T s) {
   v1.d.push_back(s);
 }
 
-
-
-
 template<typename T, typename... A>
 void auxillary(VEC<T>& v1, const VEC<T>& v2) {
   appending(v1, v2);
@@ -58,9 +55,6 @@ template<typename T, typename... A>
 void auxillary(VEC<T>& v1, const T s) {
   appending(v1, s);
 }
-
-
-
 
 template<typename T, typename... A>
 void auxillary(VEC<T>& v1, const VEC<T>&v2, const A&... vr) {
@@ -80,12 +74,12 @@ void auxillary(VEC<T>&v1, const T s, const A&... vr) {
   auxillary(v1, vr...);
 }
 
-
 template<typename T, typename... A>
 VEC<T> concatenate(VEC<T> v, const A&... vr) {
   auxillary(v, vr...);
   return v;
 }
+
 
 template<typename T, typename... A>
 VEC<T> concatenate(const T s, const A&... vr) {

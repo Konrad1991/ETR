@@ -134,7 +134,7 @@ double subset(VEC<double>& inp, int pos) {
 /*
 start and end
 */
-VEC<double>& subset_self(VEC<double>& inp, int start, int end) {
+VEC<double>& self(VEC<double>& inp, int start, int end) {
 
   inp.subsetted = true;
   inp.indices.resize((end -1) - (start -1) + 1);
@@ -148,7 +148,7 @@ VEC<double>& subset_self(VEC<double>& inp, int start, int end) {
 /*
 desired positions
 */
-VEC<double>& subset_self(VEC<double>& inp, VEC<double>& ip) {
+VEC<double>& self(VEC<double>& inp, VEC<double>& ip) {
 
   int start = ip[0] - 1;
   int end = ip.d.back() - 1;
@@ -164,7 +164,7 @@ VEC<double>& subset_self(VEC<double>& inp, VEC<double>& ip) {
 /*
 desired positions
 */
-VEC<double>& subset_self(VEC<double>& inp, VEC<double> ip) {
+VEC<double>& self(VEC<double>& inp, VEC<double> ip) {
 
   int start = ip[0] - 1;
   int end = ip.d.back() - 1;
@@ -181,7 +181,7 @@ VEC<double>& subset_self(VEC<double>& inp, VEC<double> ip) {
 /*
 desired positions
 */
-VEC<double>& subset_self(VEC<double>& inp, std::vector<double>& ip) {
+VEC<double>& self(VEC<double>& inp, std::vector<double>& ip) {
 
   int start = ip[0] - 1;
   int end = ip.back() - 1;
@@ -197,7 +197,7 @@ VEC<double>& subset_self(VEC<double>& inp, std::vector<double>& ip) {
 /*
 desired positions
 */
-VEC<double>& subset_self(VEC<double>& inp, std::vector<double> ip) {
+VEC<double>& self(VEC<double>& inp, std::vector<double> ip) {
 
   int start = ip[0] - 1;
   int end = ip.back() - 1;
@@ -213,7 +213,7 @@ VEC<double>& subset_self(VEC<double>& inp, std::vector<double> ip) {
 /*
 one position
 */
-VEC<double>& subset_self(VEC<double>& inp, int pos) {
+VEC<double>& self(VEC<double>& inp, int pos) {
   pos--;
   inp.subsetted = true;
   inp.indices.resize(1);

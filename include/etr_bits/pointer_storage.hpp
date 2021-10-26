@@ -191,31 +191,14 @@ public:
       return *this;
     }
 
-    if(other_store.size() > sz) {
-      int diff = other_store.size() - sz;
-      this -> realloc(sz + diff);
+    if(other_store.size() > this -> sz) {
+      int diff = other_store.size() - this -> sz;
+      this -> realloc(this -> sz + diff);
     }
-    for(int i = 0; i < sz; i++) {
+
+    for(int i = 0; i < this -> sz; i++) {
       p[i] = other_store[i];
     }
-    return *this;
-  }
-
-  STORE& test(const STORE& other_store) {
-
-    if(this == &other_store) {
-      return *this;
-    }
-
-    if(other_store.size() > sz) {
-      int diff = other_store.size() - sz;
-      this -> realloc(sz + diff);
-    }
-
-    for(int i = 0; i < sz; i++) {
-      p[i] = other_store[i];
-    }
-
     return *this;
   }
 

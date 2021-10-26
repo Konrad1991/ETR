@@ -1,28 +1,59 @@
 #include "etr.hpp"
 
 
+void test_vec() {
+  vec a = colon(1, 3);
+  vec b = colon(2, 4);
+
+  vec c;
+
+  c = a + b;
+
+  print(c);
+  print();
+  vec d = c(1, 2);
+
+  print(d);
+  print();
+
+  vec e = colon(1, 10);
+
+  self(e, 2, 3) = 1.0;
+  self(e, 4, 6) = b + a;
+  self(e, 1, 3) = b;
+  self(e, 1, 3) = b + 100.;
+  e(1) = 1000.;
+
+  print(e);
+}
+
 
 int main() {
 
-vec a = colon(1, 3);
-vec b = colon(2, 4);
 
-vec c;
+  mat m1(4,4,2.0);
+  mat m2(4, 4, 3.);
 
-c = a + b;
+  mat m3;
 
-print(c);
-print();
-vec d = c(1, 2);
+  m3 = m1 + m2;
 
-print(d);
-print();
-vec e = concatenate(1., 2., c); // does not work
+  print(m3);
 
-vec f = colon(1, 10);
+  m3 = m3 + 100.;
 
-subset_self(f, 2, 3) = d; // does not work
-print(f);
+  print(m3);
+
+
+  m3(1, 1) = m3(1) -100.;
+
+
+  print(m3);
+
+
+
+
+
 
 
 }

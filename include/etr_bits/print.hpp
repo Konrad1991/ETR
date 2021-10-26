@@ -39,6 +39,10 @@ void print(double inp){
   std::cout << inp << std::endl;
 }
 
+void print(int inp){
+  std::cout << inp << std::endl;
+}
+
 void print(bool inp) {
   std::cout << inp << std::endl;
 }

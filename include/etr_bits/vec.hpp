@@ -48,6 +48,7 @@ public:
   VEC(const int n) : d(n), subsetted(0), ismatrix(0) {}
   VEC(const int n, const double value) : d(n, value), subsetted(0), ismatrix(0) {}
   VEC(const R& other_vec) : d(other_vec), subsetted(0), ismatrix(0) {}
+
   VEC(const R& mat, int nrows_, int ncols_) : d(mat), subsetted(0), ncols(ncols_), nrows(nrows_), ismatrix(0) {}
   VEC() : subsetted(0), d(0), nrows(0), ncols(0), ismatrix(0) {}
   VEC(const std::vector<T> inp) : subsetted(0), d(inp), nrows(0), ncols(0), ismatrix(0) {}
@@ -55,7 +56,7 @@ public:
   // Constructors for matrix
   VEC(const int rows, const int cols) : d(rows*cols), subsetted(0), nrows(rows), ncols(cols), ismatrix(1) {}
   VEC(const int rows, const int cols, const double value) : d(rows*cols, value), subsetted(0), nrows(rows), ncols(cols), ismatrix(1) {}
-
+  VEC(const int rows, const int cols, int value) : d(rows*cols, value), subsetted(0), nrows(rows), ncols(cols), ismatrix(1) {}
 
   // vector & matrix operator=
   // ================================================================
@@ -75,6 +76,12 @@ public:
   }
 
   VEC& operator=(const R& other_vec) {
+
+    if(other_vec.size() > d.size()) {
+      int diff = other_vec.size() - d.size();
+      this -> realloc(d.size() + diff);
+    }
+
     if(subsetted == false) {
       d.resize(other_vec.size());
       for(int i = 0; i < d.size(); i++) {
@@ -90,8 +97,38 @@ public:
     return *this;
   }
 
+
+  VEC& operator=(const VEC& other_vec) {
+
+    if(other_vec.size() > d.size()) {
+      int diff = other_vec.size() - d.size();
+      this -> realloc(d.size() + diff);
+    }
+
+    if(subsetted == false) {
+      d.resize(other_vec.size());
+      for(int i = 0; i < d.size(); i++) {
+        d[i] = other_vec[i];
+      }
+    } else {
+      for(int i = 0; i < indices.size(); i++) {
+        d[indices[i]] = other_vec[i];
+      }
+    }
+
+    subsetted = false;
+    return *this;
+  }
+
+
   template<typename T2, typename R2>
   VEC& operator=(const VEC<T2, R2> &other_vec) {
+
+    if(other_vec.d.im() == true) {
+      ismatrix = true;
+      ncols = other_vec.d.nc();
+      nrows = other_vec.d.nr();
+    }
 
     if(other_vec.size() > d.size()) {
       int diff = other_vec.size() - d.size();
@@ -162,11 +199,17 @@ void realloc(int new_size) {
  }
 
 
+bool im() const {
+  return ismatrix;
+}
 
+int nc() const {
+  return ncols;
+}
 
-
-
-
+int nr() const {
+  return nrows;
+}
 
  // Vector
  // subsetting at RHS
@@ -175,6 +218,7 @@ void realloc(int new_size) {
  /*
  start and end
  */
+ /*
  VEC<double> operator()(int start, int end) {
    VEC<double> t;
    start--;
@@ -186,7 +230,7 @@ void realloc(int new_size) {
    }
    return t;
  }
-
+ */
 
  /*
  desired positions
@@ -256,10 +300,20 @@ void realloc(int new_size) {
  /*
  one position
  */
- double operator()(int pos) {
+ T& operator()(int pos) {
    pos--;
    return d[pos];
  }
+
+ /*
+ one position
+ */
+ T& operator()(int rows, int cols) {
+   rows--;
+   cols--;
+   return d[rows*nrows + cols];
+ }
+
 
 }; // end class VEC
 
