@@ -35,7 +35,7 @@ void ass(bool inp, std::string message) {
 // create range from start to end
 std::vector<double> range(int start, int end) {
   std::vector<double> ret(end - start + 1);
-  for(int i = 0; i < ret.size(); i++) {
+  for(long unsigned int i = 0; i < ret.size(); i++) {
     ret[i] = start + static_cast<double>(i);
   }
   return ret;

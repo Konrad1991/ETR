@@ -35,7 +35,6 @@ public:
 
   // Constructors
   // ================================================================
-  R d;
   bool subsetted;
   std::vector<int> indices;
 
@@ -43,6 +42,9 @@ public:
   bool ismatrix;
   int ncols;
   int nrows;
+
+  // data
+  R d;
 
   // Constructors for vector
   VEC(const int n) : d(n), subsetted(0), ismatrix(0) {}

@@ -35,4 +35,35 @@ VEC<double> colon(int start, int end) {
   return ret;
 }
 
+int length(double inp) {
+  return 1;
+}
+
+int length(int inp) {
+  return 1;
+}
+
+int length(bool inp) {
+  return 1;
+}
+
+template<typename T>
+int length(VEC<T>& inp) {
+  return inp.size();
+}
+
+VEC<double> dim(VEC<T>& inp) {
+  if(inp.im() == false) {
+    std::cerr << "dim can only be called with matrix" << std::endl;
+    exit(0);
+  }
+
+  VEC<double> ret(2);
+
+  ret(1) = inp.nr();
+  ret(2) = inp.nc();
+
+  return ret;
+}
+
 #endif

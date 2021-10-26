@@ -138,7 +138,7 @@ VEC<double>& self(VEC<double>& inp, int start, int end) {
 
   inp.subsetted = true;
   inp.indices.resize((end -1) - (start -1) + 1);
-  for(int i = 0; i < inp.indices.size(); i++) {
+  for(size_t i = 0; i < inp.indices.size(); i++) {
     inp.indices[i] = start + i -1;
   }
   return inp;
@@ -155,7 +155,7 @@ VEC<double>& self(VEC<double>& inp, VEC<double>& ip) {
 
   inp.subsetted = true;
   inp.indices.resize((end -1) - (start -1) + 1);
-  for(int i = 0; i < inp.indices.size(); i++) {
+  for(size_t i = 0; i < inp.indices.size(); i++) {
     inp.indices[i] = start + i -1;
   }
   return inp;
@@ -171,7 +171,7 @@ VEC<double>& self(VEC<double>& inp, VEC<double> ip) {
 
   inp.subsetted = true;
   inp.indices.resize((end -1) - (start -1) + 1);
-  for(int i = 0; i < inp.indices.size(); i++) {
+  for(size_t i = 0; i < inp.indices.size(); i++) {
     inp.indices[i] = start + i -1;
   }
   return inp;
@@ -188,7 +188,7 @@ VEC<double>& self(VEC<double>& inp, std::vector<double>& ip) {
 
   inp.subsetted = true;
   inp.indices.resize((end -1) - (start -1) + 1);
-  for(int i = 0; i < inp.indices.size(); i++) {
+  for(size_t i = 0; i < inp.indices.size(); i++) {
     inp.indices[i] = start + i -1;
   }
   return inp;
@@ -204,7 +204,7 @@ VEC<double>& self(VEC<double>& inp, std::vector<double> ip) {
 
   inp.subsetted = true;
   inp.indices.resize((end -1) - (start -1) + 1);
-  for(int i = 0; i < inp.indices.size(); i++) {
+  for(size_t i = 0; i < inp.indices.size(); i++) {
     inp.indices[i] = start + i -1;
   }
   return inp;
