@@ -156,6 +156,60 @@ VEC<double> subset(VEC<double>&inp, VEC<double>& rows_, VEC<double>& cols_) {
   return ret;
 }
 
+
+/*
+desired positions
+*/
+VEC<double> subset(VEC<double>&inp, char s, VEC<double>& cols_) {
+
+  if(inp.ismatrix == false) {
+    std::cerr << "incorrect number of dimensions" << std::endl;
+    exit(0);
+  }
+
+  VEC<double> ret( (inp.nr())*(cols_.size()));
+
+  for(int i = 0; i < inp.nr(); i++) {
+
+     for(int j = 0; j < cols_.size(); j++) {
+       std::cerr << i*static_cast<int>(inp.nr()) + j << std::endl;
+       ret[i*static_cast<int>(inp.nr()) + j] = inp.d[i *static_cast<int>(inp.nr()) + j];
+     }
+  }
+
+  ret.ismatrix = true;
+  ret.ncols = cols_.size();
+  ret.nrows = inp.nr();
+
+  return ret;
+}
+
+
+/*
+desired positions
+*/
+VEC<double> subset(VEC<double>&inp, VEC<double>& rows_, char s) {
+
+  if(inp.ismatrix == false) {
+    std::cerr << "incorrect number of dimensions" << std::endl;
+    exit(0);
+  }
+
+  VEC<double> ret( (rows_.size())*(inp.nc()));
+
+  for(int i = 0; i < rows_.size(); i++) {
+     for(int j = 0; j < inp.nc(); j++) {
+       ret[i*static_cast<int>(rows_.size()) + j] = inp.d[i *static_cast<int>(rows_.size()) + j];
+     }
+  }
+
+  ret.ismatrix = true;
+  ret.ncols = inp.nc();
+  ret.nrows = rows_.size();
+
+  return ret;
+}
+
 // subsetting at LHS
 // ================================================================
 /*
