@@ -66,4 +66,20 @@ VEC<double> dim(VEC<T>& inp) {
   return ret;
 }
 
+
+void dim(bool inp) {
+    std::cerr << "dim can only be called with matrix" << std::endl;
+    exit(0);
+}
+
+void dim(int inp) {
+    std::cerr << "dim can only be called with matrix" << std::endl;
+    exit(0);
+}
+
+void dim(double inp) {
+    std::cerr << "dim can only be called with matrix" << std::endl;
+    exit(0);
+}
+
 #endif
