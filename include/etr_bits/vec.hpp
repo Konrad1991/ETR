@@ -104,6 +104,15 @@ public:
 
   VEC& operator=(const VEC& other_vec) {
 
+    if(this == &other_vec) {
+      VEC temp(other_vec.indices.size());
+      for(int i = 0; i < other_vec.indices.size(); i++) {
+        temp.d[i] = other_vec.d[other_vec.indices[i]];
+      }
+
+      this -> d = temp.d;
+    }
+
     if(other_vec.size() > d.size()) {
       int diff = other_vec.size() - d.size();
       this -> realloc(d.size() + diff);
@@ -147,11 +156,12 @@ public:
 
     if(subsetted == false) {
       for(int i = 0; i < d.size(); i++) {
-        d[i] = other_vec[i];
+            d[i] = other_vec[i];
       }
     } else {
       for(int i = 0; i < indices.size(); i++) {
-        d[indices[i]] = other_vec[i];
+        std::cout << this -> indices[i] << std::endl;
+          d[indices[i]] = other_vec[i];
       }
     }
 
@@ -227,8 +237,8 @@ int nr() const {
  /*
  desired positions
  */
- VEC<double> operator()(VEC<double>&& ip) {
 
+ VEC<double> operator()(VEC<double>&& ip) {
    VEC<double> t;
    int start = ip[0] - 1;
    int end = ip.d.back() - 1;
@@ -241,13 +251,14 @@ int nr() const {
  }
 
  /*
- desired positions
+ desired positions !!!!!!
  */
- VEC<double> operator()(VEC<double> ip) {
+ /*
+ VEC<double> operator()(VEC<double>& ip) {
 
    VEC<double> t;
    int start = ip[0] - 1;
-   int end = ip.d.back() - 1;
+   int end = ip[ip.size() -1] - 1;
 
    t.d.resize((end -1) - (start -1) + 1);
    for(int i = 0; i < t.d.size(); i++) {
@@ -255,6 +266,37 @@ int nr() const {
    }
    return t;
  }
+ */
+
+ /*
+ desired positions
+ */
+/*
+ VEC& operator()(VEC<double>& ip) {
+
+   int start = ip[0] - 1;
+   int end = ip[ip.size() -1] - 1;
+
+   this -> subsetted = true;
+   this -> indices.resize((end -1) - (start -1) + 1);
+   for(size_t i = 0; i < this -> indices.size(); i++) {
+     this -> indices[i] = start + i;
+   }
+   return *this;
+ }
+ */
+
+ VEC& operator()(VEC<double>& ip) {
+
+   this -> subsetted = true;
+   this -> indices.resize(ip.size());
+   for(size_t i = 0; i < this -> indices.size(); i++) {
+     this -> indices[i] = ip[i] -1;
+   }
+   return *this;
+ }
+
+
 
 
  /*

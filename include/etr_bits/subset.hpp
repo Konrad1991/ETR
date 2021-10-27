@@ -32,33 +32,14 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 // ================================================================
 
 /*
-start and end
-*/
-VEC<double> subset(VEC<double>& inp, int start, int end) {
-  VEC<double> t;
-  start--;
-  end--;
-  t.d.resize(end - start + 1);
-
-  for(int i = 0; i < t.d.size(); i++) {
-    t.d[i] = inp[i + start];
-  }
-  return t;
-}
-
-
-/*
 desired positions
 */
 VEC<double> subset(VEC<double>& inp, VEC<double>&& ip) {
 
-  VEC<double> t;
-  int start = ip[0] - 1;
-  int end = ip.d.back() - 1;
+  VEC<double> t(ip.size());
 
-  t.d.resize((end -1) - (start -1) + 1);
-  for(int i = 0; i < t.d.size(); i++) {
-    t.d[i] = inp[start + i];
+  for(int i = 0; i < t.size(); i++) {
+    t[i] = inp[i];
   }
   return t;
 }
@@ -66,60 +47,14 @@ VEC<double> subset(VEC<double>& inp, VEC<double>&& ip) {
 /*
 desired positions
 */
-VEC<double> subset(VEC<double>& inp, VEC<double> ip) {
+VEC<double> subset(VEC<double>& inp, VEC<double>& ip) {
+  VEC<double> t(ip.size());
 
-  VEC<double> t;
-  int start = ip[0] - 1;
-  int end = ip.d.back() - 1;
-
-  t.d.resize((end -1) - (start -1) + 1);
-  for(int i = 0; i < t.d.size(); i++) {
-    t.d[i] = inp[start + i];
+  for(int i = 0; i < t.size(); i++) {
+    t[i] = inp[ip[i]];
   }
   return t;
 }
-
-/*
-desired positions
-*/
-VEC<double> subset(VEC<double>& inp, std::vector<double>&& ip) {
-
-  VEC<double> t;
-  int start = ip[0] - 1;
-  int end = ip.back() - 1;
-
-  t.d.resize((end -1) - (start -1) + 1);
-  for(int i = 0; i < t.d.size(); i++) {
-    t.d[i] = inp[start + i];
-  }
-  return t;
-}
-
-/*
-desired positions
-*/
-VEC<double> subset(VEC<double>& inp, std::vector<double> ip) {
-
-  VEC<double> t;
-  int start = ip[0] - 1;
-  int end = ip.back() - 1;
-
-  t.d.resize((end -1) - (start -1) + 1);
-  for(int i = 0; i < t.d.size(); i++) {
-    t.d[i] = inp[start + i];
-  }
-  return t;
-}
-
-
-
-
-
-
-
-
-
-
 
 /*
 one position
@@ -141,17 +76,16 @@ VEC<double> subset(VEC<double>&inp, VEC<double>& rows_, VEC<double>& cols_) {
     exit(0);
   }
 
-  VEC<double> ret( (rows_.size())*(cols_.size()));
+  int r = rows_.size();
+  int c = cols_.size();
 
-  for(int i = 0; i < rows_.size(); i++) {
-     for(int j = 0; j < cols_.size(); j++) {
-       ret[i*static_cast<int>(rows_.size()) + j] = inp.d[i *static_cast<int>(rows_.size()) + j];
+  VEC<double> ret(r, c);
+
+  for(int i = 0; i < r; i++) {
+     for(int j = 0; j < c; j++) {
+       ret.indices[i*ret.nr() + j] = i*inp.nr() + j;
      }
   }
-
-  ret.ismatrix = true;
-  ret.ncols = cols_.size();
-  ret.nrows = rows_.size();
 
   return ret;
 }
@@ -167,19 +101,16 @@ VEC<double> subset(VEC<double>&inp, char s, VEC<double>& cols_) {
     exit(0);
   }
 
-  VEC<double> ret( (inp.nr())*(cols_.size()));
+  int r = inp.nr();
+  int c = cols_.size();
 
-  for(int i = 0; i < inp.nr(); i++) {
+  VEC<double> ret(r, c);
 
-     for(int j = 0; j < cols_.size(); j++) {
-       std::cerr << i*static_cast<int>(inp.nr()) + j << std::endl;
-       ret[i*static_cast<int>(inp.nr()) + j] = inp.d[i *static_cast<int>(inp.nr()) + j];
+  for(int i = 0; i < r; i++) {
+     for(int j = 0; j < c; j++) {
+       ret.indices[i*ret.nr() + j] = i*inp.nr() + j;
      }
   }
-
-  ret.ismatrix = true;
-  ret.ncols = cols_.size();
-  ret.nrows = inp.nr();
 
   return ret;
 }
@@ -195,17 +126,16 @@ VEC<double> subset(VEC<double>&inp, VEC<double>& rows_, char s) {
     exit(0);
   }
 
-  VEC<double> ret( (rows_.size())*(inp.nc()));
+  int r = rows_.size();
+  int c = inp.nc();
 
-  for(int i = 0; i < rows_.size(); i++) {
-     for(int j = 0; j < inp.nc(); j++) {
-       ret[i*static_cast<int>(rows_.size()) + j] = inp.d[i *static_cast<int>(rows_.size()) + j];
+  VEC<double> ret(r, c);
+
+  for(int i = 0; i < r; i++) {
+     for(int j = 0; j < c; j++) {
+       ret.indices[i*ret.nr() + j] = i*inp.nr() + j;
      }
   }
-
-  ret.ismatrix = true;
-  ret.ncols = inp.nc();
-  ret.nrows = rows_.size();
 
   return ret;
 }
@@ -213,80 +143,14 @@ VEC<double> subset(VEC<double>&inp, VEC<double>& rows_, char s) {
 // subsetting at LHS
 // ================================================================
 /*
-start and end
-*/
-VEC<double>& self(VEC<double>& inp, int start, int end) {
-
-  inp.subsetted = true;
-  inp.indices.resize((end -1) - (start -1) + 1);
-  for(size_t i = 0; i < inp.indices.size(); i++) {
-    inp.indices[i] = start + i -1;
-  }
-  return inp;
-}
-
-
-/*
 desired positions
 */
 VEC<double>& self(VEC<double>& inp, VEC<double>& ip) {
 
-  int start = ip[0] - 1;
-  int end = ip.d.back() - 1;
-
   inp.subsetted = true;
-  inp.indices.resize((end -1) - (start -1) + 1);
+  inp.indices.resize(ip.size());
   for(size_t i = 0; i < inp.indices.size(); i++) {
-    inp.indices[i] = start + i -1;
-  }
-  return inp;
-}
-
-/*
-desired positions
-*/
-VEC<double>& self(VEC<double>& inp, VEC<double> ip) {
-
-  int start = ip[0] - 1;
-  int end = ip.d.back() - 1;
-
-  inp.subsetted = true;
-  inp.indices.resize((end -1) - (start -1) + 1);
-  for(size_t i = 0; i < inp.indices.size(); i++) {
-    inp.indices[i] = start + i -1;
-  }
-  return inp;
-}
-
-
-/*
-desired positions
-*/
-VEC<double>& self(VEC<double>& inp, std::vector<double>& ip) {
-
-  int start = ip[0] - 1;
-  int end = ip.back() - 1;
-
-  inp.subsetted = true;
-  inp.indices.resize((end -1) - (start -1) + 1);
-  for(size_t i = 0; i < inp.indices.size(); i++) {
-    inp.indices[i] = start + i -1;
-  }
-  return inp;
-}
-
-/*
-desired positions
-*/
-VEC<double>& self(VEC<double>& inp, std::vector<double> ip) {
-
-  int start = ip[0] - 1;
-  int end = ip.back() - 1;
-
-  inp.subsetted = true;
-  inp.indices.resize((end -1) - (start -1) + 1);
-  for(size_t i = 0; i < inp.indices.size(); i++) {
-    inp.indices[i] = start + i -1;
+    inp.indices[i] = static_cast<int>(ip[i]) -1;
   }
   return inp;
 }
@@ -301,5 +165,78 @@ VEC<double>& self(VEC<double>& inp, int pos) {
   inp.indices[0] = pos;
   return inp;
 }
+
+
+/*
+desired positions
+*/
+VEC<double>& self(VEC<double>&inp, VEC<double>& rows_, VEC<double>& cols_) {
+
+  if(inp.ismatrix == false) {
+    std::cerr << "incorrect number of dimensions" << std::endl;
+    exit(0);
+  }
+
+  int r = rows_.size();
+  int c = cols_.size();
+  inp.indices.resize(r*c);
+
+  for(int i = 0; i < r; i++) {
+     for(int j = 0; j < c; j++) {
+       inp.indices[i*r + j] = i*r + j;
+     }
+  }
+
+  return inp;
+}
+
+
+/*
+desired positions
+*/
+VEC<double>& self(VEC<double>&inp, char s, VEC<double>& cols_) {
+
+  if(inp.ismatrix == false) {
+    std::cerr << "incorrect number of dimensions" << std::endl;
+    exit(0);
+  }
+
+  int r = inp.nr();
+  int c = cols_.size();
+  inp.indices.resize(r*c);
+
+  for(int i = 0; i < r; i++) {
+     for(int j = 0; j < c; j++) {
+       inp.indices[i*inp.nr() + j] = i*inp.nr() + j;
+     }
+  }
+
+  return inp;
+}
+
+
+/*
+desired positions
+*/
+VEC<double>& self(VEC<double>&inp, VEC<double>& rows_, char s) {
+
+  if(inp.ismatrix == false) {
+    std::cerr << "incorrect number of dimensions" << std::endl;
+    exit(0);
+  }
+
+  int r = rows_.size();
+  int c = inp.nc();
+  inp.indices.resize(r*c);
+
+  for(int i = 0; i < r; i++) {
+     for(int j = 0; j < c; j++) {
+       inp.indices[i*inp.nr() + j] = i*inp.nr() + j;
+     }
+  }
+
+  return inp;
+}
+
 
 #endif
