@@ -20,28 +20,47 @@ void fizzbuzz(vec inp) {
   }
 }
 
+double i2d(int inp) {
+  return static_cast<double>(inp);
+}
+
+void fill(mat& m) {
+  for(int i = 0; i < m.size(); i++) {
+    m[i] = i2d(i);
+  }
+}
+
 
 int main() {
 
-  vec inp = colon(1, 30);
-  //fizzbuzz(inp);
-
   vec v1 = colon(1, 10);
-  vec v2 = colon(11, 20);
-  vec sub1 = colon(1, 4);
-  vec sub2 = colon(2, 5);
-  mat m(5, 4);
-  m = v2;
+  print(subset(v1, 1));
+  print();
+  vec sub1 = colon(1, 3);
+  print(subset(v1, sub1));
+  print();
+  mat m1(6, 6, 9.1);
+  fill(m1);
+  print(m1);
+  print();
+  print(subset(m1, 2, 3));
+  print();
+  print(subset(m1, sub1, sub1));
+  print();
+  print(subset(m1, 1, ' '));
+  print();
+  print(subset(m1, 5, ' '));
+  print();
+  mat inp = subset(m1, sub1, ' ');
 
-  self(v1, 1) = 100.;
-  self(v1, sub2) = 200.;
-  print(v1);
 
-  vec sub3 = colon(1,2);
-  self(m, sub3, sub3) = subset(m, sub3, sub3) + 3.;
-  for(int i = 0; m.size(); i++) {
-    std::cout << m[i] << std::endl;
+  for(int i = 0; i < inp.nrows; i++) {
+    for(int j = 0; j < inp.ncols; j++) {
+      std::cout << inp[i*inp.nr() + j] << "\t";
+    }
+      std::cout << std::endl;
   }
-  //print(m);
+
+
 
 }

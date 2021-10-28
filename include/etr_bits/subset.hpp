@@ -39,7 +39,7 @@ VEC<double> subset(VEC<double>& inp, VEC<double>&& ip) {
   VEC<double> t(ip.size());
 
   for(int i = 0; i < t.size(); i++) {
-    t[i] = inp[i];
+    t[i] = inp[ip[i] - 1]; // user start counting at 1
   }
   return t;
 }
@@ -51,7 +51,7 @@ VEC<double> subset(VEC<double>& inp, VEC<double>& ip) {
   VEC<double> t(ip.size());
 
   for(int i = 0; i < t.size(); i++) {
-    t[i] = inp[ip[i]];
+    t[i] = inp[ip[i] - 1]; // user start counting at 1
   }
   return t;
 }
@@ -61,9 +61,114 @@ one position
 */
 double subset(VEC<double>& inp, int pos) {
   pos--;
-  return inp[pos];
+  return inp[pos]; // user start counting at 1
 }
 
+/*
+one position
+*/
+double subset(VEC<double>& inp, double pos) {
+  int temp = static_cast<int>(pos);
+  temp--; // user start counting at 1
+  return inp[temp];
+}
+
+
+
+/*
+one position
+*/
+double subset(VEC<double>&inp, int row, int col) {
+  row--;
+  col--;
+  if(inp.ismatrix == false) {
+    std::cerr << "incorrect number of dimensions" << std::endl;
+    exit(0);
+  }
+  return inp[row*inp.nr() + col];
+}
+
+/*
+one position
+*/
+double subset(VEC<double>&inp, double row_, double col_) {
+  int row = static_cast<int>(row_);
+  int col = static_cast<int>(col_);
+  row--;
+  col--;
+  if(inp.ismatrix == false) {
+    std::cerr << "incorrect number of dimensions" << std::endl;
+    exit(0);
+  }
+  return inp[row*inp.nr() + col];
+}
+
+
+/*
+desired positions
+*/
+VEC<double> subset(VEC<double>&inp, int r, char s) {
+
+  if(inp.ismatrix == false) {
+    std::cerr << "incorrect number of dimensions" << std::endl;
+    exit(0);
+  }
+  int c = inp.nc();
+
+  VEC<double> ret(1, c);
+
+  for(int j = 0; j < c; j++) {
+       ret[1 + j -1] = inp[ (r-1)*inp.nr() + j];
+  }
+
+  return ret;
+}
+
+
+/*
+desired positions
+*/
+VEC<double> subset(VEC<double>&inp, double r_, char s) {
+  int r = static_cast<int>(r_);
+
+  if(inp.ismatrix == false) {
+    std::cerr << "incorrect number of dimensions" << std::endl;
+    exit(0);
+  }
+  int c = inp.nc();
+
+  VEC<double> ret(1, c);
+
+  for(int j = 0; j < c; j++) {
+       ret[1 + j -1] = inp[ (r-1)*inp.nr() + j];
+  }
+
+  return ret;
+}
+
+/*
+desired positions
+*/
+VEC<double> subset(VEC<double>&inp, VEC<double>& rows_, char s) {
+
+  if(inp.ismatrix == false) {
+    std::cerr << "incorrect number of dimensions" << std::endl;
+    exit(0);
+  }
+
+  int r = rows_.size();
+  int c = inp.nc();
+
+  VEC<double> ret(r, c);
+
+  for(int i = 0; i < r; i++) {
+     for(int j = 0; j < c; j++) {
+      ret[i*inp.nr() + j] =  inp[ (rows_[i]-1)*inp.nr() + j];  // user start counting at 1
+     }
+  }
+
+  return ret;
+}
 
 
 /*
@@ -83,12 +188,13 @@ VEC<double> subset(VEC<double>&inp, VEC<double>& rows_, VEC<double>& cols_) {
 
   for(int i = 0; i < r; i++) {
      for(int j = 0; j < c; j++) {
-       ret.indices[i*ret.nr() + j] = i*inp.nr() + j;
+       ret[i*r + j] = inp[(rows_[i]-1)*inp.nr() + cols_[j] -1]; // user start counting at 1
      }
   }
 
   return ret;
 }
+
 
 
 /*
@@ -108,7 +214,7 @@ VEC<double> subset(VEC<double>&inp, char s, VEC<double>& cols_) {
 
   for(int i = 0; i < r; i++) {
      for(int j = 0; j < c; j++) {
-       ret.indices[i*ret.nr() + j] = i*inp.nr() + j;
+       ret[i*r + j] = inp[i*inp.nr() + cols_[j] - inp.nr()]; // user start counting at 1
      }
   }
 
@@ -116,29 +222,9 @@ VEC<double> subset(VEC<double>&inp, char s, VEC<double>& cols_) {
 }
 
 
-/*
-desired positions
-*/
-VEC<double> subset(VEC<double>&inp, VEC<double>& rows_, char s) {
 
-  if(inp.ismatrix == false) {
-    std::cerr << "incorrect number of dimensions" << std::endl;
-    exit(0);
-  }
 
-  int r = rows_.size();
-  int c = inp.nc();
 
-  VEC<double> ret(r, c);
-
-  for(int i = 0; i < r; i++) {
-     for(int j = 0; j < c; j++) {
-       ret.indices[i*ret.nr() + j] = i*inp.nr() + j;
-     }
-  }
-
-  return ret;
-}
 
 // subsetting at LHS
 // ================================================================

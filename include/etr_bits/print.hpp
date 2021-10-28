@@ -58,16 +58,39 @@ void print(bool inp) {
 void print(const VEC<double>& inp) { // const
 
     if(inp.ismatrix == false) {
-      for(int i = 0; i < inp.size(); i++) {
-        std::cout << inp[i] << std::endl;
-      }
-    } else if(inp.ismatrix == true) {
-      for(int i = 0; i < inp.nrows; i++) {
-        for(int j = 0; j < inp.ncols; j++) {
-          std::cout << inp.d[i*inp.nrows + j] << "\t";
+
+      if(inp.subsetted == false) {
+        for(int i = 0; i < inp.size(); i++) {
+          std::cout << inp[i] << std::endl;
         }
-          std::cout << std::endl;
+      } else {
+        for(int i = 0; i < inp.size(); i++) {
+          std::cout << inp[inp.indices[i]] << std::endl;
+        }
       }
+
+    } else if(inp.ismatrix == true) {
+
+      if(inp.subsetted == false) {
+        for(int i = 0; i < inp.nrows; i++) {
+          for(int j = 0; j < inp.ncols; j++) {
+            std::cout << inp.d[i*inp.nrows + j] << "\t";
+          }
+            std::cout << std::endl;
+        }
+      } else {
+        for(int i = 0; i < inp.nrows; i++) {
+          for(int j = 0; j < inp.ncols; j++) {
+
+            if(inp.indices[i*inp.nrows + j] == i*inp.nrows + j) {
+                std::cout << inp.d[i*inp.nrows + j] << "\t";
+            }
+
+          }
+            std::cout << std::endl;
+        }
+      }
+
     }
 }
 
