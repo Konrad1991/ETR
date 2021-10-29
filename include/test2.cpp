@@ -54,13 +54,13 @@ int main() {
   mat inp = subset(m1, sub1, ' ');
 
 
-  for(int i = 0; i < inp.nrows; i++) {
+  for(int i = 0; i < inp.nr(); i++) {
     for(int j = 0; j < inp.ncols; j++) {
-      std::cout << inp[i*inp.nr() + j] << "\t";
+      std::cout << i << " " << j << std::endl;
+      print(i + j);
+      //std::cout << inp[(i)*inp.nr() + j] << "\t";
     }
       std::cout << std::endl;
   }
-
-
 
 }
