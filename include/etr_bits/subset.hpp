@@ -26,6 +26,10 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 #include "vec.hpp"
 
 
+// matrix should be column wise --> has to be fixed in subset, printing, ???
+
+
+
 
 // Vector
 // subsetting at RHS
