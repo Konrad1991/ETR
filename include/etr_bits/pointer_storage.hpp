@@ -288,4 +288,23 @@ public:
 };
 
 
+
+/*
+Basic idea
+
+class STORE handels printing and subsetting
+class Store contains stack for indices
+at vector level only the desired positions were passed
+if [] of STORE is called it the stack is checked.
+if stack is empty == vector not is_subsetted
+if stack is filled --> only subset of vector has to be used
+after [] was called and the stack was filled the stack has to be decreased by 1
+
+
+at vector level only the =, +, -, *, /, sin, cos, length, etc. were handeled
+if at vector level () is called --> the stack of STORE has to be changed --> increased
+
+*/
+
+
 #endif
