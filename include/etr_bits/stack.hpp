@@ -22,6 +22,8 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 #ifndef STACK
 #define STACK
 
+#include "header.hpp"
+
 
 class STCK {
 
@@ -30,13 +32,21 @@ public:
   size_t sz;
 
   STCK(std::vector<int>&& inp) {
+    stack.resize(1);
     stack.push_back(inp);
     sz = stack.size();
   }
 
-  std::vector<int>& get() {
+  STCK() : sz(0) {
+    stack.resize(1);
+  }
+
+  void get(std::vector<int>& inp) {
     if(sz >= 1) {
-        return &stack.back();
+        inp.resize(stack[sz].size());
+        for(int i = 0; i < inp.size(); i++) {
+          inp[i] = stack[sz][i];
+        }
         sz--;
     }  else {
       std::cerr << "error stack interface" << std::endl;
@@ -45,14 +55,16 @@ public:
   }
 
   STCK& operator=(std::vector<int>& inp) {
+
     stack.push_back(inp);
     sz++;
+    return *this;
   }
 
   ~STCK() {
-    if sz != 0;
-    std::cerr << "error stack != 0" << std::endl;
-    exit(0);
+    if(sz != 0) {
+      exit(0);
+    }
   }
 
 };
