@@ -51,7 +51,8 @@ int main() {
   print();
   print(subset(m1, 5, ' '));
   print();
-  mat inp = subset(m1, ' ', sub1);
+  mat temp = subset(m1, ' ', sub1);
+  print(temp.nc());
   /*
   for(int i = 0; i < inp.size(); i++) {
     std::cout << inp[i] << std::endl;

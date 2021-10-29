@@ -25,12 +25,6 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 
 #include "vec.hpp"
 
-
-// matrix should be column wise --> has to be fixed in subset, printing, ???
-
-
-
-
 // Vector
 // subsetting at RHS
 // ================================================================
@@ -89,7 +83,7 @@ double subset(VEC<double>&inp, int row, int col) {
     std::cerr << "incorrect number of dimensions" << std::endl;
     exit(0);
   }
-  return inp[row*inp.nr() + col];
+  return inp[col*inp.nc() + row];
 }
 
 /*
@@ -104,7 +98,7 @@ double subset(VEC<double>&inp, double row_, double col_) {
     std::cerr << "incorrect number of dimensions" << std::endl;
     exit(0);
   }
-  return inp[row*inp.nr() + col];
+  return inp[col*inp.nc() + row];
 }
 
 
@@ -122,7 +116,8 @@ VEC<double> subset(VEC<double>&inp, int r, char s) {
   VEC<double> ret(1, c);
 
   for(int j = 0; j < c; j++) {
-       ret[1 + j -1] = inp[ (r-1)*inp.nr() + j];
+    ret[j] = inp[j*c + r-1];
+       //ret[1 + j -1] = inp[ (r-1)*inp.nr() + j];
   }
 
   return ret;
@@ -144,7 +139,7 @@ VEC<double> subset(VEC<double>&inp, double r_, char s) {
   VEC<double> ret(1, c);
 
   for(int j = 0; j < c; j++) {
-       ret[1 + j -1] = inp[ (r-1)*inp.nr() + j];
+    ret[j] = inp[j*c + r-1];
   }
 
   return ret;
@@ -160,15 +155,15 @@ VEC<double> subset(VEC<double>&inp, char s, VEC<double>& cols_) {
     exit(0);
   }
 
-  int r = cols_.size();
-  int c = inp.nc();
+  int c = cols_.size();
+  int r = inp.nr();
 
   VEC<double> ret(r, c);
 
-  for(int i = 0; i < r; i++) {
-     for(int j = 0; j < c; j++) {
-      ret[i*inp.nr() + j] =  inp[cols_[i]-1 + j*c];  // user start counting at 1
-     }
+  for(int i = 0; i < c; i++) {
+    for(int j = 0; j < r; j++) {
+      ret[i*inp.nr() + j] = inp[i*r + j];
+    }
   }
 
   return ret;
