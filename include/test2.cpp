@@ -56,11 +56,12 @@ int main() {
   for(int i = 0; i < inp.size(); i++) {
     std::cout << inp[i] << std::endl;
   }
-  */
+
 
   mat inp2 = subset(m1, sub1, ' ');
   for(int i = 0; i < inp2.size(); i++) {
     std::cout << inp2[i] << std::endl;
   }
+  */
 
 }

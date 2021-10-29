@@ -72,22 +72,22 @@ void print(const VEC<double>& inp) { // const
     } else if(inp.ismatrix == true) {
 
       if(inp.subsetted == false) {
-        for(int i = 0; i < inp.nrows; i++) {
-          for(int j = 0; j < inp.ncols; j++) {
-            std::cout << inp.d[i*inp.nrows + j] << "\t";
+        for(int i = 0; i < inp.ncols; i++) {
+          for(int j = 0; j < inp.nrows; j++) {
+            std::cout << inp.d[j*inp.nrows + i] << "\t";
           }
-            std::cout << std::endl;
+          std::cout << std::endl;
         }
       } else {
-        for(int i = 0; i < inp.nrows; i++) {
-          for(int j = 0; j < inp.ncols; j++) {
 
-            if(inp.indices[i*inp.nrows + j] == i*inp.nrows + j) {
-                std::cout << inp.d[i*inp.nrows + j] << "\t";
+        for(int i = 0; i < inp.ncols; i++) {
+          for(int j = 0; j < inp.nrows; j++) {
+            if(inp.indices[j*inp.nrows + i] == j*inp.nrows + i) {
+              std::cout << inp.d[j*inp.nrows + i] << "\t";
             }
 
           }
-            std::cout << std::endl;
+          std::cout << std::endl;
         }
       }
 
