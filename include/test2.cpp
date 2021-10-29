@@ -51,16 +51,16 @@ int main() {
   print();
   print(subset(m1, 5, ' '));
   print();
-  mat inp = subset(m1, sub1, ' ');
+  mat inp = subset(m1, ' ', sub1);
+  /*
+  for(int i = 0; i < inp.size(); i++) {
+    std::cout << inp[i] << std::endl;
+  }
+  */
 
-
-  for(int i = 0; i < inp.nr(); i++) {
-    for(int j = 0; j < inp.ncols; j++) {
-      std::cout << i << " " << j << std::endl;
-      print(i + j);
-      //std::cout << inp[(i)*inp.nr() + j] << "\t";
-    }
-      std::cout << std::endl;
+  mat inp2 = subset(m1, sub1, ' ');
+  for(int i = 0; i < inp2.size(); i++) {
+    std::cout << inp2[i] << std::endl;
   }
 
 }
