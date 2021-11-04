@@ -25,11 +25,6 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 
 #include "vec.hpp"
 
-int d2i(double inp) {
-  return static_cast<int>(inp);
-}
-
-
 VEC<double> subset(VEC<double>& inp) {
   VEC<double> ret = inp;
 
@@ -60,10 +55,13 @@ VEC<double> subset(VEC<double>& inp, bool all) {
   if(all == true) {
       VEC<double> ret = inp;
       return ret;
-  } else if(all == false) {
+  } else if(all == false) { // maybe abort program
     VEC<double> ret;
     return ret;
   }
+  std::cerr << "error during comparison" << std::endl;
+  exit(0);
+  return inp;
 }
 
 VEC<double> subset(VEC<double>& inp, int r, int c) {

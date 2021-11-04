@@ -23,6 +23,10 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 
 #include "pointer_storage.hpp"
 
+int d2i(double inp) {
+  return static_cast<int>(inp);
+}
+
 /*
 Vector & matrix module
 */
@@ -83,29 +87,6 @@ public:
     return *this;
   }
 
-/*
-  VEC& operator=(const R& other_vec) {
-
-    if(other_vec.size() > d.size()) {
-      int diff = other_vec.size() - d.size();
-      this -> realloc(d.size() + diff);
-    }
-
-    if(subsetted == false) {
-      d.resize(other_vec.size());
-      for(int i = 0; i < d.size(); i++) {
-        d[i] = other_vec[i];
-      }
-    } else {
-      for(int i = 0; i < indices.size(); i++) {
-        d[indices[i]] = other_vec[i];
-      }
-    }
-
-    subsetted = false;
-    return *this;
-  }
-*/
   VEC& operator=(const VEC& other_vec) {
 
     if(this == &other_vec) {
@@ -209,9 +190,6 @@ void realloc(int new_size) {
   d.realloc(new_size);
 }
 
-
-
-
 // getter methods for matrix
 // ================================================================
  int ncol() const {
@@ -234,118 +212,6 @@ int nc() const {
 int nr() const {
   return nrows;
 }
-
- // Vector
- // subsetting at RHS
- // ================================================================
- /*
- desired positions
- */
-
- VEC<double> operator()(VEC<double>&& ip) {
-   VEC<double> t;
-   int start = ip[0] - 1;
-   int end = ip.d.back() - 1;
-
-   t.d.resize((end -1) - (start -1) + 1);
-   for(int i = 0; i < t.d.size(); i++) {
-     t.d[i] = d[start + i];
-   }
-   return t;
- }
-
- /*
- desired positions !!!!!!
- */
- /*
- VEC<double> operator()(VEC<double>& ip) {
-
-   VEC<double> t;
-   int start = ip[0] - 1;
-   int end = ip[ip.size() -1] - 1;
-
-   t.d.resize((end -1) - (start -1) + 1);
-   for(int i = 0; i < t.d.size(); i++) {
-     t.d[i] = d[start + i];
-   }
-   return t;
- }
- */
-
- /*
- desired positions
- */
-/*
- VEC& operator()(VEC<double>& ip) {
-
-   int start = ip[0] - 1;
-   int end = ip[ip.size() -1] - 1;
-
-   this -> subsetted = true;
-   this -> indices.resize((end -1) - (start -1) + 1);
-   for(size_t i = 0; i < this -> indices.size(); i++) {
-     this -> indices[i] = start + i;
-   }
-   return *this;
- }
- */
-
- VEC& operator()(VEC<double>& ip) {
-
-   this -> subsetted = true;
-   this -> indices.resize(ip.size());
-   for(size_t i = 0; i < this -> indices.size(); i++) {
-     this -> indices[i] = ip[i] -1;
-   }
-   return *this;
- }
-
-
-
-
- /*
- one position
- */
- T& operator()(int pos) {
-   pos--;
-   return d[pos];
- }
-
-
-
-
-
- /*
- desired positions
- */
- VEC<double> operator()(VEC<double>& rows_, VEC<double>& cols_) {
-
-   if(this -> ismatrix == false) {
-     std::cerr << "incorrect number of dimensions" << std::endl;
-     exit(0);
-   }
-
-   VEC<double> ret( (rows_.size() -1)*(cols_.size() -1) + 1);
-   for(int i = 0; i < rows_.nrows; i++) {
-      for(int j = 0; j < cols_.ncols; j++) {
-        ret[i*static_cast<int>(rows_.nrows) + j] = this -> d[i*static_cast<int>(rows_.nrows) + j];
-        std::cerr << ret[i*static_cast<int>(rows_.nrows) + j] << std::endl;
-      }
-   }
-
-   ret.ismatrix = true;
-
-   return ret;
- }
-
- /*
- one position
- */
- T& operator()(int rows, int cols) {
-   rows--;
-   cols--;
-   return d[rows*nrows + cols];
- }
 
  auto begin() const {
    return It<T>{d.p};

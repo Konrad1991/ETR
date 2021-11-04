@@ -27,10 +27,15 @@ vec sub = range(5,5);
 vec sub1 = range(1, 2);
 vec sub2 = range(2, 5);
 msub = subset(m, sub1, sub2);
-prt(msub);
+//prt(msub);
 
 
 
-//prt(subset(m));
+
+
+subassign(m, sub1, sub2) = 30.;
+
+prt(m);
+
 
 }

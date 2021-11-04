@@ -61,8 +61,8 @@ VEC<double> dim(VEC<T>& inp) {
 
   VEC<double> ret(2);
 
-  ret(1) = inp.nr();
-  ret(2) = inp.nc();
+  ret[0] = inp.nr();
+  ret[1] = inp.nc();
 
   return ret;
 }

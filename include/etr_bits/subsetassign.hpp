@@ -20,71 +20,71 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 */
 
 
-#ifndef SUBSETTINGASSIGN
-#define SUBSETTINGASSIGN
+#ifndef subassignTINGASSIGN
+#define subassignTINGASSIGN
 
 #include "vec.hpp"
 
-int d2i(double inp) {
-  return static_cast<int>(inp);
+VEC<double>& subassign(VEC<double>& inp) {
+  return inp;
 }
 
 
-VEC<double> subset(VEC<double>& inp) {
-  VEC<double> ret = inp;
-
-  return ret;
-}
-
-
-VEC<double> subset(VEC<double>& inp, int pos) {
-  VEC<double> ret(1);
+VEC<double>& subassign(VEC<double>& inp, int pos) {
   pos--;
-  ret[0] = inp[pos];
+  inp.indices.resize(1);
+  inp.indices[0] = pos;
+  inp.subsetted = true;
 
-  return ret;
+  return inp;
 }
 
 
-VEC<double> subset(VEC<double>& inp, double pos_) {
-  VEC<double> ret(1);
+VEC<double>& subassign(VEC<double>& inp, double pos_) {
   int pos = static_cast<int>(pos_);
   pos--;
-  ret[0] = inp[pos];
+  inp.indices.resize(1);
+  inp.indices[0] = pos;
+  inp.subsetted = true;
 
-  return ret;
+  return inp;
 }
 
 
-VEC<double> subset(VEC<double>& inp, bool all) {
+VEC<double>& subassign(VEC<double>& inp, bool all) {
   if(all == true) {
-      VEC<double> ret = inp;
-      return ret;
-  } else if(all == false) {
-    VEC<double> ret;
-    return ret;
+    return inp;
+  } else if(all == false) {  // maybe abort program
+    inp.subsetted = true;
+    inp.indices.resize(0);
+    return inp;
   }
+
+  std::cerr << "error during comparison" << std::endl;
+  exit(0);
+  return inp;
 }
 
-VEC<double> subset(VEC<double>& inp, int r, int c) {
+VEC<double>& subassign(VEC<double>& inp, int r, int c) {
 
   if(inp.ismatrix == false) {
     std::cerr << "incorrect number of dimensions" << std::endl;
     exit(0);
   }
 
-  VEC<double> ret(1);
   r--;
   c--;
-  int pos = c*inp.nr() + r;
+  int pos = c*inp.nrows_sub + r;
+  inp.indices.resize(1);
 
-  ret[0] = inp[pos];
+  inp.indices[0] = pos;
+  inp.subsetted = true;
 
-  return ret;
+  return inp;
 }
 
 
-VEC<double> subset(VEC<double>& inp, double r_, double c_) {
+VEC<double>& subassign(VEC<double>& inp, double r_, double c_) {
   int r = static_cast<int>(r_);
   int c = static_cast<int>(c_);
 
@@ -93,258 +93,259 @@ VEC<double> subset(VEC<double>& inp, double r_, double c_) {
     exit(0);
   }
 
-  VEC<double> ret(1);
   r--;
   c--;
-  int pos = c*inp.nr() + r;
+  int pos = c*inp.nrows_sub + r;
+  inp.indices.resize(1);
 
-  ret[0] = inp[pos];
+  inp.indices[0] = pos;
+  inp.subsetted = true;
 
-  return ret;
+  return inp;
 }
 
 
-VEC<double> subset(VEC<double>& inp, VEC<double>&& pos) {
-  VEC<double> ret(pos.size());
-  for(int i = 0; i < ret.size(); i++) {
-    ret[i] = inp[d2i(pos[i]) - 1];
+VEC<double>& subassign(VEC<double>& inp, VEC<double>&& pos) {
+  inp.indices.resize(pos.size());
+  for(int i = 0; i < pos.size(); i++) {
+    inp.indices[i] = d2i(pos[i]) - 1;
   }
+  inp.subsetted = true;
 
-  return ret;
+  return inp;
 }
 
-
-VEC<double> subset(VEC<double>& inp, VEC<double>& pos) {
-  VEC<double> ret(pos.size());
-  for(int i = 0; i < ret.size(); i++) {
-    ret[i] = inp[d2i(pos[i]) - 1];
+VEC<double>& subassign(VEC<double>& inp, VEC<double>& pos) {
+  inp.indices.resize(pos.size());
+  for(int i = 0; i < pos.size(); i++) {
+    inp.indices[i] = d2i(pos[i]) - 1;
   }
+  inp.subsetted = true;
 
-  return ret;
+  return inp;
 }
 
 
-// subset mat helper
-double smh(VEC<double>& inp, int r, int c) {
-  double ret;
-  r--;
-  c--;
-  int pos = c*inp.nr() + r;
-  ret = inp[pos];
-  return ret;
-}
 
 
-VEC<double> subset(VEC<double>& inp, VEC<double>& pos, bool substitute) {
+
+VEC<double>& subassign(VEC<double>& inp, VEC<double>& pos, bool substitute) {
   if(inp.ismatrix == false) {
     std::cerr << "incorrect number of dimensions" << std::endl;
     exit(0);
   }
-
-  VEC<double> ret(pos.size() * inp.nc());
-  ret.ismatrix = true;
-  ret.ncols = inp.nc();
-  ret.nrows = pos.size();
+  inp.subsetted = true;
+  inp.ncols_sub = inp.ncols_sub;
+  inp.nrows_sub = pos.size();
   int curr_r = 0;
   int pst = 0;
+  inp.indices.resize(inp.ncols_sub*pos.size());
 
-  for(int i = 0; i < ret.nr(); i++) {
+  for(int i = 0; i < inp.nrows_sub; i++) {
     curr_r = static_cast<int>(pos[i]) - 1;
-    for(int j = 0; j < ret.nc(); j++) {
-      pst = j*inp.nr() + curr_r;
-      ret[i*ret.nr() + j] = inp[pst];
+    for(int j = 0; j < inp.ncols_sub; j++) {
+      pst = j*inp.nrows_sub + curr_r;
+      inp.indices[i*inp.nrows_sub + j] = pst;
     }
   }
 
-  return ret;
+  return inp;
 }
 
 
-VEC<double> subset(VEC<double>& inp, VEC<double>&& pos, bool substitute) {
+VEC<double>& subassign(VEC<double>& inp, VEC<double>&& pos, bool substitute) {
   if(inp.ismatrix == false) {
     std::cerr << "incorrect number of dimensions" << std::endl;
     exit(0);
   }
-
-  VEC<double> ret(pos.size() * inp.nc());
-  ret.ismatrix = true;
-  ret.ncols = inp.nc();
-  ret.nrows = pos.size();
+  inp.subsetted = true;
+  inp.ncols_sub = inp.ncols_sub;
+  inp.nrows_sub = pos.size();
   int curr_r = 0;
   int pst = 0;
+  inp.indices.resize(inp.ncols_sub*pos.size());
 
-  for(int i = 0; i < ret.nr(); i++) {
+  for(int i = 0; i < inp.nrows_sub; i++) {
     curr_r = static_cast<int>(pos[i]) - 1;
-    for(int j = 0; j < ret.nc(); j++) {
-      pst = j*inp.nr() + curr_r;
-      ret[i*ret.nr() + j] = inp[pst];
+    for(int j = 0; j < inp.ncols_sub; j++) {
+      pst = j*inp.nrows_sub + curr_r;
+      inp.indices[i*inp.nrows_sub + j] = pst;
     }
   }
 
-  return ret;
+  return inp;
 }
 
 
 
-VEC<double> subset(VEC<double>& inp, bool substitute, VEC<double>& pos) {
+
+
+
+VEC<double>& subassign(VEC<double>& inp, bool substitute, VEC<double>& pos) {
   if(inp.ismatrix == false) {
     std::cerr << "incorrect number of dimensions" << std::endl;
     exit(0);
   }
 
-  VEC<double> ret(pos.size() * inp.nr());
-  ret.ismatrix = true;
-  ret.ncols = pos.size();
-  ret.nrows = inp.nr();
+  inp.indices.resize(pos.size() * inp.nrows_sub);
+  inp.subsetted = true;
+  inp.ncols_sub = pos.size();
+  inp.nrows_sub = inp.nrows_sub;
   int curr_c = 0;
   int pst = 0;
 
-  for(int i = 0; i < ret.nc(); i++) {
+  for(int i = 0; i < inp.ncols_sub; i++) {
     curr_c = static_cast<int>(pos[i]) - 1;
-    for(int j = 0; j < ret.nr(); j++) {
-
-      pst = curr_c*inp.nr() + j;
-      ret[i*ret.nr() + j] = inp[pst];
+    for(int j = 0; j < inp.nrows_sub; j++) {
+      pst = curr_c*inp.nrows_sub + j;
+      inp.indices[i*inp.nrows_sub + j] = pst;
     }
   }
 
-  return ret;
+  return inp;
 }
 
-VEC<double> subset(VEC<double>& inp, bool substitute, VEC<double>&& pos) {
+
+VEC<double>& subassign(VEC<double>& inp, bool substitute, VEC<double>&& pos) {
   if(inp.ismatrix == false) {
     std::cerr << "incorrect number of dimensions" << std::endl;
     exit(0);
   }
 
-  VEC<double> ret(pos.size() * inp.nr());
-  ret.ismatrix = true;
-  ret.ncols = pos.size();
-  ret.nrows = inp.nr();
+  inp.indices.resize(pos.size() * inp.nrows_sub);
+  inp.subsetted = true;
+  inp.ncols_sub = pos.size();
+  inp.nrows_sub = inp.nrows_sub;
   int curr_c = 0;
   int pst = 0;
 
-  for(int i = 0; i < ret.nc(); i++) {
+  for(int i = 0; i < inp.ncols_sub; i++) {
     curr_c = static_cast<int>(pos[i]) - 1;
-    for(int j = 0; j < ret.nr(); j++) {
-
-      pst = curr_c*inp.nr() + j;
-      ret[i*ret.nr() + j] = inp[pst];
+    for(int j = 0; j < inp.nrows_sub; j++) {
+      pst = curr_c*inp.nrows_sub + j;
+      inp.indices[i*inp.nrows_sub + j] = pst;
     }
   }
 
-  return ret;
+  return inp;
 }
 
 
 
-VEC<double> subset(VEC<double>& inp, VEC<double>& rpos, VEC<double>& cpos) {
+
+
+VEC<double>& subassign(VEC<double>& inp, VEC<double>& rpos, VEC<double>& cpos) {
   if(inp.ismatrix == false) {
     std::cerr << "incorrect number of dimensions" << std::endl;
     exit(0);
   }
 
-  VEC<double> ret(rpos.size() * cpos.size());
-  ret.ismatrix = true;
-  ret.ncols = cpos.size();
-  ret.nrows = rpos.size();
+  inp.indices.resize(rpos.size() * cpos.size());
+  inp.subsetted = true;
+  inp.ncols_sub = cpos.size();
+  inp.nrows_sub = rpos.size();
   int curr_c = 0;
   int curr_r = 0;
   int pst = 0;
 
-  for(int i = 0; i < ret.nc(); i++) {
+  for(int i = 0; i < inp.ncols_sub; i++) {
     curr_c = d2i(cpos[i]) - 1;
-    for(int j = 0; j < ret.nr(); j++) {
+    for(int j = 0; j < inp.nrows_sub; j++) {
       curr_r = d2i(rpos[j]) -1;
-      pst = curr_c*inp.nr() + curr_r;
-      ret[i*ret.nr() + j] = inp[pst];
+      pst = curr_c*inp.nrows_sub + curr_r;
+      inp.indices[i*inp.nrows_sub + j] = pst;
     }
   }
 
-  return ret;
+  return inp;
 }
 
 
-VEC<double> subset(VEC<double>& inp, VEC<double>&& rpos, VEC<double>& cpos) {
+
+VEC<double>& subassign(VEC<double>& inp, VEC<double>&& rpos, VEC<double>& cpos) {
   if(inp.ismatrix == false) {
     std::cerr << "incorrect number of dimensions" << std::endl;
     exit(0);
   }
 
-  VEC<double> ret(rpos.size() * cpos.size());
-  ret.ismatrix = true;
-  ret.ncols = cpos.size();
-  ret.nrows = rpos.size();
+  inp.indices.resize(rpos.size() * cpos.size());
+  inp.subsetted = true;
+  inp.ncols_sub = cpos.size();
+  inp.nrows_sub = rpos.size();
   int curr_c = 0;
   int curr_r = 0;
   int pst = 0;
 
-  for(int i = 0; i < ret.nc(); i++) {
+  for(int i = 0; i < inp.ncols_sub; i++) {
     curr_c = d2i(cpos[i]) - 1;
-    for(int j = 0; j < ret.nr(); j++) {
+    for(int j = 0; j < inp.nrows_sub; j++) {
       curr_r = d2i(rpos[j]) -1;
-      pst = curr_c*inp.nr() + curr_r;
-      ret[i*ret.nr() + j] = inp[pst];
+      pst = curr_c*inp.nrows_sub + curr_r;
+      inp.indices[i*inp.nrows_sub + j] = pst;
     }
   }
 
-  return ret;
+  return inp;
 }
 
 
-VEC<double> subset(VEC<double>& inp, VEC<double>& rpos, VEC<double>&& cpos) {
+
+VEC<double>& subassign(VEC<double>& inp, VEC<double>& rpos, VEC<double>&& cpos) {
   if(inp.ismatrix == false) {
     std::cerr << "incorrect number of dimensions" << std::endl;
     exit(0);
   }
 
-  VEC<double> ret(rpos.size() * cpos.size());
-  ret.ismatrix = true;
-  ret.ncols = cpos.size();
-  ret.nrows = rpos.size();
+  inp.indices.resize(rpos.size() * cpos.size());
+  inp.subsetted = true;
+  inp.ncols_sub = cpos.size();
+  inp.nrows_sub = rpos.size();
   int curr_c = 0;
   int curr_r = 0;
   int pst = 0;
 
-  for(int i = 0; i < ret.nc(); i++) {
+  for(int i = 0; i < inp.ncols_sub; i++) {
     curr_c = d2i(cpos[i]) - 1;
-    for(int j = 0; j < ret.nr(); j++) {
+    for(int j = 0; j < inp.nrows_sub; j++) {
       curr_r = d2i(rpos[j]) -1;
-      pst = curr_c*inp.nr() + curr_r;
-      ret[i*ret.nr() + j] = inp[pst];
+      pst = curr_c*inp.nrows_sub + curr_r;
+      inp.indices[i*inp.nrows_sub + j] = pst;
     }
   }
 
-  return ret;
+  return inp;
 }
 
 
 
-VEC<double> subset(VEC<double>& inp, VEC<double>&& rpos, VEC<double>&& cpos) {
+VEC<double>& subassign(VEC<double>& inp, VEC<double>&& rpos, VEC<double>&& cpos) {
   if(inp.ismatrix == false) {
     std::cerr << "incorrect number of dimensions" << std::endl;
     exit(0);
   }
 
-  VEC<double> ret(rpos.size() * cpos.size());
-  ret.ismatrix = true;
-  ret.ncols = cpos.size();
-  ret.nrows = rpos.size();
+  inp.indices.resize(rpos.size() * cpos.size());
+  inp.subsetted = true;
+  inp.ncols_sub = cpos.size();
+  inp.nrows_sub = rpos.size();
   int curr_c = 0;
   int curr_r = 0;
   int pst = 0;
 
-  for(int i = 0; i < ret.nc(); i++) {
+  for(int i = 0; i < inp.ncols_sub; i++) {
     curr_c = d2i(cpos[i]) - 1;
-    for(int j = 0; j < ret.nr(); j++) {
+    for(int j = 0; j < inp.nrows_sub; j++) {
       curr_r = d2i(rpos[j]) -1;
-      pst = curr_c*inp.nr() + curr_r;
-      ret[i*ret.nr() + j] = inp[pst];
+      pst = curr_c*inp.nrows_sub + curr_r;
+      inp.indices[i*inp.nrows_sub + j] = pst;
     }
   }
 
-  return ret;
+  return inp;
 }
+
+
+
 
 
 
