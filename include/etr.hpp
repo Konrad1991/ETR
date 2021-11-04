@@ -32,10 +32,12 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 #include "etr_bits/divide.hpp"
 #include "etr_bits/print.hpp"
 #include "etr_bits/subset.hpp"
+#include "etr_bits/subsetassign.hpp"
 #include "etr_bits/concatenate.hpp"
 #include "etr_bits/colon.hpp"
 
 #define vec VEC<double>
 #define mat VEC<double>
+#define sxp VEC<double>
 
 #endif

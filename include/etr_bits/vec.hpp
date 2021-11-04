@@ -43,6 +43,9 @@ public:
   int ncols;
   int nrows;
 
+  int ncols_sub;
+  int nrows_sub;
+
   // data
   R d;
 
@@ -80,6 +83,7 @@ public:
     return *this;
   }
 
+/*
   VEC& operator=(const R& other_vec) {
 
     if(other_vec.size() > d.size()) {
@@ -101,7 +105,7 @@ public:
     subsetted = false;
     return *this;
   }
-
+*/
   VEC& operator=(const VEC& other_vec) {
 
     if(this == &other_vec) {

@@ -20,8 +20,8 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 */
 
 
-#ifndef SUBSETTING
-#define SUBSETTING
+#ifndef SUBSETTINGASSIGN
+#define SUBSETTINGASSIGN
 
 #include "vec.hpp"
 
