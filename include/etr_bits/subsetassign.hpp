@@ -142,10 +142,10 @@ VEC<double>& subassign(VEC<double>& inp, VEC<double>& pos, bool substitute) {
   int pst = 0;
   inp.indices.resize(inp.nc()*pos.size());
 
-  for(int i = 0; i < inp.nrows_sub; i++) {
-    curr_r = static_cast<int>(pos[i]) - 1;
-    for(int j = 0; j < inp.ncols_sub; j++) {
-      pst = j*inp.nr() + curr_r;
+  for(int i = 0; i < inp.ncols_sub; i++) {
+    for(int j = 0; j < inp.nrows_sub; j++) {
+      curr_r = d2i(pos[j]) - 1;
+      pst = i*inp.nr() + curr_r;
       inp.indices[i*inp.nrows_sub + j] = pst;
     }
   }
@@ -166,10 +166,10 @@ VEC<double>& subassign(VEC<double>& inp, VEC<double>&& pos, bool substitute) {
   int pst = 0;
   inp.indices.resize(inp.nc()*pos.size());
 
-  for(int i = 0; i < inp.nrows_sub; i++) {
-    curr_r = static_cast<int>(pos[i]) - 1;
-    for(int j = 0; j < inp.ncols_sub; j++) {
-      pst =  j*inp.nr() + curr_r;
+  for(int i = 0; i < inp.ncols_sub; i++) {
+    for(int j = 0; j < inp.nrows_sub; j++) {
+      curr_r = d2i(pos[j]) - 1;
+      pst = i*inp.nr() + curr_r;
       inp.indices[i*inp.nrows_sub + j] = pst;
     }
   }

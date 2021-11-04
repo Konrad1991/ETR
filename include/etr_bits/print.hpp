@@ -94,5 +94,44 @@ void print(VEC<double>& inp) { // const
 }
 
 
+void print(VEC<double>&& inp) { // const
+
+    if(inp.ismatrix == false) {
+
+      if(inp.subsetted == false) {
+        for(int i = 0; i < inp.size(); i++) {
+          std::cout << inp[i] << std::endl;
+        }
+      } else {
+        for(int i = 0; i < inp.size(); i++) {
+          std::cout << inp[inp.indices[i]] << std::endl;
+        }
+      }
+
+    } else if(inp.ismatrix == true) {
+
+      if(inp.subsetted == false) {
+        for(int i = 0; i < inp.nrows; i++) {
+          for(int j = 0; j < inp.ncols; j++) {
+            std::cout << inp.d[j*inp.nrows + i] << "\t";
+          }
+          std::cout << std::endl;
+        }
+      } else {
+
+        ass(inp.indices.size() >= 1, "insufficient size of subset");
+        for(int i = 0; i < inp.ncols_sub; i++) {
+          for(int j = 0; j < inp.nrows_sub; j++) {
+              std::cout << inp[inp.indices[i*inp.nrows_sub + j]] << "\t";
+          }
+          std::cout << std::endl;
+      }
+
+    }
+
+    }
+}
+
+
 
 #endif
