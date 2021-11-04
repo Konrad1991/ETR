@@ -49,7 +49,7 @@ public:
         }
         sz--;
     }  else {
-      std::cerr << "error stack interface" << std::endl;
+      std::cerr << "error stack is currently empty" << std::endl;
       exit(0);
     }
   }
