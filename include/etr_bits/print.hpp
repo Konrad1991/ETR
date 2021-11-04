@@ -23,7 +23,7 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 #ifndef PRINT
 #define PRINT
 
-#include "vec.hpp"
+#include "subset.hpp"
 
 // print empty line
 void print() {
@@ -55,7 +55,7 @@ void print(bool inp) {
 // Vector & matrix
 // print fct
 // ================================================================
-void print(const VEC<double>& inp) { // const
+void print(VEC<double>& inp) { // const
 
     if(inp.ismatrix == false) {
 
@@ -72,52 +72,23 @@ void print(const VEC<double>& inp) { // const
     } else if(inp.ismatrix == true) {
 
       if(inp.subsetted == false) {
-        if(inp.nrows == 1) {
-          for(int i = 0; i < inp.ncols; i++) {
-            std::cout << inp.d[i] << "\t";
-          }
-          std::cout << std::endl;
-          return;
-        } else if(inp.ncols == 1) {
-          for(int i = 0; i < inp.nrows; i++) {
-            std::cout << inp.d[i] << "\t";
-          }
-          std::cout << std::endl;
-          return;
-        }
-
-
-        for(int i = 0; i < inp.ncols; i++) {
-          for(int j = 0; j < inp.nrows; j++) {
+        for(int i = 0; i < inp.nrows; i++) {
+          for(int j = 0; j < inp.ncols; j++) {
             std::cout << inp.d[j*inp.nrows + i] << "\t";
           }
           std::cout << std::endl;
         }
       } else {
-        if(inp.nrows == 1) {
-          for(int i = 0; i < inp.ncols; i++) {
-            std::cout << inp.d[i] << "\t";
-          }
-          std::cout << std::endl;
-          return;
-        } else if(inp.ncols == 1) {
-          for(int i = 0; i < inp.nrows; i++) {
-            std::cout << inp.d[i] << "\t";
-          }
-          std::cout << std::endl;
-          return;
-        }
 
-        for(int i = 0; i < inp.ncols; i++) {
-          for(int j = 0; j < inp.nrows; j++) {
-            if(inp.indices[j*inp.nrows + i] == j*inp.nrows + i) {
-              std::cout << inp.d[j*inp.nrows + i] << "\t";
-            }
-
+        ass(inp.indices.size() >= 1, "insufficient size of subset");
+        for(int i = 0; i < inp.ncols_sub; i++) {
+          for(int j = 0; j < inp.nrows_sub; j++) {
+              std::cout << inp[inp.indices[i*inp.nrows_sub + j]] << "\t";
           }
           std::cout << std::endl;
-        }
       }
+
+    }
 
     }
 }
