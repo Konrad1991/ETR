@@ -30,12 +30,12 @@ msub = subset(m, sub1, sub2);
 //prt(msub);
 
 
+mat temp = subset(m,  sub1, true);
 
-
-
-subassign(m, sub1, sub2) = 30.;
+subassign(m, sub1, true) = 30.;
 
 prt(m);
 
+//prt(subset(m, sub1, true));
 
 }

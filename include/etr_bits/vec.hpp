@@ -81,8 +81,6 @@ public:
       }
     }
 
-    ismatrix = false;
-
     subsetted = false;
     return *this;
   }

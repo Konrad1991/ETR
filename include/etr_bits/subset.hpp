@@ -150,7 +150,7 @@ VEC<double> subset(VEC<double>& inp, VEC<double>& pos, bool substitute) {
     curr_r = static_cast<int>(pos[i]) - 1;
     for(int j = 0; j < ret.nc(); j++) {
       pst = j*inp.nr() + curr_r;
-      ret[i*ret.nr() + j] = inp[pst];
+      ret[i*ret.nc() + j] = inp[pst];
     }
   }
 
@@ -175,7 +175,7 @@ VEC<double> subset(VEC<double>& inp, VEC<double>&& pos, bool substitute) {
     curr_r = static_cast<int>(pos[i]) - 1;
     for(int j = 0; j < ret.nc(); j++) {
       pst = j*inp.nr() + curr_r;
-      ret[i*ret.nr() + j] = inp[pst];
+      ret[i*ret.nc() + j] = inp[pst];
     }
   }
 

@@ -74,7 +74,7 @@ VEC<double>& subassign(VEC<double>& inp, int r, int c) {
 
   r--;
   c--;
-  int pos = c*inp.nrows_sub + r;
+  int pos = c*inp.nr() + r;
   inp.indices.resize(1);
 
   inp.indices[0] = pos;
@@ -95,7 +95,7 @@ VEC<double>& subassign(VEC<double>& inp, double r_, double c_) {
 
   r--;
   c--;
-  int pos = c*inp.nrows_sub + r;
+  int pos = c*inp.nr() + r;
   inp.indices.resize(1);
 
   inp.indices[0] = pos;
@@ -130,21 +130,22 @@ VEC<double>& subassign(VEC<double>& inp, VEC<double>& pos) {
 
 
 VEC<double>& subassign(VEC<double>& inp, VEC<double>& pos, bool substitute) {
+
   if(inp.ismatrix == false) {
     std::cerr << "incorrect number of dimensions" << std::endl;
     exit(0);
   }
   inp.subsetted = true;
-  inp.ncols_sub = inp.ncols_sub;
+  inp.ncols_sub = inp.nc();
   inp.nrows_sub = pos.size();
   int curr_r = 0;
   int pst = 0;
-  inp.indices.resize(inp.ncols_sub*pos.size());
+  inp.indices.resize(inp.nc()*pos.size());
 
   for(int i = 0; i < inp.nrows_sub; i++) {
     curr_r = static_cast<int>(pos[i]) - 1;
     for(int j = 0; j < inp.ncols_sub; j++) {
-      pst = j*inp.nrows_sub + curr_r;
+      pst = j*inp.nr() + curr_r;
       inp.indices[i*inp.nrows_sub + j] = pst;
     }
   }
@@ -159,16 +160,16 @@ VEC<double>& subassign(VEC<double>& inp, VEC<double>&& pos, bool substitute) {
     exit(0);
   }
   inp.subsetted = true;
-  inp.ncols_sub = inp.ncols_sub;
+  inp.ncols_sub = inp.nc();
   inp.nrows_sub = pos.size();
   int curr_r = 0;
   int pst = 0;
-  inp.indices.resize(inp.ncols_sub*pos.size());
+  inp.indices.resize(inp.nc()*pos.size());
 
   for(int i = 0; i < inp.nrows_sub; i++) {
     curr_r = static_cast<int>(pos[i]) - 1;
     for(int j = 0; j < inp.ncols_sub; j++) {
-      pst = j*inp.nrows_sub + curr_r;
+      pst =  j*inp.nr() + curr_r;
       inp.indices[i*inp.nrows_sub + j] = pst;
     }
   }
@@ -190,7 +191,7 @@ VEC<double>& subassign(VEC<double>& inp, bool substitute, VEC<double>& pos) {
   inp.indices.resize(pos.size() * inp.nrows_sub);
   inp.subsetted = true;
   inp.ncols_sub = pos.size();
-  inp.nrows_sub = inp.nrows_sub;
+  inp.nrows_sub = inp.nr();
   int curr_c = 0;
   int pst = 0;
 
@@ -215,7 +216,7 @@ VEC<double>& subassign(VEC<double>& inp, bool substitute, VEC<double>&& pos) {
   inp.indices.resize(pos.size() * inp.nrows_sub);
   inp.subsetted = true;
   inp.ncols_sub = pos.size();
-  inp.nrows_sub = inp.nrows_sub;
+  inp.nrows_sub = inp.nr();
   int curr_c = 0;
   int pst = 0;
 
