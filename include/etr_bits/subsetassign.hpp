@@ -144,8 +144,7 @@ VEC<double>& subassign(VEC<double>& inp, VEC<double>& pos, bool substitute) {
 
   for(int i = 0; i < inp.ncols_sub; i++) {
     for(int j = 0; j < inp.nrows_sub; j++) {
-      curr_r = d2i(pos[j]) - 1;
-      pst = i*inp.nr() + curr_r;
+      pst = i*inp.nr() + d2i(pos[j]-1);
       inp.indices[i*inp.nrows_sub + j] = pst;
     }
   }
@@ -168,8 +167,7 @@ VEC<double>& subassign(VEC<double>& inp, VEC<double>&& pos, bool substitute) {
 
   for(int i = 0; i < inp.ncols_sub; i++) {
     for(int j = 0; j < inp.nrows_sub; j++) {
-      curr_r = d2i(pos[j]) - 1;
-      pst = i*inp.nr() + curr_r;
+      pst = i*inp.nr() + d2i(pos[j]-1);
       inp.indices[i*inp.nrows_sub + j] = pst;
     }
   }

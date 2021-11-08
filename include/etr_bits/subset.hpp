@@ -148,8 +148,7 @@ VEC<double> subset(VEC<double>& inp, VEC<double>& pos, bool substitute) {
 
   for(int i = 0; i < ret.nc(); i++) {
     for(int j = 0; j < ret.nr(); j++) {
-      curr_r = d2i(pos[j]) - 1;
-      pst = i*ret.nr() + curr_r;
+      pst = i*inp.nr() + d2i(pos[j]-1);
       ret[i*ret.nr() + j] = inp[pst];
     }
   }
@@ -173,8 +172,7 @@ VEC<double> subset(VEC<double>& inp, VEC<double>&& pos, bool substitute) {
 
   for(int i = 0; i < ret.nc(); i++) {
     for(int j = 0; j < ret.nr(); j++) {
-      curr_r = d2i(pos[j]) - 1;
-      pst = i*ret.nr() + curr_r;
+      pst = i*inp.nr() + d2i(pos[j]-1);
       ret[i*ret.nr() + j] = inp[pst];
     }
   }

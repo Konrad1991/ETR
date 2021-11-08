@@ -32,14 +32,24 @@ msub = subset(m, sub1, sub2);
 
 mat temp = subset(m,  sub1, true);
 
+//print(m);
+
+//prt(sub1);
+
+//subassign(m, sub1, true) = 30;
+
 print(m);
 
-prt(sub1);
+sub1 = range(2, 3);
 
-subassign(m, sub1, true) = 30;
+print(sub1);
+
+subassign(m, sub1, true) = 500.;
+
+print(subset(m, sub1, true));
+
+print();
 
 print(m);
-
-prt(subset(m, sub1, true));
 
 }
