@@ -12,8 +12,10 @@ int main() {
   a = a + b;
   print(a);
 
+  print();
+  c = coca(100., a, a, 1.);
+  print(c);
 
-  print(dim(a));
-
-  print(length(b));
+  a = a + b;
+  print(a);
 }

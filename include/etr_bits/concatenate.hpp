@@ -24,68 +24,86 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 
 #include "vec.hpp"
 
-template<typename T>
-void appending(VEC<T>& v1, const VEC<T>& v2) {
-  for(auto& i : v2.d) {
-    v1.d.push_back(i);
+
+VEC<double> combine(VEC<double>&& a, VEC<double>&& b) {
+  a.ismatrix = false;
+  b.ismatrix = false;
+  VEC<double> ret(a.size() + b.size());
+  for(int i = 0; i < ret.size(); i++) {
+    if(i < a.size()) {
+        ret[i] = a[i];
+    } else if(i >= a.size()) {
+      ret[i] = b[i - (a.size())];
+    }
   }
+
+  return ret;
 }
 
-template<typename T>
-void appending(const T s, VEC<T>& v1) {
-  v1.d.push_back(s);
-}
+VEC<double> combine(VEC<double>& a, VEC<double>& b) {
+  a.ismatrix = false;
+  b.ismatrix = false;
+  VEC<double> ret(a.size() + b.size());
+  for(int i = 0; i < ret.size(); i++) {
+    if(i < a.size()) {
+        ret[i] = a[i];
+    } else if(i >= a.size()) {
+      ret[i] = b[i - (a.size())];
+    }
+  }
 
-template<typename T>
-void appending(VEC<T>& v1, const T s) {
-  v1.d.push_back(s);
-}
-
-template<typename T, typename... A>
-void auxillary(VEC<T>& v1, const VEC<T>& v2) {
-  appending(v1, v2);
-}
-
-template<typename T, typename... A>
-void auxillary(const T s, VEC<T>& v1) {
-  appending(v1, s);
-}
-
-template<typename T, typename... A>
-void auxillary(VEC<T>& v1, const T s) {
-  appending(v1, s);
-}
-
-template<typename T, typename... A>
-void auxillary(VEC<T>& v1, const VEC<T>&v2, const A&... vr) {
-  appending(v1, v2);
-  auxillary(v1, vr...);
-}
-
-template<typename T, typename... A>
-void auxillary(const T s, VEC<T>&v1, const A&... vr) {
-  appending(s, v1);
-  auxillary(v1, vr...);
-}
-
-template<typename T, typename... A>
-void auxillary(VEC<T>&v1, const T s, const A&... vr) {
-  appending(v1, s);
-  auxillary(v1, vr...);
-}
-
-template<typename T, typename... A>
-VEC<T> concatenate(VEC<T> v, const A&... vr) {
-  auxillary(v, vr...);
-  return v;
+  return ret;
 }
 
 
-template<typename T, typename... A>
-VEC<T> concatenate(const T s, const A&... vr) {
-  VEC<T> v(1, s);
-  auxillary(v, vr...);
-  return v;
+
+VEC<double> combine(VEC<double>& a, double b) {
+  VEC<double> ret(a.size() + 1);
+  a.ismatrix = false;
+  for(int i = 0; i < ret.size(); i++) {
+    if(i < a.size()) {
+        ret[i] = a[i];
+    } else if(i >= a.size()) {
+      ret[i] = b;
+    }
+  }
+  return ret;
+}
+
+
+VEC<double> combine(double a, VEC<double>& b) {
+  VEC<double> ret(b.size() + 1);
+  b.ismatrix = false;
+  for(int i = 0; i < ret.size(); i++) {
+    if(i == 0) {
+        ret[i] = a;
+    } else {
+      ret[i] = b[i -1];
+    }
+  }
+  return ret;
+}
+
+
+template <typename ... Ts>
+VEC<double> coca (Ts && ... multi_inputs)
+{
+    VEC<double> ret;
+    ret.ismatrix = false;
+    int i = 0;
+
+    ([&] (auto & input)
+    {
+      if(i == 0) {
+        ret = input;
+      } else {
+        ret = combine(ret, input);
+      }
+
+      i++;
+    } (multi_inputs), ...);
+
+    return ret;
 }
 
 #endif
