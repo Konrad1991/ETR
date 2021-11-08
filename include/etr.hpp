@@ -35,9 +35,10 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 #include "etr_bits/subsetassign.hpp"
 #include "etr_bits/concatenate.hpp"
 #include "etr_bits/colon.hpp"
+#include "etr_bits/allocation.hpp"
 
 #define vec VEC<double>
 #define mat VEC<double>
-#define sxp VEC<double>
+#define sexp VEC<double>
 
 #endif
