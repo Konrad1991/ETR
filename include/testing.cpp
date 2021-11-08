@@ -18,4 +18,9 @@ int main() {
 
   a = a + b;
   print(a);
+
+  print();
+  print(colon(1, 5));
+
+  print(colon(1.1, 5.5));
 }

@@ -31,9 +31,19 @@ VEC<double> colon(int start, int end) {
   for(int i = 0; i < ret.size(); i++) {
     ret[i] = start + static_cast<double>(i);
   }
-
   return ret;
 }
+
+VEC<double> colon(double start, double end) {
+
+  int size = static_cast<int>(std::floor(end - start +1));
+  VEC<double> ret(size);
+  for(int i = 0; i < ret.size(); i++) {
+    ret[i] = start + static_cast<double>(i);
+  }
+  return ret;
+}
+
 
 int length(double inp) {
   return 1;
