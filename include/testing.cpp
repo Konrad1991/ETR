@@ -23,4 +23,6 @@ int main() {
   print(colon(1, 5));
 
   print(colon(1.1, 5.5));
+
+  print(colon(1, 5.5));
 }
