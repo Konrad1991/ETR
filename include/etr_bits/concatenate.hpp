@@ -26,8 +26,8 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 
 
 VEC<double> combine(VEC<double>&& a, VEC<double>&& b) {
-  a.ismatrix = false;
-  b.ismatrix = false;
+  //a.ismatrix = false;
+  //b.ismatrix = false;
   VEC<double> ret(a.size() + b.size());
   for(int i = 0; i < ret.size(); i++) {
     if(i < a.size()) {
@@ -36,13 +36,13 @@ VEC<double> combine(VEC<double>&& a, VEC<double>&& b) {
       ret[i] = b[i - (a.size())];
     }
   }
-
+  ret.ismatrix = false;
   return ret;
 }
 
 VEC<double> combine(VEC<double>& a, VEC<double>& b) {
-  a.ismatrix = false;
-  b.ismatrix = false;
+  //a.ismatrix = false;
+  //b.ismatrix = false;
   VEC<double> ret(a.size() + b.size());
   for(int i = 0; i < ret.size(); i++) {
     if(i < a.size()) {
@@ -51,7 +51,7 @@ VEC<double> combine(VEC<double>& a, VEC<double>& b) {
       ret[i] = b[i - (a.size())];
     }
   }
-
+  ret.ismatrix = false;
   return ret;
 }
 
@@ -59,7 +59,7 @@ VEC<double> combine(VEC<double>& a, VEC<double>& b) {
 
 VEC<double> combine(VEC<double>& a, double b) {
   VEC<double> ret(a.size() + 1);
-  a.ismatrix = false;
+  //a.ismatrix = false;
   for(int i = 0; i < ret.size(); i++) {
     if(i < a.size()) {
         ret[i] = a[i];
@@ -67,13 +67,14 @@ VEC<double> combine(VEC<double>& a, double b) {
       ret[i] = b;
     }
   }
+  ret.ismatrix = false;
   return ret;
 }
 
 
 VEC<double> combine(double a, VEC<double>& b) {
   VEC<double> ret(b.size() + 1);
-  b.ismatrix = false;
+  //b.ismatrix = false;
   for(int i = 0; i < ret.size(); i++) {
     if(i == 0) {
         ret[i] = a;
@@ -81,12 +82,36 @@ VEC<double> combine(double a, VEC<double>& b) {
       ret[i] = b[i -1];
     }
   }
+  ret.ismatrix = false;
   return ret;
 }
 
 
 template <typename ... Ts>
 VEC<double> coca (Ts && ... multi_inputs)
+{
+    VEC<double> ret;
+    ret.ismatrix = false;
+    int i = 0;
+
+    ([&] (auto & input)
+    {
+      if(i == 0) {
+        ret = input;
+      } else {
+        ret = combine(ret, input);
+      }
+
+      i++;
+    } (multi_inputs), ...);
+
+    return ret;
+}
+
+
+
+template <typename ... Ts>
+VEC<double> coca (Ts & ... multi_inputs)
 {
     VEC<double> ret;
     ret.ismatrix = false;

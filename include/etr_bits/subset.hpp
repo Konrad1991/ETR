@@ -102,6 +102,43 @@ VEC<double> subset(VEC<double>& inp, double r_, double c_) {
 }
 
 
+VEC<double> subset(VEC<double>& inp, int r, double c_) {
+  int c = static_cast<int>(c_);
+
+  if(inp.ismatrix == false) {
+    std::cerr << "incorrect number of dimensions" << std::endl;
+    exit(0);
+  }
+
+  VEC<double> ret(1);
+  r--;
+  c--;
+  int pos = c*inp.nr() + r;
+
+  ret[0] = inp[pos];
+
+  return ret;
+}
+
+VEC<double> subset(VEC<double>& inp, double r_, int c) {
+  int r = static_cast<int>(r_);
+
+  if(inp.ismatrix == false) {
+    std::cerr << "incorrect number of dimensions" << std::endl;
+    exit(0);
+  }
+
+  VEC<double> ret(1);
+  r--;
+  c--;
+  int pos = c*inp.nr() + r;
+
+  ret[0] = inp[pos];
+
+  return ret;
+}
+
+
 VEC<double> subset(VEC<double>& inp, VEC<double>&& pos) {
   VEC<double> ret(pos.size());
   for(int i = 0; i < ret.size(); i++) {
@@ -122,6 +159,53 @@ VEC<double> subset(VEC<double>& inp, VEC<double>& pos) {
 }
 
 
+VEC<double> subset(VEC<double>& inp, VEC<bool>& pos) {
+
+  int counter = 0;
+  for(int i = 0; i < pos.size(); i++) {
+    if(pos[i] == true) {
+      counter++;
+    }
+  }
+
+  VEC<double> ret(counter);
+
+  counter = 0;
+  for(int i = 0; i < pos.size(); i++) {
+    if(pos[i] == true) {
+        ret[counter] = inp[static_cast<int>(pos[i]) - 1];
+        counter++;
+    }
+  }
+
+  return ret;
+}
+
+
+
+VEC<double> subset(VEC<double>& inp, VEC<bool>&& pos) {
+
+  int counter = 0;
+  for(int i = 0; i < pos.size(); i++) {
+    if(pos[i] == true) {
+      counter++;
+    }
+  }
+
+  VEC<double> ret(counter);
+
+  counter = 0;
+  for(int i = 0; i < pos.size(); i++) {
+    if(pos[i] == true) {
+        ret[counter] = inp[i - 1];
+        counter++;
+    }
+  }
+
+  return ret;
+}
+
+
 // subset mat helper
 double smh(VEC<double>& inp, int r, int c) {
   double ret;
@@ -131,6 +215,76 @@ double smh(VEC<double>& inp, int r, int c) {
   ret = inp[pos];
   return ret;
 }
+
+
+VEC<double> subset(VEC<double>& inp, VEC<bool>& pos, bool substitute) {
+  if(inp.ismatrix == false) {
+    std::cerr << "incorrect number of dimensions" << std::endl;
+    exit(0);
+  }
+
+
+  int counter = 0;
+  std::vector<int> positions;
+  for(int i = 0; i < pos.size(); i++) {
+    if(pos[i] == true) {
+      counter++;
+      positions.push_back(i);
+    }
+  }
+
+  VEC<double> ret(counter * inp.nc());
+  ret.ismatrix = true;
+  ret.ncols = inp.nc();
+  ret.nrows = counter;
+  int curr_r = 0;
+  int pst = 0;
+
+  for(int i = 0; i < ret.nc(); i++) {
+    for(int j = 0; j < ret.nr(); j++) {
+      pst = i*counter + positions[j];
+      ret[i*ret.nr() + j] = inp[pst];
+    }
+  }
+
+  return ret;
+}
+
+
+
+VEC<double> subset(VEC<double>& inp, VEC<bool>&& pos, bool substitute) {
+  if(inp.ismatrix == false) {
+    std::cerr << "incorrect number of dimensions" << std::endl;
+    exit(0);
+  }
+
+
+  int counter = 0;
+  std::vector<int> positions;
+  for(int i = 0; i < pos.size(); i++) {
+    if(pos[i] == true) {
+      counter++;
+      positions.push_back(i);
+    }
+  }
+
+  VEC<double> ret(counter * inp.nc());
+  ret.ismatrix = true;
+  ret.ncols = inp.nc();
+  ret.nrows = counter;
+  int curr_r = 0;
+  int pst = 0;
+
+  for(int i = 0; i < ret.nc(); i++) {
+    for(int j = 0; j < ret.nr(); j++) {
+      pst = i*counter + positions[j];
+      ret[i*ret.nr() + j] = inp[pst];
+    }
+  }
+
+  return ret;
+}
+
 
 
 VEC<double> subset(VEC<double>& inp, VEC<double>& pos, bool substitute) {
