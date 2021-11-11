@@ -138,6 +138,125 @@ VEC<double> subset(VEC<double>& inp, double r_, int c) {
   return ret;
 }
 
+VEC<double> subset(VEC<double>& inp, int r, bool cols) {
+
+  if(inp.ismatrix == false) {
+    std::cerr << "incorrect number of dimensions" << std::endl;
+    exit(0);
+  }
+
+  if(cols == false) {
+    VEC<double> empty;
+    return empty;
+  }
+
+  VEC<double> ret(inp.nc());
+  int pst = 0;
+
+  for(int i = 0; i < ret.size(); i++) {
+      pst = i*inp.nc() + r - 1;
+      ret[i] = inp[pst];
+  }
+
+  return ret;
+}
+
+
+VEC<double> subset(VEC<double>& inp, double r_, bool cols) {
+
+  int r = static_cast<int>(r_);
+
+  if(inp.ismatrix == false) {
+    std::cerr << "incorrect number of dimensions" << std::endl;
+    exit(0);
+  }
+
+  if(cols == false) {
+    VEC<double> empty;
+    return empty;
+  }
+
+  VEC<double> ret(inp.nc());
+  int pst = 0;
+
+  for(int i = 0; i < ret.size(); i++) {
+      pst = i*inp.nc() + r - 1;
+      ret[i] = inp[pst];
+  }
+
+  return ret;
+}
+
+
+VEC<double> subset(VEC<double>& inp, bool rows, bool cols) {
+
+  if(inp.ismatrix == false) {
+    std::cerr << "incorrect number of dimensions" << std::endl;
+    exit(0);
+  }
+
+  if( (cols == false) || (rows == false) ) {
+    VEC<double> empty;
+    return empty;
+  }
+
+  VEC<double> ret;
+  ret = inp;
+
+  return ret;
+}
+
+VEC<double> subset(VEC<double>& inp, bool rows, int c) {
+
+  if(inp.ismatrix == false) {
+    std::cerr << "incorrect number of dimensions" << std::endl;
+    exit(0);
+  }
+
+  if(rows == false) {
+    VEC<double> empty;
+    return empty;
+  }
+
+  VEC<double> ret(inp.nr());
+  int pst = 0;
+
+  for(int i = 0; i < ret.size(); i++) {
+      pst = (c-1)*inp.nr() + i;
+      ret[i] = inp[pst];
+  }
+
+  return ret;
+}
+
+VEC<double> subset(VEC<double>& inp, bool rows, double c_) {
+
+  int c = static_cast<int>(c_);
+  
+  if(inp.ismatrix == false) {
+    std::cerr << "incorrect number of dimensions" << std::endl;
+    exit(0);
+  }
+
+  if(rows == false) {
+    VEC<double> empty;
+    return empty;
+  }
+
+  VEC<double> ret(inp.nr());
+  int pst = 0;
+
+  for(int i = 0; i < ret.size(); i++) {
+      pst = (c-1)*inp.nr() + i;
+      ret[i] = inp[pst];
+  }
+
+  return ret;
+}
+
+
+
+
 
 VEC<double> subset(VEC<double>& inp, VEC<double>&& pos) {
   VEC<double> ret(pos.size());

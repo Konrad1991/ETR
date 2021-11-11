@@ -55,4 +55,20 @@ int main() {
   print(a);
   print(subset(a, two, true));
 
+  print();
+  print(subset(a, 1, true));
+  print();
+  print(subset(a, 2, true));
+
+  print();
+  print(subset(a, true, false));
+  print(subset(a, false, true));
+  print(subset(a, false, false));
+  print(subset(a, true, true));
+
+  print();
+  print(subset(a, true, 1));
+  print();
+  print(subset(a, true, 2));
+
 }
