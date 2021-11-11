@@ -154,7 +154,7 @@ VEC<double> subset(VEC<double>& inp, int r, bool cols) {
   int pst = 0;
 
   for(int i = 0; i < ret.size(); i++) {
-      pst = i*inp.nc() + r - 1;
+      pst = i*inp.nr() + r - 1;
       ret[i] = inp[pst];
   }
 
