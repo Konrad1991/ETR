@@ -70,5 +70,43 @@ int main() {
   print(subset(a, true, 1));
   print();
   print(subset(a, true, 2));
+  print();
+
+  a[0] = 1.;
+  a[1] = 2.;
+  a[2] = 3.;
+  a[3] = 4.;
+  print(a);
+  print(subset(a, true, two));
+  print();
+  print(subset(a, two, true));
+  print();
+  two[0] = false;
+  two[1] = true;
+  print(a);
+  print(subset(a, true, two));
+  print();
+  print(subset(a, two, true));
+  print();
+  print();
+  print();
+  print(a);
+  print();
+  print(subset(a, two, 1));
+  print(subset(a, two, 2));
+  print();
+  print();
+  print();
+  print(a);
+  c = coca(1., 2.);
+  print(subset(a, c, 1));
+  print(subset(a, c, 2));
+  print(subset(a, coca(1., 2.), 1));
+  print();
+  print();
+  print();
+
+
+
 
 }
