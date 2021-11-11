@@ -59,28 +59,6 @@ int, vec double
 double, vec double
 */
 
-VEC<double> subset(VEC<double>& inp, int row, VEC<double>& pos) {
-
-  if(inp.ismatrix == false) {
-    std::cerr << "incorrect number of dimensions" << std::endl;
-    exit(0);
-  }
-
-  VEC<double> ret(pos.size() * inp.nc());
-  ret.ismatrix = true;
-  ret.ncols = 1;
-  ret.nrows = counter;
-  int curr_r = 0;
-  int pst = 0;
-
-  for(int j = 0; j < positions.size(); j++) {
-    pst = (positions[j])*inp.nr() + row -1;
-    ret[j] = inp[pst];
-  }
-
-  return ret;
-}
-
 
 VEC<double> subset(VEC<double>& inp, int row, VEC<bool>& pos) {
 

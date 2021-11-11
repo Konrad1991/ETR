@@ -112,11 +112,8 @@ int main() {
 
 
   print(a);
-  two[1] = true;
-  print(subset(a, 1, two));
-  print(subset(a, 2, two));
+  a[100] = 3.;
 
-  
 
 
 }

@@ -37,8 +37,9 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 #include "etr_bits/colon.hpp"
 #include "etr_bits/allocation.hpp"
 
-#define vec VEC<double>
-#define mat VEC<double>
+//#define vec VEC<double>
+//#define mat VEC<double>
+
 #define sexp VEC<double>
 
 #endif
