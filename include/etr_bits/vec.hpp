@@ -23,10 +23,6 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 
 #include "pointer_storage.hpp"
 
-int d2i(double inp) {
-  return static_cast<int>(inp);
-}
-
 /*
 Vector & matrix module
 */
@@ -98,7 +94,7 @@ public:
 
     if(other_vec.size() > d.size()) {
       int diff = other_vec.size() - d.size();
-      this -> realloc(d.size() + diff);
+      this -> realloc(d.size() + diff); // should not be done with matrix check is missing
     }
 
     if(subsetted == false) {
@@ -134,7 +130,7 @@ public:
 
     if(other_vec.size() > d.size()) {
       int diff = other_vec.size() - d.size();
-      this -> realloc(d.size() + diff);
+      this -> realloc(d.size() + diff); // should not be done with matrix check is missing
     }
 
     if(subsetted == false) {
@@ -184,7 +180,7 @@ bool is_subsetted() const {
   return subsetted;
 }
 
-void realloc(int new_size) {
+void realloc(int new_size) { // when is it called?
   d.realloc(new_size);
 }
 
@@ -225,6 +221,82 @@ int nr() const {
 
 
 }; // end class VEC
+
+
+/*
+some helper functions for subsetting
+*/
+int d2i(double inp) {
+  return static_cast<int>(inp);
+}
+
+VEC<int> vb2vi(VEC<bool>& inp) {
+
+  int counter = 0;
+  for(int i = 0; i < inp.size(); i++) {
+    if(inp[i] == true) {
+        counter++;
+    }
+  }
+
+  VEC<int> ret(counter);
+  counter = 0;
+  for(int i = 0; i < inp.size(); i++) {
+    if(inp[i] == true) {
+      ret[i] = i;
+    }
+  }
+
+  return ret;
+}
+
+template<typename T>
+bool multiple(VEC<T>& inp, int size) {
+  int rest = 0;
+  bool inp_l_size;
+  bool modify = false;
+
+  if(inp.size() >= size) {
+      int rest = inp.size() % size;
+      inp_l_size = true;
+  } else  {
+    int rest = size % inp.size();
+    inp_l_size = false;
+  }
+
+  if(rest != 0) {
+    std::cerr << "subsetting with vector which is not multiple of object" << std::endl;
+    exit(0);
+  } else if( (rest == 0) && (inp.size() >= size) ) {
+    modify = true;
+  }
+  return modify;
+}
+
+template<typename T>
+void modify(VEC<T>& tm, int size) { // tm = to modify
+  int quotient = 0;
+
+  if(tm.size() < size) {
+    int oldsize = tm.size();
+    tm.realloc(size);
+    int counter = 0;
+    for(int i = oldsize; i < tm.size(); i++) {
+      tm[i] = tm[counter];
+      counter++;
+      if(counter == (oldsize-1)) {
+        counter = 0;
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
 
 
 #endif

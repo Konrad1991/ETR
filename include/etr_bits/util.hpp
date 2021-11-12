@@ -41,28 +41,5 @@ std::vector<double> range(int start, int end) {
   return ret;
 }
 
-struct SEXP2MAT {
-  std::vector<double> v;
-  int ncols;
-  int nrows;
-};
-
-template< typename T, typename R = std::vector<T> >
-struct SUBSET {
-  R sub;
-
-  // for matrix
-  int ncols;
-  int nrows;
-  bool matrix;
-
-  R& data() {
-    return sub.data();
-  }
-
-  int size() {
-    return sub.size();
-  }
-};
 
 #endif
