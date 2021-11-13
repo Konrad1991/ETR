@@ -22,6 +22,12 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 #ifndef SUBSETTING
 #define SUBSETTING
 
+VEC<double> subset(VEC<double>& inp) {
+  VEC<double> ret;
+  ret = inp;
+  return ret;
+}
+
 VEC<double> subset(VEC<double>& inp, int pos) {
   VEC<double> ret(1);
   pos--;

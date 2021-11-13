@@ -73,6 +73,7 @@ public:
       d[0] = dob;
     } else {
       for(int i = 0; i < indices.size(); i++) {
+        std::cout << indices[i] << std::endl;
         d[indices[i]] = dob;
       }
     }
@@ -104,6 +105,7 @@ public:
       }
     } else {
       for(int i = 0; i < indices.size(); i++) {
+        std::cout << indices[i] << std::endl;
         d[indices[i]] = other_vec[i];
       }
     }
@@ -219,84 +221,17 @@ int nr() const {
    return d.p[this -> size()];
  }
 
+ // resize indices
+ void rsi(int size) {
+   this -> indices.resize(size);
+ }
 
 }; // end class VEC
 
 
-/*
-some helper functions for subsetting
-*/
+
 int d2i(double inp) {
   return static_cast<int>(inp);
 }
-
-VEC<int> vb2vi(VEC<bool>& inp) {
-
-  int counter = 0;
-  for(int i = 0; i < inp.size(); i++) {
-    if(inp[i] == true) {
-        counter++;
-    }
-  }
-
-  VEC<int> ret(counter);
-  counter = 0;
-  for(int i = 0; i < inp.size(); i++) {
-    if(inp[i] == true) {
-      ret[i] = i;
-    }
-  }
-
-  return ret;
-}
-
-template<typename T>
-bool multiple(VEC<T>& inp, int size) {
-  int rest = 0;
-  bool inp_l_size;
-  bool modify = false;
-
-  if(inp.size() >= size) {
-      int rest = inp.size() % size;
-      inp_l_size = true;
-  } else  {
-    int rest = size % inp.size();
-    inp_l_size = false;
-  }
-
-  if(rest != 0) {
-    std::cerr << "subsetting with vector which is not multiple of object" << std::endl;
-    exit(0);
-  } else if( (rest == 0) && (inp.size() >= size) ) {
-    modify = true;
-  }
-  return modify;
-}
-
-template<typename T>
-void modify(VEC<T>& tm, int size) { // tm = to modify
-  int quotient = 0;
-
-  if(tm.size() < size) {
-    int oldsize = tm.size();
-    tm.realloc(size);
-    int counter = 0;
-    for(int i = oldsize; i < tm.size(); i++) {
-      tm[i] = tm[counter];
-      counter++;
-      if(counter == (oldsize-1)) {
-        counter = 0;
-      }
-    }
-  }
-}
-
-
-
-
-
-
-
-
 
 #endif
