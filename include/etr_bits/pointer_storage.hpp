@@ -55,6 +55,7 @@ public:
   // Constructors
   STORE(const STORE<T>& other) {
     if(allocated == true) {
+      ass(p != nullptr, "try to delete nullptr");
       delete [] p;
       p = nullptr;
     }
@@ -74,6 +75,7 @@ public:
   STORE() {
 
     if(allocated == true) {
+      ass(p != nullptr, "try to delete nullptr");
       delete [] p;
       p = nullptr;
     }
@@ -87,6 +89,7 @@ public:
   STORE(const int n) {
 
     if(allocated == true) {
+      ass(p != nullptr, "try to delete nullptr");
       delete [] p;
       p = nullptr;
     }
@@ -100,6 +103,7 @@ public:
   STORE(const int n, const double value) {
 
     if(allocated == true) {
+      ass(p != nullptr, "try to delete nullptr");
       delete [] p;
       p = nullptr;
     }
@@ -116,6 +120,7 @@ public:
   STORE(std::vector<T> inp) {
 
     if(allocated == true) {
+      ass(p != nullptr, "try to delete nullptr");
       delete [] p;
       p = nullptr;
     }
@@ -132,6 +137,7 @@ public:
   STORE(const int n, T* pinp, bool copy) {
 
     if(allocated == true) {
+      ass(p != nullptr, "try to delete nullptr");
       delete [] p;
       p = nullptr;
     }
@@ -157,6 +163,7 @@ public:
   STORE& init(const int n, T* pinp, bool copy) {
 
         if(allocated == true) {
+          ass(p != nullptr, "try to delete nullptr");
           delete [] p;
           p = nullptr;
         }
@@ -184,6 +191,7 @@ public:
   ~STORE() {
     if(todelete == true) {
       if(p != nullptr) {
+        ass(p != nullptr, "try to delete nullptr");
         delete [] p;
         p = nullptr;
       }
@@ -236,6 +244,7 @@ public:
 
   void resize(int new_size) {
     if(allocated == true) {
+      ass(p != nullptr, "try to delete nullptr");
       delete [] p;
       p = nullptr;
     }
@@ -252,6 +261,7 @@ public:
       temp[i] = p[i];
     }
 
+    ass(p != nullptr, "try to delete nullptr");
     delete [] p;
     p = new T[new_size];
     sz = new_size;
@@ -259,6 +269,7 @@ public:
       p[i] = temp[i];
     }
 
+    ass(temp != nullptr, "try to delete nullptr");
     delete [] temp;
     temp = nullptr;
   }
