@@ -94,19 +94,19 @@ public:
       this -> d = temp.d;
     }
 
-    if(other_vec.size() > d.size()) {
-      int diff = other_vec.size() - d.size();
-      this -> realloc(d.size() + diff); // should not be done with matrix check is missing
-    }
-
     if(subsetted == false) {
       d.resize(other_vec.size());
+      this -> ismatrix = false;
       for(int i = 0; i < d.size(); i++) {
         d[i] = other_vec[i];
       }
+      if(other_vec.im() == true) {
+        this -> ismatrix = true;
+        this -> ncols = other_vec.nc();
+        this -> nrows = other_vec.nr();
+      }
     } else {
       for(int i = 0; i < indices.size(); i++) {
-        std::cout << indices[i] << std::endl;
         d[indices[i]] = other_vec[i];
       }
     }

@@ -44,17 +44,26 @@ VEC<double> vector(VEC<double> inp) {
 
 VEC<double> matrix(int nrows_, int ncols_) {
   VEC<double> ret(nrows_, ncols_);
+  ret.ismatrix = true;
+  ret.nrows = nrows_;
+  ret.ncols = ncols_;
   return ret;
 }
 
 VEC<double> matrix(double inp, int nrows_, int ncols_) {
   VEC<double> ret(nrows_, ncols_, inp);
+  ret.ismatrix = true;
+  ret.nrows = nrows_;
+  ret.ncols = ncols_;
   return ret;
 }
 
 VEC<double> matrix(VEC<double> inp, int nrows_, int ncols_) {
   VEC<double> ret(nrows_, ncols_);
   ret = inp;
+  ret.ismatrix = true;
+  ret.nrows = nrows_;
+  ret.ncols = ncols_;
   return ret;
 }
 
