@@ -36,6 +36,7 @@ public:
   // Constructors
   // ================================================================
   bool subsetted;
+  //bool fill;
   std::vector<int> indices;
 
   // for Matrix
@@ -74,7 +75,6 @@ public:
       d[0] = dob;
     } else {
       for(int i = 0; i < indices.size(); i++) {
-        std::cout << indices[i] << std::endl;
         d[indices[i]] = dob;
       }
     }
@@ -132,7 +132,6 @@ public:
       }
     } else {
       for(int i = 0; i < indices.size(); i++) {
-        std::cout << this -> indices[i] << std::endl;
           d[indices[i]] = other_vec[i];
       }
     }
@@ -213,8 +212,8 @@ int nr() const {
  }
 
  // resize indices
- void rsi(int size) {
-   this -> indices.resize(size);
+ void rsi(int sizenew) {
+   this -> indices.resize(sizenew);
  }
 
 }; // end class VEC

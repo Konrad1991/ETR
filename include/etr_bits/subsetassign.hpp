@@ -26,6 +26,10 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 #include "vec.hpp"
 
 VEC<double>& subassign(VEC<double>& inp) {
+  inp.rsi(inp.size());
+  for(int i = 0; i < inp.size(); i++) {
+    inp.indices[i] = i;
+  }
   return inp;
 }
 
@@ -53,11 +57,21 @@ VEC<double>& subassign(VEC<double>& inp, bool p) {
     inp.subsetted = true;
     return inp;
   }
-  inp.subsetted = false;
+  inp.subsetted = true;
+
+  inp.rsi(inp.size());
+  for(int i = 0; i < inp.size(); i++) {
+    inp.indices[i] = i;
+  }
   return inp;
 }
 
 VEC<double>& subassign(VEC<double>& inp, void* p) {
+  inp.rsi(inp.size());
+  for(int i = 0; i < inp.size(); i++) {
+    inp.indices[i] = i;
+  }
+  inp.subsetted = true;
   return inp;
 }
 
@@ -65,6 +79,7 @@ VEC<double>& subassign(VEC<double>& inp, VEC<double>& pos) {
 
   inp.rsi(pos.size());
   inp.subsetted = true;
+
   for(int i = 0; i < pos.size(); i++) {
     inp.indices[i] = ( d2i(pos[i]) - 1);
   }
@@ -617,6 +632,11 @@ VEC<double>& subassign(VEC<double>& inp, bool r, bool c) {
   }
 
   if( (r == true) && (c == true)) {
+    inp.subsetted = true;
+    inp.rsi(inp.size());
+    for(int i = 0; i < inp.size(); i++) {
+      inp.indices[i] = i;
+    }
     return inp;
   }
 
@@ -633,6 +653,11 @@ VEC<double>& subassign(VEC<double>& inp, bool r, void* c) {
   }
 
   if( r == true) {
+    inp.rsi(inp.size());
+    for(int i = 0; i < inp.size(); i++) {
+      inp.indices[i] = i;
+    }
+    inp.subsetted = true;
     return inp;
   }
 
@@ -732,6 +757,12 @@ VEC<double>& subassign(VEC<double>& inp, void* r, bool c) {
     return inp;
   }
 
+  inp.rsi(inp.size());
+  for(int i = 0; i < inp.size(); i++) {
+    inp.indices[i] = i;
+  }
+  inp.subsetted = true;
+
   return inp;
 }
 
@@ -814,6 +845,11 @@ VEC<double>& subassign(VEC<double>& inp, VEC<bool>& pos, bool c) {
 }
 
 VEC<double>& subassign(VEC<double>& inp, void* r, void* c) {
+  inp.rsi(inp.size());
+  for(int i = 0; i < inp.size(); i++) {
+    inp.indices[i] = i;
+  }
+  inp.subsetted = true;
   return inp;
 }
 
@@ -961,8 +997,8 @@ VEC<double>& subassign(VEC<double>& inp, VEC<double>& rpos, VEC<double>& cpos) {
   int pst = 0;
   int counter = 0;
 
-  for(int i = 0; i < inp.nc(); i++) {
-    for(int j = 0; j < inp.nr(); j++) {
+  for(int i = 0; i < cpos.size(); i++) {
+    for(int j = 0; j < rpos.size(); j++) {
       pst = (d2i(cpos[i]) - 1)*inp.nr() + (d2i(rpos[j]) - 1);
       inp.indices[counter] = pst;
       counter++;
