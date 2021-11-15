@@ -36,4 +36,7 @@ print(d); print();
 d = coca(1,2,3);
 print(d); print();
 
+
+sexp test = coca(true, true);
+print(test);
 }
