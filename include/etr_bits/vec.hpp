@@ -120,8 +120,11 @@ public:
   VEC& operator=(const VEC<T2, R2> &other_vec) {
 
     if(subsetted == false) {
-      d.resize(other_vec.size());
+      if(d.size() < other_vec.size()) {
+          d.realloc(other_vec.size());
+      }
       this -> ismatrix = false;
+
       for(int i = 0; i < d.size(); i++) {
             d[i] = other_vec[i];
       }

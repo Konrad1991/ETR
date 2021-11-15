@@ -24,19 +24,47 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 
 #include "vec.hpp"
 
-
 template<typename T, typename L, typename R>
 class VVDIV {
 
 private:
-  const L& l;
-  const R& r;
+  const L& l; //const L& l;
+  const R& r; //const R& r;
   std::vector<int> indices1;
   std::vector<int> indices2;
+  int columns_;
+  int rows_;
+  bool ismatrix;
 
 public:
-  VVDIV(const L &a, const R &b ) :
-     l(a), r(b) {
+
+  VVDIV(const L &a, const R &b, bool l_ismatrix, bool r_ismatrix,
+        int l_rows, int l_cols, int r_rows, int r_cols) : l(a), r(b) {
+
+    bool _l_ismatrix = l_ismatrix;
+    bool _r_ismatrix = r_ismatrix;
+    int _l_nrow = l_rows;
+    int _r_nrow = r_rows;
+    int _l_ncol = l_cols;
+    int _r_ncol = r_cols;
+
+    if( ((_l_ismatrix == true) || (_r_ismatrix == true )) ||
+        ((_l_ismatrix == true) && (_r_ismatrix == true )) ) {
+        ismatrix = true;
+      if( (_l_ismatrix == true) && (_r_ismatrix == false) ){
+        columns_ = _l_ncol;
+        rows_ = _l_nrow;
+      } else if ((_l_ismatrix == false) && (_r_ismatrix == true)) {
+        columns_ = _r_ncol;
+        rows_ = _r_nrow;
+      } else if((_l_ismatrix == true) && (_r_ismatrix == true)) {
+        columns_ = (_l_ncol > _r_ncol) ? _l_ncol : _r_ncol;
+        rows_ = (_l_nrow > _r_nrow) ? _l_nrow : _r_nrow;
+      } else {
+        exit(0);
+      }
+    }
+
        if(l.size() > r.size()) {
          ass((l.size() % r.size()) == 0, "Vector is not multiple of other vector");
          indices1.resize(l.size());
@@ -72,15 +100,28 @@ public:
    }
 
    int size() const {
-     return l.size();
+     return l.size(); // correct?
+   }
+
+   bool im() const {
+     return ismatrix;
+   }
+
+   int nc() const {
+     return columns_;
+   }
+
+   int nr() const {
+     return rows_;
    }
 
 };
 
-
 template<typename T, typename L, typename R>
 VEC< T, VVDIV< T, L, R > > operator/(const VEC<T, L>& a, const VEC<T, R>& b) {
-    return VEC<T, VVDIV<T, L, R> > (VVDIV<T, L, R>(a.data(), b.data() ) );
+    return VEC<T, VVDIV<T, L, R> > (VVDIV<T, L, R>(a.data(), b.data(),
+                                     a.im(), b.im(),
+                                     a.nrow(), a.ncol(), b.nrow(), b.ncol() )  );
 }
 
 template<typename T, typename L, typename R>
@@ -89,10 +130,13 @@ class VSDIV {
 private:
   const L& l;
   const R& r;
+  bool ismatrix;
+  int nrows;
+  int ncols;
 
 public:
-  VSDIV(const L &a, const R &b ) :
-     l(a), r(b) {}
+  VSDIV(const L &a, const R &b, bool ismatrix_, int nrows_, int ncols_ ) :
+     l(a), r(b), ismatrix(ismatrix_), nrows(nrows_), ncols(ncols_) {}
 
    T operator[](const int i) const {
      return l[i] / r;
@@ -102,16 +146,68 @@ public:
      return l.size();
    }
 
+
+   bool im() const {
+     return ismatrix;
+   }
+
+   int nc() const {
+     return ncols;
+   }
+
+   int nr() const {
+     return nrows;
+   }
+
 };
 
 template<typename T, typename L, typename R>
 VEC< T, VSDIV< T, L, R > > operator/(const VEC<T, L>& a, const R& b) {
-    return VEC<T, VSDIV<T, L, R> > (VSDIV<T, L, R>(a.data(), b ) );
+    return VEC<T, VSDIV<T, L, R> > (VSDIV<T, L, R>(a.data(), b, a.im(), a.nr(), a.nc() ) );
 }
 
+
 template<typename T, typename L, typename R>
-VEC< T, VSDIV< T, L, R > > operator/(const L& a, const VEC<T, R>&  b) {
-    return VEC<T, VSDIV<T, L, R> > (VSDIV<T, L, R>(a, b.data() ) );
+class SVDIV {
+
+private:
+  const L& l;
+  const R& r;
+  const bool ismatrix;
+  const int nrows;
+  const int ncols;
+
+public:
+  SVDIV(const R& a, const L &b, bool ismatrix_, int nrows_, int ncols_ ) :
+     r(a), l(b), ismatrix(ismatrix_), nrows(nrows_), ncols(ncols_) { }
+
+   T operator[](const int i) const {
+     return l[i] / r;
+   }
+
+   int size() const {
+     return l.size();
+   }
+
+
+   bool im() const {
+     return ismatrix;
+   }
+
+   int nc() const {
+     return ncols;
+   }
+
+   int nr() const {
+     return nrows;
+   }
+
+};
+
+
+template<typename T, typename L, typename R>
+VEC< T, SVDIV< T, L, R > > operator/(const R& a, const VEC<T, L>&  b) {
+    return VEC<T, SVDIV<T, L, R> > (SVDIV<T, L, R>(a, b.data(), b.im(), b.nr(), b.nc() ) );
 }
 
 
