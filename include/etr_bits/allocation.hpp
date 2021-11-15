@@ -50,6 +50,7 @@ VEC<double> matrix(int nrows_, int ncols_) {
   return ret;
 }
 
+
 VEC<double> matrix(double inp, int nrows_, int ncols_) {
   VEC<double> ret(nrows_, ncols_, inp);
   ret.ismatrix = true;
