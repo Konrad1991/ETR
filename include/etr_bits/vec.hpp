@@ -70,6 +70,7 @@ public:
 
     if(subsetted == false) {
       d.resize(1);
+      ismatrix = false;
       d[0] = dob;
     } else {
       for(int i = 0; i < indices.size(); i++) {

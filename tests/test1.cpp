@@ -1,4 +1,4 @@
-#include "../etr.hpp"
+#include "../include/etr.hpp"
 
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
