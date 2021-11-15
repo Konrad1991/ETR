@@ -1,6 +1,6 @@
 # ETR
 
-Expression template for C++ almost similar to R syntax. It is a header-only library just include *etr.hpp*. Use of C++17 is required. \
+Expression template library for C++ with syntax almost similar to R. It is a header-only library just include *etr.hpp*. Use of C++17 is required. \
 How the program works in detail is explained below using small examples. 
 
 # How to use it
