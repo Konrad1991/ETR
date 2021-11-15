@@ -113,32 +113,22 @@ public:
 
     subsetted = false;
 
-    if(other_vec.im() == true) {
-      this -> ismatrix = true;
-      this -> ncols = other_vec.nc();
-      this -> nrows = other_vec.nr();
-    }
-
     return *this;
   }
 
   template<typename T2, typename R2>
   VEC& operator=(const VEC<T2, R2> &other_vec) {
 
-    if(other_vec.d.im() == true) {
-      ismatrix = true;
-      ncols = other_vec.d.nc();
-      nrows = other_vec.d.nr();
-    }
-
-    if(other_vec.size() > d.size()) {
-      int diff = other_vec.size() - d.size();
-      this -> realloc(d.size() + diff); // should not be done with matrix check is missing
-    }
-
     if(subsetted == false) {
+      d.resize(other_vec.size());
+      this -> ismatrix = false;
       for(int i = 0; i < d.size(); i++) {
             d[i] = other_vec[i];
+      }
+      if(other_vec.d.im() == true) {
+        ismatrix = true;
+        ncols = other_vec.d.nc();
+        nrows = other_vec.d.nr();
       }
     } else {
       for(int i = 0; i < indices.size(); i++) {
