@@ -33,7 +33,7 @@ Notably, it is possible to change the type of a variable within the program. You
 
 int main() {
 
-sexp scalar;
+sexp scalar; // currently scalar has to be first declared without initialization 
 scalar = 1;
 print("This is a scalar:");
 print(scalar);
@@ -76,6 +76,10 @@ print(m);
 ### Subsetting
 
 Currently you have to use the function **subset** to extract certain elements (later usage of **()** will be possible). The **subset** function returns a **sexp** object. Indices starts counting from 1 (as usual in R). To subset a vector use one parameter either of type scalar, bool, nothing (use **nullptr**) or another sexp object. In case you want to subset a matrix you can use either one or two arguments which are from the types scalar, bool, nothing (use **nullptr**) or another sexp objects. 
+
+**Caveat: You cannot delete objects using negative indices as in R**
+
+**Missing: explain rules in detail....**
 
 ```Cpp
 #include "etr.hpp"
