@@ -100,15 +100,19 @@ print(subset(m, coca(1, 3, 2), coca(5, 2, 1)));
 
 Currently you have to use the function **subassign** to extract only certain elements and assign new values to them (later usage of **&()** will be possible). The **subassign** function returns a reference to the input object. Indices starts countingfrom 1 (as usual in R). To subset a vector use one parameter either of type scalar, bool, nothing (use **nullptr**) or another sexp object. In case you want to subset a matrix you can use either one or two arguments which are from the types scalar, bool, nothing (use **nullptr**) or another sexp objects. 
 
+The **colon** function works in the same way as the **range** function.
+
 ```Cpp
 #include "etr.hpp"
 
 int main() {
 
-sexp v1 = range(1, 2);
-sexp v2 = vector(3, 5);
+sexp v1 = range(1, 5);
+sexp v2 = vector(3, 10);
 
-subassign(v2, coca(1, 5)) = v1 + subset(v2, coca(1, 5));
+subassign(v2, colon(1, 5)) = v1 + subset(v2, colon(6, 10));
+print(v2);
+
 }
 ```
 
