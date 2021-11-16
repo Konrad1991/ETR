@@ -79,8 +79,6 @@ Currently you have to use the function **subset** to extract certain elements (l
 
 **Caveat: You cannot delete objects using negative indices as in R**
 
-**Missing: explain rules in detail....**
-
 ```Cpp
 #include "etr.hpp"
 
@@ -99,6 +97,52 @@ sexp m = matrix(colon(1, 15), 3, 5);
 print(subset(m, coca(1, 3, 2), coca(5, 2, 1)));
 }
 ```
+
+#### Subsetting vector in detail
+<details>
+  <summary>Click to expand!</summary>
+In the program below you can see all the cases of subsetting a vector (matrix subsetting behaves in the same way). 
+
+```Cpp
+#include "etr.hpp"
+
+int main() {
+  sexp v = colon(1, 6);
+  print(v);
+  print();
+
+  print("bool");
+  print("true: ");
+  print(subset(v, true));
+  print("false: ");
+  print(subset(v, false));
+  print();
+
+  print("integer or double");
+  print(subset(v, 1));
+  print(subset(v, 5.5));
+  print();
+
+  print("nothing (nullptr):");
+  print(subset(v, nullptr));
+  print();
+
+  sexp positions = coca(1, 6, 2, 3);
+  print("other vec:");
+  print(subset(v, positions));
+  print();
+
+  VEC<bool> vec_bool(4); // output e.g. of comparison of two vectors not implemented yet
+  vec_bool[0] = true;
+  vec_bool[1] = false;
+  vec_bool[2] = true;
+  vec_bool[3] = true;
+  print("bool vec:");
+  print(subset(v, vec_bool));
+  print();
+}
+```
+</details>
 
 ### Assign to a subset
 
