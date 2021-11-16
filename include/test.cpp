@@ -2,38 +2,44 @@
 
 
 int main() {
-  sexp v = colon(1, 6);
-  print(v);
+  sexp m = matrix(colon(1, 15), 5, 3);
+  print(m);
   print();
 
   print("bool");
-  print("true: ");
-  print(subset(v, true));
-  print("false: ");
-  print(subset(v, false));
+  print("true, true: ");
+  print(subset(m, true, true));
+  print("false, true: ");
+  print(subset(m, false, true));
   print();
 
   print("integer or double");
-  print(subset(v, 1));
-  print(subset(v, 5.5));
+  print(subset(m, 1, 1));
+  print(subset(m, 5.5, 2));
   print();
 
   print("nothing (nullptr):");
-  print(subset(v, nullptr));
+  print(subset(m, nullptr, nullptr));
   print();
 
-  sexp positions = coca(1, 6, 2, 3);
-  print("other vec:");
-  print(subset(v, positions));
+  sexp positions1 = coca(1, 5, 2, 3);
+  sexp positions2 = coca(1, 3, 2, 3);
+  print("other vecs:");
+  print(subset(m, positions1, positions2));
   print();
 
-  VEC<bool> vec_bool(4); // output e.g. of comparison of two vectors not implemented yet
-  vec_bool[0] = true;
-  vec_bool[1] = false;
-  vec_bool[2] = true;
-  vec_bool[3] = true;
+  VEC<bool> vec_bool1(3); // output e.g. of comparison of two mectors not implemented yet
+  vec_bool1[0] = true;
+  vec_bool1[1] = false;
+  vec_bool1[2] = true;
+
+  VEC<bool> vec_bool2(4); // output e.g. of comparison of two mectors not implemented yet
+  vec_bool2[0] = true;
+  vec_bool2[1] = true;
+  vec_bool2[2] = false;
+  vec_bool2[3] = true;
   print("bool vec:");
-  print(subset(v, vec_bool));
+  print(subset(m, vec_bool1, vec_bool2));
   print();
 
 }
