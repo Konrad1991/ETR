@@ -364,10 +364,10 @@ pre code {
 </div>
 
 
-<div id="etr" class="section level1">
-<h1>ETR</h1>
-<p>Expression template library for C++ with syntax almost similar to R. It is a header-only library just include <strong>etr.hpp</strong>. Use of C++17 is required.<br />
-How the program works in detail, is explained below using small examples.</p>
+<div id="overview" class="section level1">
+<h1>Overview</h1>
+<p>ETR is an expression template library for C++ with syntax almost similar to R. It provides a scalar, vector and matrix as containers. Furthermore, basic arithmetic (+, -, *, /) can be applied to these objects in any combination. Thus, it is easy to write C++ which almost looks like R code. Notably, it is a header-only library just include <strong>etr.hpp</strong> (see the include folder) and thus can be easly integrated in other projects. Use of C++17 is required, e.g. compile a program using: ‘g++ test.cpp -std=c++17’.</p>
+<p>How the program works in detail, is explained below using small examples.</p>
 </div>
 <div id="how-to-use-it" class="section level1">
 <h1>How to use it</h1>
@@ -420,7 +420,7 @@ print(m);
 </div>
 <div id="subsetting" class="section level3">
 <h3>Subsetting</h3>
-<p>Currently you have to use the function subset to extract only certain elements (later usage of <em>()</em> will be possible). The <em>subset</em> function returns a <em>sexp</em> object. Indices starts counting from 1 (as usual in R). You can subset using a scalar, bool, nothing (use <em>nullptr</em>) or another sexp object to subset vectors. In case you want to subset a matrix you can use either one or two arguments which are from the types scalar, bool, nothing (use <em>nullptr</em>) or other sexp objects.</p>
+<p>Currently you have to use the function <strong>subset</strong> to extract certain elements (later usage of <strong>()</strong> will be possible). The <strong>subset</strong> function returns a <strong>sexp</strong> object. Indices starts counting from 1 (as usual in R). To subset a vector use one parameter either of type scalar, bool, nothing (use <strong>nullptr</strong>) or another sexp object. In case you want to subset a matrix you can use either one or two arguments which are from the types scalar, bool, nothing (use <strong>nullptr</strong>) or another sexp objects.</p>
 <pre class="cpp"><code>#include &quot;etr.hpp&quot;
 
 int main() {
@@ -440,7 +440,7 @@ print(subset(m, coca(1, 3, 2), coca(5, 2, 1)));
 </div>
 <div id="assign-to-a-subset" class="section level3">
 <h3>Assign to a subset</h3>
-<p>Currently you have to use the function subassign to extract only certain elements (later usage of <em>&amp;()</em> will be possible). The <em>subassign</em> function returns a reference to the input object. Indices starts countingfrom 1 (as usual in R). You can subset using a scalar, bool, nothing (use <em>nullptr</em>) or another sexp object to subset vectors. In case you want to subset a matrix you can use either one or two arguments which are from the types scalar, bool, nothing (use <em>nullptr</em>) or other sexp objects.</p>
+<p>Currently you have to use the function <strong>subassign</strong> to extract only certain elements and assign new values to them (later usage of <strong>&amp;()</strong> will be possible). The <strong>subassign</strong> function returns a reference to the input object. Indices starts countingfrom 1 (as usual in R). To subset a vector use one parameter either of type scalar, bool, nothing (use <strong>nullptr</strong>) or another sexp object. In case you want to subset a matrix you can use either one or two arguments which are from the types scalar, bool, nothing (use <strong>nullptr</strong>) or another sexp objects.</p>
 <pre class="cpp"><code>#include &quot;etr.hpp&quot;
 
 int main() {
@@ -453,7 +453,7 @@ subassign(v2, coca(1, 5)) = v1 + subset(v2, coca(1, 5));
 </div>
 <div id="helper-functions" class="section level3">
 <h3>Helper functions</h3>
-<p>In order to extract informations about variables. You can use the <em>length</em> function in order to determine number of stored objects. In case the variable is a matrix the <em>dim</em> function returns a vector containg the number of rows in the first place followed by the number of columns.</p>
+<p>In order to extract informations about variables. You can use the <strong>length</strong> function in order to determine number of stored objects in vector or matrix. In case the variable is a matrix the <strong>dim</strong> function returns a vector containg the number of rows in the first place followed by the number of columns.</p>
 <pre class="cpp"><code>#include &quot;etr.hpp&quot;
 
 int main() {
@@ -468,7 +468,7 @@ print(dim(m));
 </div>
 <div id="looping" class="section level3">
 <h3>Looping</h3>
-<p>You can use range based for loops in order to loop over <em>sexp</em> objects.</p>
+<p>You can use range based for loops in order to loop over <strong>sexp</strong> objects.</p>
 <pre class="cpp"><code>#include &quot;etr.hpp&quot;
 
 int main() {

@@ -1,6 +1,11 @@
-# ETR
+# Overview 
 
-Expression template library for C++ with syntax almost similar to R. It is a header-only library just include **etr.hpp**. Use of C++17 is required. \
+ETR is an expression template library for C++ with syntax almost similar to R. It provides a scalar, vector and matrix as containers. Furthermore, basic arithmetic (+, -, \*, /) can be applied to these objects in any combination. Thus, it is easy to write C++ which almost looks like R code. 
+
+# Integrate ETR in your project
+
+Notably, it is a header-only library and thus can be easly integrated in other projects. Clone the repository and add the 'etr_bits' folder in your project (can be found in the 'include' folder). Afterwards you have to include the 'etr.hpp' file in your codebase (*#include 'etr.hpp'*). The file can also be found in the 'include' folder. Use of C++17 is required, i.e. compile a program using: 'g++ test.cpp -std=c++17'. 
+
 How the program works in detail, is explained below using small examples. 
 
 # How to use it
