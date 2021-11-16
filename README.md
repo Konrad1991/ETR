@@ -181,12 +181,12 @@ int main() {
   print(subset(m, positions1, positions2));
   print();
 
-  VEC<bool> vec_bool1(3); // output e.g. of comparison of two mectors not implemented yet
+  VEC<bool> vec_bool1(3); // output e.g. of comparison of two vectors not implemented yet
   vec_bool1[0] = true;
   vec_bool1[1] = false;
   vec_bool1[2] = true;
 
-  VEC<bool> vec_bool2(4); // output e.g. of comparison of two mectors not implemented yet
+  VEC<bool> vec_bool2(4); // output e.g. of comparison of two vectors not implemented yet
   vec_bool2[0] = true;
   vec_bool2[1] = true;
   vec_bool2[2] = false;
