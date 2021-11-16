@@ -1,10 +1,11 @@
 # Overview 
 
-ETR is an expression template library for C++ with syntax almost similar to R. It provides a scalar, vector and matrix as containers. Furthermore, basic arithmetic (+, -, \*, /) can be applied to these objects in any combination. Thus, it is easy to write C++ which almost looks like R code. 
+ETR is an expression template library for C++ with syntax almost similar to R. It provides one class (**sexp**) which can hold a scalar, vector or matrix. The type can dynamically be changed during runtime. 
+Furthermore, basic arithmetic operations (+, -, \*, /) can be applied to these objects. Thus, it is easy to write C++ which almost looks like R code. 
 
 # Integrate ETR in your project
 
-Notably, it is a header-only library and thus can be easly integrated in other projects. Clone the repository and add the 'etr_bits' folder in your project (can be found in the 'include' folder). Afterwards you have to include the 'etr.hpp' file in your codebase (*#include 'etr.hpp'*). The file can also be found in the 'include' folder. Use of C++17 is required, i.e. compile a program using: 'g++ test.cpp -std=c++17'. 
+Notably, it is a header-only library and thus can be easly integrated in other projects. Simply clone the repository and add the 'etr_bits' folder in your project (can be found in the 'include' folder). Afterwards you have to include the 'etr.hpp' file in your codebase (*#include 'etr.hpp'*). The file can also be found in the 'include' folder. Use of C++17 is required, i.e. compile a program using: 'g++ test.cpp -std=c++17'. 
 
 How the program works in detail, is explained below using small examples. 
 
@@ -31,7 +32,8 @@ All variables are of type **sexp**. This type can hold a scalar, a vector or a m
 
 int main() {
 
-sexp scalar = 1;
+sexp scalar;
+scalar = 1;
 print("This is a scalar:");
 print(scalar);
 
@@ -43,6 +45,10 @@ sexp full_mat = matrix(10.5, 5, 4); // matrix with 10 elements; 5 rows and 4 col
 
 sexp vec_range = range(1, 10); // vector containing 1, 2, 3, ..., 10
 sexp vec = coca(1, 5, 6, vec_range); // vector containing 1, 5, 6, vec_range
+
+// change the type
+scalar = vector(5.2, 12);
+print(scalar);
 }
 ```
 
