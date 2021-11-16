@@ -25,7 +25,7 @@ int main() {
 
 ### Variable declaration
 
-All variables are of type **sexp**. This type can hold a scalar, a vector or a matrix (The only type that can be hold by these containers is a **double**). If you want to allocate memory you can use the functions **vector** or **matrix**. Another possibility to allocate memory are the functions **range** and **coca**. The **range** function excepts a start and a end value and returns a vector with n-values seperated by an interval with length 1 respectively. The **coca** functions concatenates the given input. \
+All variables are of type **sexp**. This type can hold a scalar, a vector or a matrix (The only type that can be hold by these containers is a **double**). If you want to allocate memory you can use the functions **vector** or **matrix**. Another possibility to allocate memory are the functions **range** and **coca**. The **colon** function excepts a start and a end value and returns a vector with n-values seperated by an interval with length 1 respectively. The **coca** functions concatenates the given input. \
 Notably, it is possible to change the type of a variable within the program. You can see below that at the end the variable *scalar* contains a vector. 
 
 ```Cpp
@@ -44,7 +44,7 @@ sexp full_vec = vector(3.14, 10); // vector with 10 elements all contain 3.14
 sexp emtpy_mat = matrix(5, 2); // matrix with 10 elements; 5 rows and 2 cols
 sexp full_mat = matrix(10.5, 5, 4); // matrix with 10 elements; 5 rows and 4 cols all contain 10.5
 
-sexp vec_range = range(1, 10); // vector containing 1, 2, 3, ..., 10
+sexp vec_range = colon(1, 10); // vector containing 1, 2, 3, ..., 10
 sexp vec = coca(1, 5, 6, vec_range); // vector containing 1, 5, 6, vec_range
 
 // change the type
@@ -62,7 +62,7 @@ You can apply basic functions like **+**, **-**, **/** and **\*** to scalar, vec
 
 int main() {
 
-sexp v = range(1, 10);
+sexp v = colon(1, 10);
 
 v = v/1 + 10;
 print(v);
@@ -82,7 +82,7 @@ Currently you have to use the function **subset** to extract certain elements (l
 
 int main() {
 
-sexp v1 = range(1, 2);
+sexp v1 = colon(1, 2);
 sexp v2 = vector(3, 5);
 
 v1 = v1 + subset(v2, coca(1, 5));
@@ -91,7 +91,7 @@ print(subset(v1, 1));
 print(subset(v1, true));
 print();
 
-sexp m = matrix(range(1, 15), 3, 5);
+sexp m = matrix(colon(1, 15), 3, 5);
 print(subset(m, coca(1, 3, 2), coca(5, 2, 1)));
 }
 ```
@@ -100,14 +100,12 @@ print(subset(m, coca(1, 3, 2), coca(5, 2, 1)));
 
 Currently you have to use the function **subassign** to extract only certain elements and assign new values to them (later usage of **&()** will be possible). The **subassign** function returns a reference to the input object. Indices starts countingfrom 1 (as usual in R). To subset a vector use one parameter either of type scalar, bool, nothing (use **nullptr**) or another sexp object. In case you want to subset a matrix you can use either one or two arguments which are from the types scalar, bool, nothing (use **nullptr**) or another sexp objects. 
 
-The **colon** function works in the same way as the **range** function.
-
 ```Cpp
 #include "etr.hpp"
 
 int main() {
 
-sexp v1 = range(1, 5);
+sexp v1 = colon(1, 5);
 sexp v2 = vector(3, 10);
 
 subassign(v2, colon(1, 5)) = v1 + subset(v2, colon(6, 10));
@@ -125,7 +123,7 @@ In order to extract informations about variables. You can use the **length** fun
 
 int main() {
 
-sexp v = range(1, 2);
+sexp v = colon(1, 2);
 print(length(v));
 
 sexp m = matrix(5, 2);
@@ -144,7 +142,7 @@ You can use range based for loops in order to loop over **sexp** objects.
 
 int main() {
 
-  sexp v = range(1, 10);
+  sexp v = colon(1, 10);
 
   for(auto& i: v) {
     print(i);
