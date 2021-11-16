@@ -5,7 +5,7 @@ How the program works in detail is explained below using small examples.
 
 # How to use it
 
-### Hello World from *ETR*
+### Hello World from ETR
 
 The *print* function can be used to print strings, scalar values, vectors or matrices. If you want to add a empty line use the function without an argument. 
 
@@ -34,7 +34,7 @@ sexp empty_vec = vector(10); // vector with 10 elements
 sexp full_vec = vector(3.14, 10); // vector with 10 elements all contain 3.14
 
 sexp emtpy_mat = matrix(5, 2); // matrix with 10 elements; 5 rows and 2 cols
-sexp full_mat = matrix(10.5, 5, 4); // matrix with 10 elements; 5 rows and 2 cols all contain 10.5
+sexp full_mat = matrix(10.5, 5, 4); // matrix with 10 elements; 5 rows and 4 cols all contain 10.5
 
 sexp vec_range = range(1, 10); // vector containing 1, 2, 3, ..., 10
 sexp vec = coca(1, 5, 6, vec_range); // vector containing 1, 5, 6, vec_range
@@ -84,7 +84,7 @@ print(subset(m, coca(1, 3, 2), coca(5, 2, 1)));
 }
 ```
 
-### Subsetting assign
+### Assign to a subset
 
 Currently you have to use the function subassign to extract only certain elements (later usage of *&()* will be possible). The *subassign* function returns a reference to the input object. Indices starts countingfrom 1 (as usual in R). You can subset using a scalar, bool, nothing (use *nullptr*) or another sexp object to subset vectors. In case you want to subset a matrix you can use either one or two arguments which are from the types scalar, bool, nothing (use *nullptr*) or other sexp objects. 
 
