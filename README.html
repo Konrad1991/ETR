@@ -366,14 +366,14 @@ pre code {
 
 <div id="etr" class="section level1">
 <h1>ETR</h1>
-<p>Expression template for C++ almost similar to R syntax. It is a header-only library just include <em>etr.hpp</em>. Use of C++17 is required.<br />
-How the program works in detail is explained below using small examples.</p>
+<p>Expression template library for C++ with syntax almost similar to R. It is a header-only library just include <strong>etr.hpp</strong>. Use of C++17 is required.<br />
+How the program works in detail, is explained below using small examples.</p>
 </div>
 <div id="how-to-use-it" class="section level1">
 <h1>How to use it</h1>
 <div id="hello-world-from-etr" class="section level3">
-<h3>Hello World from <em>ETR</em></h3>
-<p>The <em>print</em> function can be used to print strings, scalar values, vectors or matrices. If you want to add a empty line use the function without an argument.</p>
+<h3>Hello World from ETR</h3>
+<p>The <strong>print</strong> function can be used to print strings, scalar values, vectors or matrices. If you want to add a empty line use the function without an argument.</p>
 <pre class="cpp"><code>#include &quot;etr.hpp&quot;
 
 int main() {
@@ -382,7 +382,7 @@ int main() {
 </div>
 <div id="variable-declaration" class="section level3">
 <h3>Variable declaration</h3>
-<p>All variables are of type <em>sexp</em>. This type can hold a scalar, a vector or a matrix. The only type that can be hold by these containers is <em>double</em>. If you want to allocate memory you can use the functions vector or matrix. Another possibility to allocate memory are the functions <em>range</em> and <em>coca</em>. The <em>range</em> function excepts a start and a end value and returns a vector with n-intervals all of length 1. The <em>coca</em> functions concatenates the given input.</p>
+<p>All variables are of type <strong>sexp</strong>. This type can hold a scalar, a vector or a matrix (The only type that can be hold by these containers is a <strong>double</strong>). If you want to allocate memory you can use the functions <strong>vector</strong> or <strong>matrix</strong>. Another possibility to allocate memory are the functions <strong>range</strong> and <strong>coca</strong>. The <strong>range</strong> function excepts a start and a end value and returns a vector with n-values seperated by an interval with length 1 respectively. The <strong>coca</strong> functions concatenates the given input.</p>
 <pre class="cpp"><code>#include &quot;etr.hpp&quot;
 
 int main() {
@@ -395,7 +395,7 @@ sexp empty_vec = vector(10); // vector with 10 elements
 sexp full_vec = vector(3.14, 10); // vector with 10 elements all contain 3.14
 
 sexp emtpy_mat = matrix(5, 2); // matrix with 10 elements; 5 rows and 2 cols
-sexp full_mat = matrix(10.5, 5, 4); // matrix with 10 elements; 5 rows and 2 cols all contain 10.5
+sexp full_mat = matrix(10.5, 5, 4); // matrix with 10 elements; 5 rows and 4 cols all contain 10.5
 
 sexp vec_range = range(1, 10); // vector containing 1, 2, 3, ..., 10
 sexp vec = coca(1, 5, 6, vec_range); // vector containing 1, 5, 6, vec_range
@@ -403,7 +403,7 @@ sexp vec = coca(1, 5, 6, vec_range); // vector containing 1, 5, 6, vec_range
 </div>
 <div id="basic-arithmetic" class="section level3">
 <h3>Basic arithmetic</h3>
-<p>You can apply basic functions like <em>+</em>, <em>-</em>, <em>/</em> and <em>*</em> to scalar, vector, matrices and any combinations.</p>
+<p>You can apply basic functions like <strong>+</strong>, <strong>-</strong>, <strong>/</strong> and <strong>*</strong> to scalar, vector, matrices and any combinations.</p>
 <pre class="cpp"><code>#include &quot;etr.hpp&quot;
 
 int main() {
@@ -438,8 +438,8 @@ sexp m = matrix(range(1, 15), 3, 5);
 print(subset(m, coca(1, 3, 2), coca(5, 2, 1)));
 }</code></pre>
 </div>
-<div id="subsetting-assign" class="section level3">
-<h3>Subsetting assign</h3>
+<div id="assign-to-a-subset" class="section level3">
+<h3>Assign to a subset</h3>
 <p>Currently you have to use the function subassign to extract only certain elements (later usage of <em>&amp;()</em> will be possible). The <em>subassign</em> function returns a reference to the input object. Indices starts countingfrom 1 (as usual in R). You can subset using a scalar, bool, nothing (use <em>nullptr</em>) or another sexp object to subset vectors. In case you want to subset a matrix you can use either one or two arguments which are from the types scalar, bool, nothing (use <em>nullptr</em>) or other sexp objects.</p>
 <pre class="cpp"><code>#include &quot;etr.hpp&quot;
 
