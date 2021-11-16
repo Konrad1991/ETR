@@ -1,3 +1,18 @@
+- [Overview](#overview)
+- [Integrate ETR in your project](#integrate-etr-in-your-project)
+- [How to use it](#how-to-use-it)
+    + [Hello World from ETR](#hello-world-from-etr)
+    + [Variable declaration](#variable-declaration)
+    + [Basic arithmetic](#basic-arithmetic)
+    + [Subsetting](#subsetting)
+      - [Subsetting vector in detail](#subsetting-vector-in-detail)
+      - [Subsetting matrix in detail](#subsetting-matrix-in-detail)
+    + [Assign to a subset](#assign-to-a-subset)
+    + [Helper functions](#helper-functions)
+    + [Looping](#looping)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
 # Overview 
 
 ETR is an expression template library for C++ with syntax almost similar to R. It provides one class (**sexp**) which can hold a scalar, vector or matrix. The type can dynamically be changed during runtime. 
