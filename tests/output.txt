@@ -1,0 +1,105 @@
+File 'alltests.cpp'
+Lines executed:100.00% of 608
+Branches executed:78.95% of 6878
+Taken at least once:39.79% of 6878
+Calls executed:66.39% of 7379
+Creating 'alltests.cpp.gcov'
+
+File 'catch.hpp'
+Lines executed:24.64% of 4594
+Branches executed:20.75% of 5634
+Taken at least once:10.58% of 5634
+Calls executed:19.53% of 7005
+Creating 'catch.hpp.gcov'
+
+File '../include/etr_bits/mul.hpp'
+Lines executed:85.92% of 71
+Branches executed:69.23% of 52
+Taken at least once:46.15% of 52
+Calls executed:77.27% of 66
+Creating 'mul.hpp.gcov'
+
+File '../include/etr_bits/divide.hpp'
+Lines executed:85.92% of 71
+Branches executed:69.23% of 52
+Taken at least once:46.15% of 52
+Calls executed:77.27% of 66
+Creating 'divide.hpp.gcov'
+
+File '../include/etr_bits/subtract.hpp'
+Lines executed:85.92% of 71
+Branches executed:69.23% of 52
+Taken at least once:46.15% of 52
+Calls executed:77.27% of 66
+Creating 'subtract.hpp.gcov'
+
+File '../include/etr_bits/add.hpp'
+Lines executed:85.92% of 71
+Branches executed:69.23% of 52
+Taken at least once:46.15% of 52
+Calls executed:77.27% of 66
+Creating 'add.hpp.gcov'
+
+File '../include/etr_bits/pointer_storage.hpp'
+Lines executed:63.55% of 107
+Branches executed:38.89% of 72
+Taken at least once:23.61% of 72
+Calls executed:17.91% of 67
+Creating 'pointer_storage.hpp.gcov'
+
+File '../include/etr_bits/vec.hpp'
+Lines executed:92.31% of 78
+Branches executed:73.68% of 38
+Taken at least once:55.26% of 38
+Calls executed:68.75% of 48
+Creating 'vec.hpp.gcov'
+
+File '../include/etr_bits/concatenate.hpp'
+Lines executed:43.48% of 46
+Branches executed:49.41% of 170
+Taken at least once:25.88% of 170
+Calls executed:36.30% of 135
+Creating 'concatenate.hpp.gcov'
+
+File '../include/etr_bits/allocation.hpp'
+Lines executed:68.97% of 29
+Branches executed:100.00% of 4
+Taken at least once:50.00% of 4
+Calls executed:75.00% of 8
+Creating 'allocation.hpp.gcov'
+
+File '../include/etr_bits/colon.hpp'
+Lines executed:13.16% of 38
+Branches executed:25.00% of 24
+Taken at least once:16.67% of 24
+Calls executed:16.67% of 18
+Creating 'colon.hpp.gcov'
+
+File '../include/etr_bits/subsetassign.hpp'
+Lines executed:25.85% of 1381
+Branches executed:25.98% of 1686
+Taken at least once:17.56% of 1686
+Calls executed:22.21% of 1076
+Creating 'subsetassign.hpp.gcov'
+
+File '../include/etr_bits/print.hpp'
+Lines executed:5.36% of 56
+Branches executed:0.00% of 48
+Taken at least once:0.00% of 48
+Calls executed:1.59% of 63
+Creating 'print.hpp.gcov'
+
+File '../include/etr_bits/subset.hpp'
+Lines executed:24.91% of 1389
+Branches executed:25.67% of 2252
+Taken at least once:16.74% of 2252
+Calls executed:21.72% of 1257
+Creating 'subset.hpp.gcov'
+
+File '../include/etr_bits/util.hpp'
+Lines executed:80.00% of 10
+Branches executed:100.00% of 6
+Taken at least once:66.67% of 6
+Calls executed:57.14% of 7
+Creating 'util.hpp.gcov'
+

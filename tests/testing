@@ -1,0 +1,8 @@
+#!/bin/bash
+
+g++ -fprofile-arcs -ftest-coverage alltests.cpp -std=c++17
+./a.out
+gcov alltests.cpp -r -b > output.txt
+rm *.gcov
+rm *.gcda
+rm *.gcno

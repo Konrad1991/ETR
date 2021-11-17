@@ -1,4 +1,4 @@
-#include "etr.hpp"
+#include "../include/etr.hpp"
 
 
 int main() {
