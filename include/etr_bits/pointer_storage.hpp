@@ -283,6 +283,12 @@ public:
     }
   }
 
+  void fill(T input) {
+    for(int i = 0; i < sz; i++) {
+      p[i] = input;
+    }
+  }
+
   auto begin() const {
     return It<T>{p};
   }

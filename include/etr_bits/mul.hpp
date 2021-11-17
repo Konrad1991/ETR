@@ -66,7 +66,7 @@ public:
     }
 
        if(l.size() > r.size()) {
-         ass((l.size() % r.size()) == 0, "Vector is not multiple of other vector");
+         //ass((l.size() % r.size()) == 0, "Vector is not multiple of other vector");
          indices1.resize(l.size());
          indices2.resize(l.size());
          for(int i = 0; i < indices2.size(); i++) {
@@ -76,7 +76,7 @@ public:
            indices2[i] =  i - times*r.size();
          }
        } else if(r.size() > l.size()) {
-         ass((l.size() % r.size()) == 0, "Vector is not multiple of other vector");
+         //ass((l.size() % r.size()) == 0, "Vector is not multiple of other vector");
          indices1.resize(r.size());
          indices2.resize(r.size());
          for(int i = 0; i < indices2.size(); i++) {
@@ -100,7 +100,8 @@ public:
    }
 
    int size() const {
-     return l.size(); // correct?
+     int sz = (l.size() > r.size()) ? l.size() : r.size();
+     return   sz;      //l.size(); // correct?
    }
 
    bool im() const {

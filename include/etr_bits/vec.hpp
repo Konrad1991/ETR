@@ -51,7 +51,7 @@ public:
   R d;
 
   // Constructors for vector
-  VEC(const int n) : d(n), subsetted(0), ismatrix(0) {}
+  VEC(const int n) : d(n), subsetted(0), ismatrix(0) {d.fill(static_cast<double>(n));} // fill is a hack that sexp s = 1 works;
   VEC(const int n, const double value) : d(n, value), subsetted(0), ismatrix(0) {}
   VEC(const R& other_vec) : d(other_vec), subsetted(0), ismatrix(0) {}
   //VEC(const R&& other_vec) : d(other_vec), subsetted(0), ismatrix(0) {} // not correct?
@@ -64,6 +64,25 @@ public:
   VEC(const int rows, const int cols) : d(rows*cols), subsetted(0), nrows(rows), ncols(cols), ismatrix(1) {}
   VEC(const int rows, const int cols, const double value) : d(rows*cols, value), subsetted(0), nrows(rows), ncols(cols), ismatrix(1) {}
   VEC(const int rows, const int cols, int value) : d(rows*cols, value), subsetted(0), nrows(rows), ncols(cols), ismatrix(1) {}
+
+  // constructor for calculations
+  template<typename T2, typename R2>
+  VEC(const VEC<T2, R2> &other_vec) :d(1) {
+
+      this -> d.resize(other_vec.size());
+      this -> ismatrix = false;
+      for(int i = 0; i < d.size(); i++) {
+            this -> d[i] = other_vec[i];
+      }
+
+      if(other_vec.d.im() == true) {
+        this -> ismatrix = true;
+        this -> ncols = other_vec.d.nc();
+        this -> nrows = other_vec.d.nr();
+      }
+
+      subsetted = false;
+  }
 
   // vector & matrix operator=
   // ================================================================

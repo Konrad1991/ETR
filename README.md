@@ -38,7 +38,7 @@ int main() {
 
 ### Variable declaration
 
-All variables are of type **sexp**. This type can hold a scalar, a vector or a matrix (The only type that can be hold by these containers is a **double**). If you want to allocate memory you can use the functions **vector** or **matrix**. Another possibility to allocate memory are the functions **range** and **coca**. The **colon** function excepts a start and a end value and returns a vector with n-values seperated by an interval with length 1 respectively. The **coca** functions concatenates the given input. \
+All variables are of type **sexp**. This type can hold a scalar, a vector or a matrix (The only type that can be hold by these containers is a **double**). If you want to allocate memory you can use the functions **vector** or **matrix**. Another possibility to allocate memory are the functions **colon** and **coca**. The **colon** function excepts a start and a end value and returns a vector with n-values seperated by an interval with length 1 respectively. The **coca** functions concatenates the given input. \
 Notably, it is possible to change the type of a variable within the program. You can see below that at the end the variable *scalar* contains a vector. 
 
 ```Cpp
