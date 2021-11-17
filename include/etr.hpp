@@ -38,6 +38,7 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 #include "etr_bits/allocation.hpp"
 #include "etr_bits/exponent.hpp"
 #include "etr_bits/trigo.hpp"
+#include "etr_bits/interpolation.hpp"
 
 //#define vec VEC<double>
 //#define mat VEC<double>
