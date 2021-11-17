@@ -3,7 +3,53 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
-TEST_CASE( "subassign" ) {
+TEST_CASE( "subassign vector" ) {
+
+sexp a, pos, temp;
+
+a = vector(colon(0, 9));
+temp = a;
+
+subassign(a, 1) = 100;
+subassign(a, 2.5) = 200;
+REQUIRE(subset(a, 1)[0] == 100.0);
+REQUIRE(subset(a, 2.5)[0] == 200.0);
+a = temp;
+
+pos = coca(1, 6, 7, 2);
+subassign(a, pos) = range(1, 4);
+REQUIRE(subset(a, 1)[0] == 1.0);
+REQUIRE(subset(a, 6)[0] == 2.0);
+REQUIRE(subset(a, 7)[0] == 3.0);
+REQUIRE(subset(a, 2)[0] == 4.0);
+a = temp;
+
+VEC<bool> pb(4);
+pb[0] = true;
+pb[1] = true;
+pb[2] = false;
+pb[3] = true;
+subassign(a, pb) = range(1, 3);
+REQUIRE(subset(a, 1)[0] == 1.0);
+REQUIRE(subset(a, 2)[0] == 2.0);
+REQUIRE(subset(a, 4)[0] == 3.0);
+a = temp;
+
+
+subassign(a, true) = -60;
+for(auto i: a) {
+  REQUIRE(i == -60);
+}
+subassign(a, nullptr) = -50;
+for(auto i: a) {
+  REQUIRE(i == -50);
+}
+
+}
+
+
+
+TEST_CASE( "subassign matrix" ) {
 
   sexp a, r, c, temp;
   VEC<bool> cb(8);
@@ -143,32 +189,121 @@ a = temp;
 
 r = coca(1, 5, 3);
 subassign(a, r, true) = colon(1, 21);
-print(a);
 REQUIRE(subset(a, 1, 1)[0] == 1.0);
-REQUIRE(subset(a, 1, 2)[0] == 2.0);
-REQUIRE(subset(a, 1, 3)[0] == 3.0);
-REQUIRE(subset(a, 1, 4)[0] == 4.0);
-REQUIRE(subset(a, 1, 5)[0] == 5.0);
-REQUIRE(subset(a, 1, 6)[0] == 6.0);
-REQUIRE(subset(a, 1, 7)[0] == 7.0);
-REQUIRE(subset(a, 5, 1)[0] == 8.0);
-REQUIRE(subset(a, 5, 2)[0] == 9.0);
-REQUIRE(subset(a, 5, 3)[0] == 10.0);
+REQUIRE(subset(a, 5, 1)[0] == 2.0);
+REQUIRE(subset(a, 3, 1)[0] == 3.0);
+REQUIRE(subset(a, 1, 2)[0] == 4.0);
+REQUIRE(subset(a, 5, 2)[0] == 5.0);
+REQUIRE(subset(a, 3, 2)[0] == 6.0);
+REQUIRE(subset(a, 1, 3)[0] == 7.0);
+REQUIRE(subset(a, 5, 3)[0] == 8.0);
+REQUIRE(subset(a, 3, 3)[0] == 9.0);
+REQUIRE(subset(a, 1, 4)[0] == 10.0);
 REQUIRE(subset(a, 5, 4)[0] == 11.0);
-REQUIRE(subset(a, 5, 5)[0] == 12.0);
-REQUIRE(subset(a, 5, 6)[0] == 13.0);
-REQUIRE(subset(a, 5, 7)[0] == 14.0);
-REQUIRE(subset(a, 3, 1)[0] == 15.0);
-REQUIRE(subset(a, 3, 2)[0] == 16.0);
-REQUIRE(subset(a, 3, 3)[0] == 17.0);
-REQUIRE(subset(a, 3, 4)[0] == 18.0);
-REQUIRE(subset(a, 3, 5)[0] == 19.0);
-REQUIRE(subset(a, 3, 6)[0] == 20.0);
+REQUIRE(subset(a, 3, 4)[0] == 12.0);
+REQUIRE(subset(a, 1, 5)[0] == 13.0);
+REQUIRE(subset(a, 5, 5)[0] == 14.0);
+REQUIRE(subset(a, 3, 5)[0] == 15.0);
+REQUIRE(subset(a, 1, 6)[0] == 16.0);
+REQUIRE(subset(a, 5, 6)[0] == 17.0);
+REQUIRE(subset(a, 3, 6)[0] == 18.0);
+REQUIRE(subset(a, 1, 7)[0] == 19.0);
+REQUIRE(subset(a, 5, 7)[0] == 20.0);
 REQUIRE(subset(a, 3, 7)[0] == 21.0);
-
 a = temp;
 
 
+VEC<bool> temp_(2);
+temp_[0] = true;
+temp_[1] = true;
+subassign(a, temp_, true) = range(1, 14);
+REQUIRE(subset(a, 1, 1)[0] == 1.0);
+REQUIRE(subset(a, 2, 1)[0] == 2.0);
+REQUIRE(subset(a, 1, 2)[0] == 3.0);
+REQUIRE(subset(a, 2, 2)[0] == 4.0);
+REQUIRE(subset(a, 1, 3)[0] == 5.0);
+REQUIRE(subset(a, 2, 3)[0] == 6.0);
+REQUIRE(subset(a, 1, 4)[0] == 7.0);
+REQUIRE(subset(a, 2, 4)[0] == 8.0);
+REQUIRE(subset(a, 1, 5)[0] == 9.0);
+REQUIRE(subset(a, 2, 5)[0] == 10.0);
+REQUIRE(subset(a, 1, 6)[0] == 11.0);
+REQUIRE(subset(a, 2, 6)[0] == 12.0);
+REQUIRE(subset(a, 1, 7)[0] == 13.0);
+REQUIRE(subset(a, 2, 7)[0] == 14.0);
+a = temp;
+
+
+subassign(a, nullptr, nullptr) = -20;
+for(auto i: a) {
+  REQUIRE(i == -20);
+}
+a = temp; print();
+
+
+r = coca(1, 5, 3);
+c = coca(1, 7, 5);
+subassign(a, r, c) = range(1, 9);
+
+REQUIRE(subset(a, 1, 1)[0] == 1.0);
+REQUIRE(subset(a, 5, 1)[0] == 2.0);
+REQUIRE(subset(a, 3, 1)[0] == 3.0);
+REQUIRE(subset(a, 1, 7)[0] == 4.0);
+REQUIRE(subset(a, 5, 7)[0] == 5.0);
+REQUIRE(subset(a, 3, 7)[0] == 6.0);
+REQUIRE(subset(a, 1, 5)[0] == 7.0);
+REQUIRE(subset(a, 5, 5)[0] == 8.0);
+REQUIRE(subset(a, 3, 5)[0] == 9.0);
+a = temp;
+
+
+VEC<bool> temp2(4);
+temp2[0] = true;
+temp2[1] = true;
+temp2[2] = false;
+temp2[3] = true;
+subassign(a, r, temp2) = colon(1, 9);
+REQUIRE(subset(a, 1, 1)[0] == 1.0);
+REQUIRE(subset(a, 5, 1)[0] == 2.0);
+REQUIRE(subset(a, 3, 1)[0] == 3.0);
+REQUIRE(subset(a, 1, 2)[0] == 4.0);
+REQUIRE(subset(a, 5, 2)[0] == 5.0);
+REQUIRE(subset(a, 3, 2)[0] == 6.0);
+REQUIRE(subset(a, 1, 4)[0] == 7.0);
+REQUIRE(subset(a, 5, 4)[0] == 8.0);
+REQUIRE(subset(a, 3, 4)[0] == 9.0);
+
+a = temp;
+c = coca(1, 7, 2);
+subassign(a, temp2, c) = range(1, 9);
+REQUIRE(subset(a, 1, 1)[0] == 1.0);
+REQUIRE(subset(a, 2, 1)[0] == 2.0);
+REQUIRE(subset(a, 4, 1)[0] == 3.0);
+REQUIRE(subset(a, 1, 7)[0] == 4.0);
+REQUIRE(subset(a, 2, 7)[0] == 5.0);
+REQUIRE(subset(a, 4, 7)[0] == 6.0);
+REQUIRE(subset(a, 1, 2)[0] == 7.0);
+REQUIRE(subset(a, 2, 2)[0] == 8.0);
+REQUIRE(subset(a, 4, 2)[0] == 9.0);
+a = temp;
+
+
+VEC<bool> temp3(3);
+temp3[0] = true;
+temp3[1] = true;
+temp3[2] = true;
+
+VEC<bool> temp4(3);
+temp4[0] = true;
+temp4[1] = false;
+temp4[2] = true;
+subassign(a, temp3, temp4) = range(1, 6);
+REQUIRE(subset(a, 1, 1)[0] == 1.0);
+REQUIRE(subset(a, 2, 1)[0] == 2.0);
+REQUIRE(subset(a, 3, 1)[0] == 3.0);
+REQUIRE(subset(a, 1, 3)[0] == 4.0);
+REQUIRE(subset(a, 2, 3)[0] == 5.0);
+REQUIRE(subset(a, 3, 3)[0] == 6.0);
 
 
 }
