@@ -1,8 +1,8 @@
-#include "etr.hpp"
+#include "../include/etr.hpp"
 
 int main() {
 
-
+  /*
   sexp s, v, m;
   s = 1;
   s = s + 3;
@@ -31,9 +31,9 @@ int main() {
   m = m + v;
   print(m);
   print();
+  */
 
 
-  /*
   sexp s, v, m;
   s = 1;
   s = s - 3;
@@ -62,7 +62,7 @@ int main() {
   m = m - v;
   print(m);
   print();
-  */
+  
 
   /*
   sexp s, v, m;
