@@ -150,7 +150,7 @@ public:
       this -> ismatrix = false;
 
       for(int i = 0; i < d.size(); i++) {
-            d[i] = other_vec[i];
+            this -> d[i] = other_vec[i];
       }
       if(other_vec.d.im() == true) {
         ismatrix = true;
@@ -159,7 +159,7 @@ public:
       }
     } else {
       for(int i = 0; i < indices.size(); i++) {
-          d[indices[i]] = other_vec[i];
+          this -> d[indices[i]] = other_vec[i];
       }
     }
 
