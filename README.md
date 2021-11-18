@@ -10,6 +10,7 @@
     + [Assign to a subset](#assign-to-a-subset)
     + [Helper functions](#helper-functions)
     + [Looping](#looping)
+    + [Math functions](#math-functions)
 
 # Overview 
 
