@@ -80,4 +80,82 @@ double exp(double base, double exponent) {
   return std::pow(base, exponent);
 }
 
+
+
+
+
+
+
+
+template<typename T, typename L>
+class VVlog {
+
+private:
+  const L& r; //const L& l;
+  bool ismatrix;
+  int nrow_;
+  int ncol_;
+
+public:
+
+  VVlog(const L &a, bool r_ismatrix, int r_rows, int r_cols) : r(a) {
+
+    if( r_ismatrix == true) {
+      ismatrix = r_ismatrix;
+      nrow_ = r_rows;
+      ncol_ = r_cols;
+    }
+
+  }
+
+   T operator[](const int i) const {
+     return std::log(r[i]);
+   }
+
+   int size() const {
+     return r.size();
+   }
+
+   bool im() const {
+     return ismatrix;
+   }
+
+   int nc() const {
+     return ncol_;
+   }
+
+   int nr() const {
+     return nrow_;
+   }
+
+};
+
+
+template<typename T, typename L>
+VEC< T, VVlog< T, L> > ln(const VEC<T, L>& a) {
+    return VEC<T, VVlog<T, L> > (VVlog<T, L>(a.data(), a.im(), a.nrow(), a.ncol()) );
+}
+
+
+double ln(double base) {
+  return std::log(base);
+}
+
+double ln(int base) {
+  return std::log(static_cast<long double>(base));
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #endif

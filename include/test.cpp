@@ -47,5 +47,9 @@ int main() {
   print(atangens(0));
   print(atangens(a));
 
+  print("log");
+  print(ln(1));
+  print(ln(coca(0, 1, 2)) );
+
 
 }
