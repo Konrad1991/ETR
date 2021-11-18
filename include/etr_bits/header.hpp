@@ -26,6 +26,7 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 #include <iterator>
 #include <memory>
 #include <vector>
-#include <math.h>      
+#include <math.h>
+
 
 #endif

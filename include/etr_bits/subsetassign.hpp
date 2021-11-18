@@ -2254,6 +2254,4 @@ VEC<double>& subassign(VEC<double>& inp, VEC<bool>& rows, VEC<bool>&& cols) {
   return inp;
 }
 
-
-
 #endif

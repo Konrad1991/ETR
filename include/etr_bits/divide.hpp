@@ -213,7 +213,4 @@ VEC< T, SVDIV< T, L, R > > operator/(const R& a, const VEC<T, L>&  b) {
 
 
 
-
-
-
 #endif

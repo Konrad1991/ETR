@@ -132,6 +132,4 @@ void print(VEC<double>&& inp) { // const
     }
 }
 
-
-
 #endif

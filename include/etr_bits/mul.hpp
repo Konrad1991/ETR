@@ -213,9 +213,4 @@ VEC< T, SVTIMES< T, L, R > > operator*(const R& a, const VEC<T, L>&  b) {
     return VEC<T, SVTIMES<T, L, R> > (SVTIMES<T, L, R>(a, b.data(), b.im(), b.nr(), b.nc() ) );
 }
 
-
-
-
-
-
 #endif

@@ -1,4 +1,11 @@
-#include "../include/etr.hpp"
+#include "assign.hpp"
+#include "basicoperations.hpp"
+#include "changetype.hpp"
+#include "sub.hpp"
+#include "subassign.hpp"
+#include "trigono.hpp"
+#include "testinterpolation.hpp"
+
 
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
@@ -775,5 +782,27 @@ REQUIRE(subset(a, 1, 3)[0] == 4.0);
 REQUIRE(subset(a, 2, 3)[0] == 5.0);
 REQUIRE(subset(a, 3, 3)[0] == 6.0);
 
+
+}
+
+
+
+
+TEST_CASE( "stuff" ) {
+
+
+  assign_test();
+
+  testplus();
+  testminus();
+  testtimes();
+  testdiv();
+  testchange();
+
+  testsub();
+  testsubass();
+
+  trigono();
+  interpolation();
 
 }

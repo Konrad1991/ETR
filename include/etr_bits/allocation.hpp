@@ -69,6 +69,4 @@ VEC<double> matrix(VEC<double> inp, int nrows_, int ncols_) {
 }
 
 
-
-
 #endif

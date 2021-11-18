@@ -1,0 +1,420 @@
+        -:    0:Source:/home/konrad/Documents/0Uni/programming/ETR/include/etr_bits/add.hpp
+        -:    0:Graph:/home/konrad/Documents/0Uni/programming/ETR/tests/alltests.gcno
+        -:    0:Data:/home/konrad/Documents/0Uni/programming/ETR/tests/alltests.gcda
+        -:    0:Runs:1
+        -:    1:/*
+        -:    2:R package etr
+        -:    3:Copyright (C) 2021 Konrad Krämer
+        -:    4:
+        -:    5:This file is part of R package etr
+        -:    6:
+        -:    7:
+        -:    8:etr is free software; you can redistribute it and/or
+        -:    9:modify it under the terms of the GNU General Public License
+        -:   10:as published by the Free Software Foundation; either version 2
+        -:   11:of the License, or (at your option) any later version.
+        -:   12:
+        -:   13:This program is distributed in the hope that it will be useful,
+        -:   14:but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   15:MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   16:GNU General Public License for more details.
+        -:   17:
+        -:   18:You should have received a copy of the GNU General Public License along with etr
+        -:   19:If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
+        -:   20:*/
+        -:   21:
+        -:   22:#ifndef ADD
+        -:   23:#define ADD
+        -:   24:
+        -:   25:#include "vec.hpp"
+        -:   26:
+        -:   27:template<typename T, typename L, typename R>
+        -:   28:class VVPLUS {
+        -:   29:
+        -:   30:private:
+        -:   31:  const L& l; //const L& l;
+        -:   32:  const R& r; //const R& r;
+        -:   33:  std::vector<int> indices1;
+        -:   34:  std::vector<int> indices2;
+        -:   35:  int columns_;
+        -:   36:  int rows_;
+        -:   37:  bool ismatrix;
+        -:   38:
+        -:   39:public:
+        -:   40:
+function _ZN6VVPLUSId5STOREIdES1_EC2ERKS1_S4_bbiiii called 10 returned 100% blocks executed 72%
+       10:   41:  VVPLUS(const L &a, const R &b, bool l_ismatrix, bool r_ismatrix,
+       10:   42:        int l_rows, int l_cols, int r_rows, int r_cols) : l(a), r(b) {
+call    0 returned 10
+call    1 returned 10
+call    2 never executed
+call    3 never executed
+        -:   43:
+       10:   44:    bool _l_ismatrix = l_ismatrix;
+       10:   45:    bool _r_ismatrix = r_ismatrix;
+       10:   46:    int _l_nrow = l_rows;
+       10:   47:    int _r_nrow = r_rows;
+       10:   48:    int _l_ncol = l_cols;
+       10:   49:    int _r_ncol = r_cols;
+        -:   50:
+       10:   51:    if( ((_l_ismatrix == true) || (_r_ismatrix == true )) ||
+branch  0 taken 7 (fallthrough)
+branch  1 taken 3
+branch  2 taken 3 (fallthrough)
+branch  3 taken 4
+       3*:   52:        ((_l_ismatrix == true) && (_r_ismatrix == true )) ) {
+branch  0 taken 0 (fallthrough)
+branch  1 taken 3
+branch  2 never executed
+branch  3 never executed
+        7:   53:        ismatrix = true;
+        7:   54:      if( (_l_ismatrix == true) && (_r_ismatrix == false) ){
+branch  0 taken 3 (fallthrough)
+branch  1 taken 4
+branch  2 taken 2 (fallthrough)
+branch  3 taken 1
+        2:   55:        columns_ = _l_ncol;
+        2:   56:        rows_ = _l_nrow;
+        5:   57:      } else if ((_l_ismatrix == false) && (_r_ismatrix == true)) {
+branch  0 taken 4 (fallthrough)
+branch  1 taken 1
+branch  2 taken 4 (fallthrough)
+branch  3 taken 0
+        4:   58:        columns_ = _r_ncol;
+        4:   59:        rows_ = _r_nrow;
+        1:   60:      } else if((_l_ismatrix == true) && (_r_ismatrix == true)) {
+branch  0 taken 1 (fallthrough)
+branch  1 taken 0
+branch  2 taken 1 (fallthrough)
+branch  3 taken 0
+       1*:   61:        columns_ = (_l_ncol > _r_ncol) ? _l_ncol : _r_ncol;
+branch  0 taken 0 (fallthrough)
+branch  1 taken 1
+       1*:   62:        rows_ = (_l_nrow > _r_nrow) ? _l_nrow : _r_nrow;
+branch  0 taken 0 (fallthrough)
+branch  1 taken 1
+        -:   63:      } else {
+    #####:   64:        exit(0);
+call    0 never executed
+        -:   65:      }
+        -:   66:    }
+        -:   67:
+       10:   68:       if(l.size() > r.size()) {
+call    0 returned 10
+call    1 returned 10
+branch  2 taken 0 (fallthrough)
+branch  3 taken 10
+        -:   69:         //ass((l.size() % r.size()) == 0, "Vector is not multiple of other vector");
+    #####:   70:         indices1.resize(l.size());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:   71:         indices2.resize(l.size());
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:   72:         for(int i = 0; i < indices2.size(); i++) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   73:           indices1[i] = i;
+call    0 never executed
+        -:   74:
+    #####:   75:           int times = floor(i/r.size());
+call    0 never executed
+call    1 never executed
+    #####:   76:           indices2[i] =  i - times*r.size();
+call    0 never executed
+call    1 never executed
+        -:   77:         }
+       10:   78:       } else if(r.size() > l.size()) {
+call    0 returned 10
+call    1 returned 10
+branch  2 taken 4 (fallthrough)
+branch  3 taken 6
+        -:   79:         //ass((l.size() % r.size()) == 0, "Vector is not multiple of other vector");
+        4:   80:         indices1.resize(r.size());
+call    0 returned 4
+call    1 returned 4
+branch  2 taken 4 (fallthrough)
+branch  3 taken 0 (throw)
+        4:   81:         indices2.resize(r.size());
+call    0 returned 4
+call    1 returned 4
+branch  2 taken 4 (fallthrough)
+branch  3 taken 0 (throw)
+       20:   82:         for(int i = 0; i < indices2.size(); i++) {
+call    0 returned 20
+branch  1 taken 16 (fallthrough)
+branch  2 taken 4
+       16:   83:           indices2[i] = i;
+call    0 returned 16
+        -:   84:
+       16:   85:           int times = floor(i/l.size());
+call    0 returned 16
+call    1 returned 16
+       16:   86:           indices1[i] =  i - times*l.size();
+call    0 returned 16
+call    1 returned 16
+        -:   87:         }
+        6:   88:     } else if(r.size() == l.size()) {
+call    0 returned 6
+call    1 returned 6
+branch  2 taken 6 (fallthrough)
+branch  3 taken 0
+        6:   89:       indices1.resize(l.size());
+call    0 returned 6
+call    1 returned 6
+branch  2 taken 6 (fallthrough)
+branch  3 taken 0 (throw)
+        6:   90:       indices2.resize(r.size());
+call    0 returned 6
+call    1 returned 6
+branch  2 taken 6 (fallthrough)
+branch  3 taken 0 (throw)
+       52:   91:       for(int i = 0; i < indices2.size(); i++) {
+call    0 returned 52
+branch  1 taken 46 (fallthrough)
+branch  2 taken 6
+       46:   92:         indices1[i] = i;
+call    0 returned 46
+       46:   93:         indices2[i] = i;
+call    0 returned 46
+        -:   94:       }
+        -:   95:     }
+       10:   96:   }
+        -:   97:
+function _ZNK6VVPLUSId5STOREIdES1_EixEi called 62 returned 100% blocks executed 100%
+       62:   98:   T operator[](const int i) const {
+       62:   99:     return l[indices1[i]] + r[indices2[i]];
+call    0 returned 62
+call    1 returned 62
+call    2 returned 62
+call    3 returned 62
+        -:  100:   }
+        -:  101:
+function _ZNK6VVPLUSId5STOREIdES1_E4sizeEv called 16 returned 100% blocks executed 86%
+       16:  102:   int size() const {
+      16*:  103:     int sz = (l.size() > r.size()) ? l.size() : r.size();
+call    0 returned 16
+call    1 returned 16
+branch  2 taken 0 (fallthrough)
+branch  3 taken 16
+call    4 never executed
+call    5 returned 16
+       16:  104:     return   sz;      //l.size(); // correct?
+        -:  105:   }
+        -:  106:
+function _ZNK6VVPLUSId5STOREIdES1_E2imEv called 10 returned 100% blocks executed 100%
+       10:  107:   bool im() const {
+       10:  108:     return ismatrix;
+        -:  109:   }
+        -:  110:
+function _ZNK6VVPLUSId5STOREIdES1_E2ncEv called 7 returned 100% blocks executed 100%
+        7:  111:   int nc() const {
+        7:  112:     return columns_;
+        -:  113:   }
+        -:  114:
+function _ZNK6VVPLUSId5STOREIdES1_E2nrEv called 7 returned 100% blocks executed 100%
+        7:  115:   int nr() const {
+        7:  116:     return rows_;
+        -:  117:   }
+        -:  118:
+        -:  119:};
+        -:  120:
+        -:  121:
+        -:  122:template<typename T, typename L, typename R>
+function _ZplId5STOREIdES1_E3VECIT_6VVPLUSIS3_T0_T1_EERKS2_IS3_S5_ERKS2_IS3_S6_E called 10 returned 100% blocks executed 88%
+       10:  123:VEC< T, VVPLUS< T, L, R > > operator+(const VEC<T, L>& a, const VEC<T, R>& b) {
+       30:  124:    return VEC<T, VVPLUS<T, L, R> > (VVPLUS<T, L, R>(a.data(), b.data(),
+call    0 returned 10
+call    1 returned 10
+call    2 returned 10
+call    3 returned 10
+call    4 returned 10
+call    5 returned 10
+call    6 returned 10
+call    7 returned 10
+call    8 never executed
+       10:  125:                                     a.im(), b.im(),
+call    0 returned 10
+call    1 returned 10
+       20:  126:                                     a.nrow(), a.ncol(), b.nrow(), b.ncol()) );
+call    0 returned 10
+branch  1 taken 10 (fallthrough)
+branch  2 taken 0 (throw)
+        -:  127:}
+        -:  128:
+        -:  129:
+        -:  130:template<typename T, typename L, typename R>
+        -:  131:class VSPLUS {
+        -:  132:
+        -:  133:private:
+        -:  134:  const L& l;
+        -:  135:  const R& r;
+        -:  136:  bool ismatrix;
+        -:  137:  int nrows;
+        -:  138:  int ncols;
+        -:  139:
+        -:  140:public:
+       10:  141:  VSPLUS(const L &a, const R &b, bool ismatrix_, int nrows_, int ncols_ ) :
+       10:  142:     l(a), r(b), ismatrix(ismatrix_), nrows(nrows_), ncols(ncols_) {}
+------------------
+_ZN6VSPLUSId5STOREIdEdEC2ERKS1_RKdbii:
+function _ZN6VSPLUSId5STOREIdEdEC2ERKS1_RKdbii called 1 returned 100% blocks executed 100%
+        1:  141:  VSPLUS(const L &a, const R &b, bool ismatrix_, int nrows_, int ncols_ ) :
+        1:  142:     l(a), r(b), ismatrix(ismatrix_), nrows(nrows_), ncols(ncols_) {}
+------------------
+_ZN6VSPLUSId5STOREIdEiEC2ERKS1_RKibii:
+function _ZN6VSPLUSId5STOREIdEiEC2ERKS1_RKibii called 9 returned 100% blocks executed 100%
+        9:  141:  VSPLUS(const L &a, const R &b, bool ismatrix_, int nrows_, int ncols_ ) :
+        9:  142:     l(a), r(b), ismatrix(ismatrix_), nrows(nrows_), ncols(ncols_) {}
+------------------
+        -:  143:
+       35:  144:   T operator[](const int i) const {
+       35:  145:     return l[i] + r;
+        -:  146:   }
+------------------
+_ZNK6VSPLUSId5STOREIdEdEixEi:
+function _ZNK6VSPLUSId5STOREIdEdEixEi called 1 returned 100% blocks executed 100%
+        1:  144:   T operator[](const int i) const {
+        1:  145:     return l[i] + r;
+call    0 returned 1
+        -:  146:   }
+------------------
+_ZNK6VSPLUSId5STOREIdEiEixEi:
+function _ZNK6VSPLUSId5STOREIdEiEixEi called 34 returned 100% blocks executed 100%
+       34:  144:   T operator[](const int i) const {
+       34:  145:     return l[i] + r;
+call    0 returned 34
+        -:  146:   }
+------------------
+        -:  147:
+       14:  148:   int size() const {
+       14:  149:     return l.size();
+        -:  150:   }
+------------------
+_ZNK6VSPLUSId5STOREIdEdE4sizeEv:
+function _ZNK6VSPLUSId5STOREIdEdE4sizeEv called 2 returned 100% blocks executed 100%
+        2:  148:   int size() const {
+        2:  149:     return l.size();
+call    0 returned 2
+        -:  150:   }
+------------------
+_ZNK6VSPLUSId5STOREIdEiE4sizeEv:
+function _ZNK6VSPLUSId5STOREIdEiE4sizeEv called 12 returned 100% blocks executed 100%
+       12:  148:   int size() const {
+       12:  149:     return l.size();
+call    0 returned 12
+        -:  150:   }
+------------------
+        -:  151:
+        -:  152:
+       10:  153:   bool im() const {
+       10:  154:     return ismatrix;
+        -:  155:   }
+------------------
+_ZNK6VSPLUSId5STOREIdEdE2imEv:
+function _ZNK6VSPLUSId5STOREIdEdE2imEv called 1 returned 100% blocks executed 100%
+        1:  153:   bool im() const {
+        1:  154:     return ismatrix;
+        -:  155:   }
+------------------
+_ZNK6VSPLUSId5STOREIdEiE2imEv:
+function _ZNK6VSPLUSId5STOREIdEiE2imEv called 9 returned 100% blocks executed 100%
+        9:  153:   bool im() const {
+        9:  154:     return ismatrix;
+        -:  155:   }
+------------------
+        -:  156:
+       3*:  157:   int nc() const {
+       3*:  158:     return ncols;
+        -:  159:   }
+------------------
+_ZNK6VSPLUSId5STOREIdEdE2ncEv:
+function _ZNK6VSPLUSId5STOREIdEdE2ncEv called 0 returned 0% blocks executed 0%
+    #####:  157:   int nc() const {
+    #####:  158:     return ncols;
+        -:  159:   }
+------------------
+_ZNK6VSPLUSId5STOREIdEiE2ncEv:
+function _ZNK6VSPLUSId5STOREIdEiE2ncEv called 3 returned 100% blocks executed 100%
+        3:  157:   int nc() const {
+        3:  158:     return ncols;
+        -:  159:   }
+------------------
+        -:  160:
+       3*:  161:   int nr() const {
+       3*:  162:     return nrows;
+        -:  163:   }
+------------------
+_ZNK6VSPLUSId5STOREIdEdE2nrEv:
+function _ZNK6VSPLUSId5STOREIdEdE2nrEv called 0 returned 0% blocks executed 0%
+    #####:  161:   int nr() const {
+    #####:  162:     return nrows;
+        -:  163:   }
+------------------
+_ZNK6VSPLUSId5STOREIdEiE2nrEv:
+function _ZNK6VSPLUSId5STOREIdEiE2nrEv called 3 returned 100% blocks executed 100%
+        3:  161:   int nr() const {
+        3:  162:     return nrows;
+        -:  163:   }
+------------------
+        -:  164:
+        -:  165:};
+        -:  166:
+        -:  167:template<typename T, typename L, typename R>
+       10:  168:VEC< T, VSPLUS< T, L, R > > operator+(const VEC<T, L>& a, const R& b) {
+       10:  169:    return VEC<T, VSPLUS<T, L, R> > (VSPLUS<T, L, R>(a.data(), b, a.im(), a.nr(), a.nc() ) );
+        -:  170:}
+        -:  171:
+        -:  172:
+        -:  173:
+        -:  174:
+        -:  175:template<typename T, typename L, typename R>
+        -:  176:class SVPLUS {
+        -:  177:
+        -:  178:private:
+        -:  179:  const L& l;
+        -:  180:  const R& r;
+        -:  181:  const bool ismatrix;
+        -:  182:  const int nrows;
+        -:  183:  const int ncols;
+        -:  184:
+        -:  185:public:
+        -:  186:  SVPLUS(const R& a, const L &b, bool ismatrix_, int nrows_, int ncols_ ) :
+        -:  187:     r(a), l(b), ismatrix(ismatrix_), nrows(nrows_), ncols(ncols_) { }
+        -:  188:
+        -:  189:   T operator[](const int i) const {
+        -:  190:     return l[i] + r;
+        -:  191:   }
+        -:  192:
+        -:  193:   int size() const {
+        -:  194:     return l.size();
+        -:  195:   }
+        -:  196:
+        -:  197:
+        -:  198:   bool im() const {
+        -:  199:     return ismatrix;
+        -:  200:   }
+        -:  201:
+        -:  202:   int nc() const {
+        -:  203:     return ncols;
+        -:  204:   }
+        -:  205:
+        -:  206:   int nr() const {
+        -:  207:     return nrows;
+        -:  208:   }
+        -:  209:
+        -:  210:};
+        -:  211:
+        -:  212:
+        -:  213:template<typename T, typename L, typename R>
+        -:  214:VEC< T, SVPLUS< T, L, R > > operator+(const R& a, const VEC<T, L>&  b) {
+        -:  215:    return VEC<T, SVPLUS<T, L, R> > (SVPLUS<T, L, R>(a, b.data(), b.im(), b.nr(), b.nc() ) );
+        -:  216:}
+        -:  217:
+        -:  218:
+        -:  219:#endif

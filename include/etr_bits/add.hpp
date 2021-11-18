@@ -216,5 +216,4 @@ VEC< T, SVPLUS< T, L, R > > operator+(const R& a, const VEC<T, L>&  b) {
 }
 
 
-
 #endif

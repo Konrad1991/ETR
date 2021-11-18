@@ -115,6 +115,7 @@ double cmr(double t, VEC<T> &time_vec, VEC<T> &par_vec){
       t1 = time_vec[idx1];
       y1 = par_vec[idx1];
 
+
       if ( i == time_vec.size()-1 ) {
         idx2 = 0;
         t2 = time_vec[idx2]+time_vec.back();
@@ -123,6 +124,7 @@ double cmr(double t, VEC<T> &time_vec, VEC<T> &par_vec){
         t2 = time_vec[idx2];
       }
       y2 = par_vec[idx2];
+
 
       if ( i == time_vec.size()-2 ) {
         idx3 = 0;
@@ -136,6 +138,7 @@ double cmr(double t, VEC<T> &time_vec, VEC<T> &par_vec){
       }
       y3 = par_vec[idx3];
       break;
+
     }
 
   } // search for the beginning of the interpolation intervall
@@ -246,8 +249,5 @@ double cmr(double t, VEC<T> &&time_vec, VEC<T> &&par_vec){
   );
   return res;
 }
-
-
-
 
 #endif

@@ -131,4 +131,5 @@ VEC<double> coca (Ts & ... multi_inputs)
     return ret;
 }
 
+
 #endif
