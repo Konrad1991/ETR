@@ -11,6 +11,7 @@
     + [Helper functions](#helper-functions)
     + [Looping](#looping)
     + [Math functions](#math-functions)
+    + [Interpolation](#interpolation)
 
 # Overview 
 
