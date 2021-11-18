@@ -76,9 +76,18 @@ VEC< T, VVEXP< T, L, R> > operator^(const VEC<T, L>& a, const R exponent) {
 }
 
 
+template<typename T, typename L, typename R>
+VEC< T, VVEXP< T, L, R> > exp(const VEC<T, L>& a, const R exponent) {
+    return VEC<T, VVEXP<T, L, R> > (VVEXP<T, L, R>(a.data(), a.im(), a.nrow(), a.ncol(), exponent) );
+}
+
+
 double exp(double base, double exponent) {
   return std::pow(base, exponent);
 }
+
+
+
 
 
 

@@ -214,7 +214,7 @@ int main() {
 
 ### Assign to a subset
 
-Currently you have to use the function **subassign** to extract only certain elements and assign new values to them (later usage of **&()** will be possible). The **subassign** function returns a reference to the input object. Indices starts countingfrom 1 (as usual in R). To subset a vector use one parameter either of type scalar, bool, nothing (use **nullptr**) or another sexp object. In case you want to subset a matrix you can use either one or two arguments which are from the types scalar, bool, nothing (use **nullptr**) or another sexp objects. 
+Currently you have to use the function **subassign** to extract only certain elements and assign new values to them (later usage of **&()** will be possible). The **subassign** function returns a reference to the input object. Indices starts counting from 1 (as usual in R). To subset a vector use one parameter either of type scalar, bool, nothing (use **nullptr**) or another sexp object. In case you want to subset a matrix you can use either one or two arguments which are from the types scalar, bool, nothing (use **nullptr**) or another sexp objects. 
 
 ```Cpp
 #include "etr.hpp"
@@ -268,4 +268,21 @@ int main() {
 
 ```
 
+
+### Math functions
+
+The following math functions can be used:
+
+- exponent: exp(variable, exponent); 
+  - on non primitive types one can also write a^exponent
+- natural logarithm: ln(variable)
+- sinus(variable)
+- sinush(variable)
+- asinus(variable)
+- cosinus(variable)
+- cosinush(variable)
+- acosinus(variable)
+- tangens(variable)
+- tangensh(variable)
+- atangens(variable)
 
