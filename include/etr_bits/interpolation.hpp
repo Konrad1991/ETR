@@ -69,13 +69,20 @@ double cmr(double t, VEC<T> &time_vec, VEC<T> &par_vec){
   idx3 = 0;
   t0 = t1 = t2 = t3 = 0.;
   y0 = y1 = y2 = y3 = 0.;
-  //if(t > time_vec.back()) { //!
-   //t = t  - time_vec.back();
-  //}
-  //for (signed int i = 0; i <= time_vec.size(); ++i) { // i < time_vec.size !
+
+  ass(time_vec.size() == par_vec.size(), "x and y differ in length");
+
+  if(t < time_vec[0]) {
+    return par_vec[0];
+  } else if(t > time_vec[time_vec.size() - 1]); {
+    return par_vec[par_vec.size() - 1];
+  }
+
+
   for(size_t i = 0; i <= time_vec.size(); i++)  {
 
     if (i == (time_vec.size()-1)) {
+
       idx0 = time_vec.size() - 2;
       t0 = time_vec[idx0];
       y0 = par_vec[idx0];
@@ -92,6 +99,7 @@ double cmr(double t, VEC<T> &time_vec, VEC<T> &par_vec){
       t3 = time_vec[idx3];
       y3 = par_vec[idx3];
       break;
+
     } else if (t>=time_vec[i] && t<time_vec[i+1]){
 
       if (i==0) {
@@ -158,10 +166,15 @@ double cmr(double t, VEC<T> &&time_vec, VEC<T> &&par_vec){
   idx3 = 0;
   t0 = t1 = t2 = t3 = 0.;
   y0 = y1 = y2 = y3 = 0.;
-  //if(t > time_vec.back()) { //!
-   //t = t  - time_vec.back();
-  //}
-  //for (signed int i = 0; i <= time_vec.size(); ++i) { // i < time_vec.size !
+
+  ass(time_vec.size() == par_vec.size(), "x and y differ in length");
+
+  if(t < time_vec[0]) {
+    return par_vec[0];
+  } else if(t > time_vec[time_vec.size() - 1]); {
+    return par_vec[par_vec.size() - 1];
+  }
+
   for(size_t i = 0; i <= time_vec.size(); i++)  {
 
     if (i == (time_vec.size()-1)) {
