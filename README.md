@@ -287,3 +287,57 @@ The following math functions can be used:
 - tangensh(variable)
 - atangens(variable)
 
+
+### Interpolation
+
+It is possible to use a catmull-rome interpolation function called **cmr**. The first argument is the position where the desired value should be calculated. The second argument is the x-variable (i.e. a vector), and the last argument are the y-values. See the example below how to use the function. 
+
+```Cpp
+#include "etr.hpp"
+
+int main() {
+
+sexp t = colon(1, 8);
+sexp p = coca(1, 2, 3, 4, 5, 6, 7, 8);
+
+sexp res = cmr(1, t, p);
+print(res);
+
+res = cmr(1.5, t, p);
+print(res);
+
+res = cmr(2.5, t, p);
+print(res);
+
+res = cmr(4, t, p);
+print(res);
+
+res = cmr(5, t, p);
+print(res);
+
+res = cmr(5.5, t, p);
+print(res);
+
+res = cmr(7.5, t, p);
+print(res);
+
+res = cmr(7.99, t, p);
+print(res);
+print();
+res = cmr(8, t, p);
+print(res);
+
+print();
+res = cmr(9, t, p);
+print(res);
+
+print();
+res = cmr(-1, t, p);
+print(res);
+
+
+}
+
+```
+
+
