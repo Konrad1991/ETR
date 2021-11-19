@@ -3,7 +3,7 @@
 
 void bs(sexp& arr) {
   sexp size = length(arr);
-  bool swapped = true;
+  sexp swapped = true;
 
   do {
     swapped = false;
