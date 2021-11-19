@@ -9,6 +9,7 @@
       - [Subsetting matrix in detail](#subsetting-matrix-in-detail)
     + [Assign to a subset](#assign-to-a-subset)
     + [Helper functions](#helper-functions)
+    + [Comparison functions](#comparison-functions)
     + [Looping](#looping)
     + [Math functions](#math-functions)
     + [Interpolation](#interpolation)
@@ -250,7 +251,7 @@ print(dim(m));
 }
 ```
 
-### comparison functions
+### Comparison functions
 
 As usual in R you can use **==**, **!=**, **<=**, **>=**, **<** and **>**. If one of the comparison functions returns more then one bool and is used in a if clause the first element is used.
 
