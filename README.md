@@ -253,7 +253,7 @@ print(dim(m));
 
 ### Comparison functions
 
-As usual in R you can use **==**, **!=**, **<=**, **>=**, **<** and **>**. If one of the comparison functions returns more then one bool and is used in a if clause the first element is used.
+As usual in R you can use **==**, **!=**, **<=**, **>=**, **<** and **>**. If one of the comparison functions returns more then one bool and is used in an **if** or **else if** the first element is used.
 
 ```Cpp
 #include "etr.hpp"
