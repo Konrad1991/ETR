@@ -39,6 +39,7 @@ void print(const char* inp) {
 }
 
 
+
 void print(double inp){
   std::cout << inp << std::endl;
 }
@@ -131,5 +132,29 @@ void print(VEC<double>&& inp) { // const
 
     }
 }
+
+
+
+
+
+void print(VEC<bool>& inp) { // const
+
+    if(inp.ismatrix == false) {
+      if(inp.subsetted == true) {
+        std::cerr << "Error: found VEC<bool> is subsetted" << std::endl;
+        exit(0);
+      }
+        for(int i = 0; i < inp.size(); i++) {
+          std::cout << inp[i] << std::endl;
+        }
+
+    } else {
+      std::cerr << "Error: found VEC<bool> is matrix" << std::endl;
+      exit(0);
+    }
+
+}
+
+
 
 #endif

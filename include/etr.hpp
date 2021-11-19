@@ -15,7 +15,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with pso
+You should have received a copy of the GNU General Public License along with etr
 If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 */
 
@@ -39,6 +39,7 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 #include "etr_bits/exponent.hpp"
 #include "etr_bits/trigo.hpp"
 #include "etr_bits/interpolation.hpp"
+#include "etr_bits/comparison.hpp"
 
 //#define vec VEC<double>
 //#define mat VEC<double>

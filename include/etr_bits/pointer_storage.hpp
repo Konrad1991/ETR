@@ -300,7 +300,6 @@ public:
     return p[sz];
   }
 
-
 };
 
 

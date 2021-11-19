@@ -2,7 +2,7 @@
 
 
 void bs(sexp& arr) {
-  int size = length(arr);
+  sexp size = length(arr);
   bool swapped = true;
 
   do {
@@ -10,7 +10,7 @@ void bs(sexp& arr) {
 
     for(auto i: colon(1, size-1)) {
 
-      if(subset(arr, i)[0] > subset(arr, i + 1)[0]) {
+      if(subset(arr, i) > subset(arr, i + 1) ) {
           sexp temp = subset(arr, i);
           subassign(arr, i) = subset(arr, i + 1);
           subassign(arr, i + 1) = temp;

@@ -84,6 +84,18 @@ public:
       subsetted = false;
   }
 
+  // constructor for COMPARISON
+  VEC(const VEC<bool>& other_vec) : d(1) {
+    d.resize(other_vec.size());
+    ismatrix = false;
+    subsetted = false;
+    for(int i = 0; i < d.size(); i++) {
+      d[i] = other_vec[i];
+    }
+  }
+
+  explicit operator bool() const{return d[0];}
+
   // vector & matrix operator=
   // ================================================================
   VEC& operator=(const T &dob) {

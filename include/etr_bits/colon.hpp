@@ -64,6 +64,47 @@ VEC<double> colon(double start, int end) {
   return ret;
 }
 
+VEC<double> colon(int start, VEC<double> end) {
+
+  int size = static_cast<int>(std::floor(end[0] - static_cast<double>(start) +1));
+  VEC<double> ret(size);
+  for(int i = 0; i < ret.size(); i++) {
+    ret[i] = start + static_cast<double>(i);
+  }
+  return ret;
+}
+
+VEC<double> colon(double start, VEC<double> end) {
+
+  int size = static_cast<int>(std::floor(end[0] - (start) +1));
+  VEC<double> ret(size);
+  for(int i = 0; i < ret.size(); i++) {
+    ret[i] = start + static_cast<double>(i);
+  }
+  return ret;
+}
+
+VEC<double> colon(VEC<double> start, int end) {
+
+  int size = static_cast<int>(std::floor(static_cast<double>(end) - (start[0]) +1));
+  VEC<double> ret(size);
+  for(int i = 0; i < ret.size(); i++) {
+    ret[i] = start[0] + static_cast<double>(i);
+  }
+  return ret;
+}
+
+VEC<double> colon(VEC<double> start, double end) {
+
+  int size = static_cast<int>(std::floor(end - (start[0]) +1));
+  VEC<double> ret(size);
+  for(int i = 0; i < ret.size(); i++) {
+    ret[i] = start[0] + static_cast<double>(i);
+  }
+  return ret;
+}
+
+
 
 int length(double inp) {
   return 1;
