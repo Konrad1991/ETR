@@ -4,33 +4,34 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
+void bs(sexp& arr) {
+  sexp size = length(arr);
+  sexp swapped = true;
+
+  do {
+    swapped = false;
+
+    for(auto i: colon(1, size-1)) {
+
+      if(subset(arr, i) > subset(arr, i + 1) ) {
+          sexp temp = subset(arr, i);
+          subassign(arr, i) = subset(arr, i + 1);
+          subassign(arr, i + 1) = temp;
+          swapped = true;
+      }
+
+    }
+  } while(swapped);
+
+
+}
 
 
 TEST_CASE( "stuff2" ) {
 
 
 
-  void bs(sexp& arr) {
-    sexp size = length(arr);
-    sexp swapped = true;
 
-    do {
-      swapped = false;
-
-      for(auto i: colon(1, size-1)) {
-
-        if(subset(arr, i) > subset(arr, i + 1) ) {
-            sexp temp = subset(arr, i);
-            subassign(arr, i) = subset(arr, i + 1);
-            subassign(arr, i + 1) = temp;
-            swapped = true;
-        }
-
-      }
-    } while(swapped);
-
-
-  }
 
 
 
