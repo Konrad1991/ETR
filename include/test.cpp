@@ -4,9 +4,9 @@
 
 int main() {
 
+/*
   sexp a = coca(1, 2, 3);
   sexp b = coca(1, 2, 4);
-
 
   sexp c = a == b;
   print(c);
@@ -41,5 +41,17 @@ int main() {
 
   print(d);
   print(coca(1,2,d));
+
+*/
+
+
+sexp a = colon(1,19);
+
+
+subset(a, 1);
+
+sexp b = 3.14;
+print(b);
+
 
 }

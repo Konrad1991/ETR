@@ -1,8 +1,8 @@
 #!/bin/bash
 
-g++ -fprofile-arcs -ftest-coverage alltests.cpp -std=c++17
-./a.out
-gcov alltests.cpp -r -b > output.txt
-rm *.gcov
-rm *.gcda
-rm *.gcno
+clang++ -fprofile-instr-generate -fcoverage-mapping alltests.cpp -o foo -std=c++17
+LLVM_PROFILE_FILE="foo.profraw" ./foo
+llvm-profdata merge -sparse foo.profraw -o foo.profdata
+llvm-cov report ./foo -instr-profile=foo.profdata 
+llvm-cov report ./foo -instr-profile=foo.profdata > coverage.json
+

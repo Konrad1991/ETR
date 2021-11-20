@@ -50,6 +50,14 @@ public:
   // data
   R d;
 
+  template<typename T2>
+  VEC(T2 n) = delete;
+
+  VEC(const bool value) : d(1, value),subsetted(0), ismatrix(0) {}
+
+  VEC(const double value) : d(1, value),subsetted(0), ismatrix(0) {}
+  VEC(const long unsigned int n) : d(n), subsetted(0), ismatrix(0) {d.fill(static_cast<double>(n));} // fill is a hack that sexp s = 1 works;
+
   // Constructors for vector
   VEC(const int n) : d(n), subsetted(0), ismatrix(0) {d.fill(static_cast<double>(n));} // fill is a hack that sexp s = 1 works;
   VEC(const int n, const double value) : d(n, value), subsetted(0), ismatrix(0) {}

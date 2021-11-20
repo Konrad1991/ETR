@@ -74,7 +74,7 @@ double cmr(double t, VEC<T> &time_vec, VEC<T> &par_vec){
 
   if(t < time_vec[0]) {
     return par_vec[0];
-  } else if(t > time_vec[time_vec.size() - 1]); {
+  } else if(t > time_vec[time_vec.size() - 1]) {
     return par_vec[par_vec.size() - 1];
   }
 
@@ -174,7 +174,7 @@ double cmr(double t, VEC<T> &&time_vec, VEC<T> &&par_vec){
 
   if(t < time_vec[0]) {
     return par_vec[0];
-  } else if(t > time_vec[time_vec.size() - 1]); {
+  } else if(t > time_vec[time_vec.size() - 1]) {
     return par_vec[par_vec.size() - 1];
   }
 

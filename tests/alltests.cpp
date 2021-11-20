@@ -1,14 +1,50 @@
-#include "assign.hpp"
-#include "basicoperations.hpp"
-#include "changetype.hpp"
-#include "sub.hpp"
-#include "subassign.hpp"
-#include "trigono.hpp"
-#include "testinterpolation.hpp"
+#include "../include/etr.hpp"
 
 
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
+
+
+
+TEST_CASE( "stuff2" ) {
+
+
+
+  void bs(sexp& arr) {
+    sexp size = length(arr);
+    sexp swapped = true;
+
+    do {
+      swapped = false;
+
+      for(auto i: colon(1, size-1)) {
+
+        if(subset(arr, i) > subset(arr, i + 1) ) {
+            sexp temp = subset(arr, i);
+            subassign(arr, i) = subset(arr, i + 1);
+            subassign(arr, i + 1) = temp;
+            swapped = true;
+        }
+
+      }
+    } while(swapped);
+
+
+  }
+
+
+
+    sexp arr = coca(3, 2, 8, 1, 0);
+
+    print(arr);
+
+    bs(arr);
+
+    print();
+
+    print(arr);
+
+}
 
 TEST_CASE( "plus" ) {
 
@@ -781,6 +817,14 @@ REQUIRE(subset(a, 3, 1)[0] == 3.0);
 REQUIRE(subset(a, 1, 3)[0] == 4.0);
 REQUIRE(subset(a, 2, 3)[0] == 5.0);
 REQUIRE(subset(a, 3, 3)[0] == 6.0);
+print(sinus(0));
+
+r == c;
+r >= c;
+r != c;
+r > c;
+r < c;
+r <= c;
 
 
 }
@@ -790,19 +834,41 @@ REQUIRE(subset(a, 3, 3)[0] == 6.0);
 
 TEST_CASE( "stuff" ) {
 
+  sexp a = coca(1,2, 3, 4);
+  sexp b = coca(1, 2., 100.5, 4.000001);
 
-  assign_test();
+  sexp vec1 = vector(4);
+  sexp vec2 = vector(3.14, 4);
+  sexp m1 = matrix(2, 5);
+  sexp m2 = matrix(3.14, 5, 5);
 
-  testplus();
-  testminus();
-  testtimes();
-  testdiv();
-  testchange();
+  sexp vec3 = colon(1, 5);
+  sexp vec4 = colon(1, 5.5);
+  sexp vec5 = colon(1.5, 4);
+  sexp vec6 = colon(vec3, 7);
+  sexp temp1 = 9;
+  sexp vec7 = colon(1, temp1);
+  sexp temp2 = 1;
+  sexp vec8 = colon(temp2, temp1);
+  sexp vec9 = colon(temp2, 10);
+  length(vec9);
+  dim(m1);
+  dim(1);
+  dim(true);
+  dim(3.14);
 
-  testsub();
-  testsubass();
 
-  trigono();
-  interpolation();
+  VEC<bool> tb;
+  print(a == b);
+  print(a != b);
+  print(a >= b);
+  print(a <= b);
+  print(a > b);
+  print(a < b);
+
+  tb = a < b;
+  REQUIRE(tb[0] == true);
+
+
 
 }
