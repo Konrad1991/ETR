@@ -1,5 +1,3 @@
-[![codecov][codecov-badge]][codecov-link]
-
 - [Overview](#overview)
 - [Integrate ETR in your project](#integrate-etr-in-your-project)
 - [How to use it](#how-to-use-it)
