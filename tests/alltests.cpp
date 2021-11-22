@@ -2,49 +2,63 @@
 
 
 #define CATCH_CONFIG_MAIN
-#include "catch.hpp"
+#include "./catch/catch.hpp"
 
-void bs(sexp& arr) {
-  sexp size = length(arr);
-  sexp swapped = true;
-
-  do {
-    swapped = false;
-
-    for(auto i: colon(1, size-1)) {
-
-      if(subset(arr, i) > subset(arr, i + 1) ) {
-          sexp temp = subset(arr, i);
-          subassign(arr, i) = subset(arr, i + 1);
-          subassign(arr, i + 1) = temp;
-          swapped = true;
-      }
-
-    }
-  } while(swapped);
-
-
+bool deq(double a, double b) {
+      return std::fabs(a - b) < 1E-3;
 }
 
 
-TEST_CASE( "stuff2" ) {
+bool eq(sexp inp1, sexp inp2) {
+
+  ass(inp1.size() == inp2.size(), "Error");
+
+  bool test = true;
+
+  for(int i = 0; i < inp1.size(); i++) {
+    if(deq(inp1[i], inp2[i]) == false) {
+      test = false;
+      break;
+    }
+  }
+
+  return test;
+}
 
 
 
 
+bool eq(sexp inp1, double inp2) {
+
+  bool test = true;
+
+  for(int i = 0; i < inp1.size(); i++) {
+    if(deq(inp1[i], inp2) == false) {
+      test = false;
+      break;
+    }
+  }
+
+  return test;
+}
 
 
 
-    sexp arr = coca(3, 2, 8, 1, 0);
 
-    print(arr);
+bool eqb(VEC<bool> inp1, VEC<bool> inp2) {
 
-    bs(arr);
+  ass(inp1.size() == inp2.size(), "Error");
 
-    print();
+  bool test = true;
 
-    print(arr);
+  for(int i = 0; i < inp1.size(); i++) {
+    if(inp1[i] != inp2[i]) {
+      test = false;
+      break;
+    }
+  }
 
+  return test;
 }
 
 TEST_CASE( "plus" ) {
@@ -55,40 +69,28 @@ TEST_CASE( "plus" ) {
   REQUIRE(subset(s, 1)[0] == 4);
 
   v = s + vector(4, 4);
-  REQUIRE(subset(v, 1)[0] == 8);
-  REQUIRE(subset(v, 2)[0] == 8);
-  REQUIRE(subset(v, 3)[0] == 8);
-  REQUIRE(subset(v, 4)[0] == 8);
+  REQUIRE(eq(v, vector(8, 4)) == true);
 
   v = vector(4, 4);
   v = v + 30;
-  REQUIRE(subset(v, 1)[0] == 34);
-  REQUIRE(subset(v, 2)[0] == 34);
-  REQUIRE(subset(v, 3)[0] == 34);
-  REQUIRE(subset(v, 4)[0] == 34);
+  REQUIRE(eq(v, vector(34, 4)) == true);
 
+  REQUIRE(eq(v + 3, vector(37, 4)) == true);
+  REQUIRE(eq(3 + v, vector(37, 4)) == true);
 
   m = s + matrix(2, 2, 2);
-  for(auto i: m) {
-    REQUIRE(i == 6);
-  }
+  REQUIRE(eq(m, vector(6, 4)));
+
 
   m = matrix(2, 2, 2);
   m = m + 40;
-  for(auto i: m) {
-    REQUIRE(i == 42);
-  }
+  REQUIRE(eq(m, vector(42, 4)));
 
   m = v + m;
-  for(auto i: m) {
-    REQUIRE(i == 76);
-  }
+  REQUIRE(eq(m, vector(76, 4)));
 
   m = m + v;
-  for(auto i: m) {
-    REQUIRE(i == 110);
-  }
-
+  REQUIRE(eq(m, vector(110, 4)));
 }
 
 
@@ -101,40 +103,26 @@ TEST_CASE( "minus" ) {
   REQUIRE(subset(s, 1)[0] == -2);
 
   v = s - vector(4, 4);
-
-  REQUIRE(subset(v, 1)[0] == -6);
-  REQUIRE(subset(v, 2)[0] == -6);
-  REQUIRE(subset(v, 3)[0] == -6);
-  REQUIRE(subset(v, 4)[0] == -6);
+  REQUIRE(eq(v, vector(-6, 4)));
 
   v = vector(4, 4);
   v = v - 30;
-  REQUIRE(subset(v, 1)[0] == -26);
-  REQUIRE(subset(v, 2)[0] == -26);
-  REQUIRE(subset(v, 3)[0] == -26);
-  REQUIRE(subset(v, 4)[0] == -26);
+  REQUIRE(eq(v, vector(-26, 4)) == true);
+  REQUIRE(eq(v - 3, vector(-29, 4)) == true);
+  REQUIRE(eq(3 - v, vector(29, 4)) == true);
 
   m = s - matrix(2, 2, 2);
-  for(auto i: m) {
-    REQUIRE(i == -4);
-  }
+  REQUIRE(eq(m, vector(-4, 4)));
 
   m = matrix(2, 2, 2);
   m = m - 40;
-  for(auto i: m) {
-    REQUIRE(i == -38);
-  }
+  REQUIRE(eq(m, vector(-38, 4)));
 
   m = v - m;
-  for(auto i: m) {
-    REQUIRE(i == 12);
-  }
+  REQUIRE(eq(m, vector(12, 4)));
 
   m = m - v;
-  for(auto i: m) {
-    REQUIRE(i == 38);
-  }
-
+  REQUIRE(eq(m, vector(38, 4)));
 
 }
 
@@ -149,40 +137,26 @@ TEST_CASE( "divide" ) {
   REQUIRE(subset(s, 1)[0] == 1);
 
   v = s / vector(4, 4);
-  REQUIRE(subset(v, 1)[0] == 0.25);
-  REQUIRE(subset(v, 2)[0] == 0.25);
-  REQUIRE(subset(v, 3)[0] == 0.25);
-  REQUIRE(subset(v, 4)[0] == 0.25);
+  REQUIRE(eq(v, vector(0.25, 4)));
 
   v = vector(4, 4);
   v = v / 2;
-  REQUIRE(subset(v, 1)[0] == 2);
-  REQUIRE(subset(v, 2)[0] == 2);
-  REQUIRE(subset(v, 3)[0] == 2);
-  REQUIRE(subset(v, 4)[0] == 2);
-
+  REQUIRE(eq(v, vector(2, 4)));
+  REQUIRE(eq(v / 3., vector(2./3., 4)) == true);
+  REQUIRE(eq(3. / v, vector(3./2., 4)) == true);
 
   m = s / matrix(2, 2, 2);
-  for(auto i: m) {
-    REQUIRE(i == 0.5);
-  }
+  REQUIRE(eq(m, vector(0.5, 4)));
 
   m = matrix(2, 2, 2);
   m = m / 40;
-  for(auto i: m) {
-    REQUIRE(i == 0.05);
-  }
-
+  REQUIRE(eq(m, vector(0.05, 4)));
 
   m = v / m;
-  for(auto i: m) {
-    REQUIRE(i == 40);
-  }
+  REQUIRE(eq(m, vector(40, 4)));
 
   m = m / v;
-  for(auto i: m) {
-    REQUIRE(i == 20);
-  }
+  REQUIRE(eq(m, vector(20, 4)));
 
 }
 
@@ -196,18 +170,14 @@ TEST_CASE( "multiply" ) {
   REQUIRE(subset(s, 1)[0] == 9);
 
   v = s * vector(4, 4);
-  REQUIRE(subset(v, 1)[0] == 36);
-  REQUIRE(subset(v, 2)[0] == 36);
-  REQUIRE(subset(v, 3)[0] == 36);
-  REQUIRE(subset(v, 4)[0] == 36);
-
+  REQUIRE(eq(v, vector(36, 4)));
 
   v = vector(4, 4);
   v = v * 2;
-  REQUIRE(subset(v, 1)[0] == 8);
-  REQUIRE(subset(v, 2)[0] == 8);
-  REQUIRE(subset(v, 3)[0] == 8);
-  REQUIRE(subset(v, 4)[0] == 8);
+  REQUIRE(eq(v, vector(8, 4)));
+  REQUIRE(eq(v * 3., vector(24, 4)) == true);
+  REQUIRE(eq(3*v, vector(24, 4)) == true);
+
 
 
   m = s * matrix(2, 2, 2);
@@ -239,279 +209,581 @@ TEST_CASE( "multiply" ) {
 
 
 
-TEST_CASE( "vector subsetting" ) {
+TEST_CASE( "colon" ) {
 
-  sexp a = range(1, 5);
-  sexp b = coca(1, 3, 5);
-  VEC<bool> bb(7);
-  bb[0] = true;
-  bb[1] = false;
-  bb[2] = true;
-  bb[3] = true;
-  bb[4] = true;
-  bb[5] = true;
-  bb[6] = true;
+  REQUIRE(eq(colon(1, 3), coca(1, 2, 3)) == true);
+  REQUIRE(eq(colon(1., 3.), coca(1, 2, 3)) == true);
+  REQUIRE(eq(colon(1., 3), coca(1, 2, 3)) == true);
+  REQUIRE(eq(colon(1, 3.), coca(1, 2, 3)) == true);
 
-  REQUIRE(subset(a, 1)[0] == 1.0);
+  sexp temp1(1, 1.0);
+  REQUIRE(eq(colon(temp1, 3.), coca(1, 2, 3)) == true);
+  REQUIRE(eq(colon(temp1, 3), coca(1, 2, 3)) == true);
 
-  REQUIRE(subset(a, 1.1)[0] == 1.0);
-  sexp result;
-  result = subset(a, b);
-  REQUIRE(result[0] == 1.0);
-  REQUIRE(result[1] == 3.0);
-  REQUIRE(result[2] == 5.0);
+  sexp temp2(1, 3.0);
+  REQUIRE(eq(colon(1., temp2), coca(1, 2, 3)) == true);
+  REQUIRE(eq(colon(1, temp2), coca(1, 2, 3)) == true);
 
-  result = subset(a, bb);
-  REQUIRE(result[0] == 1.0);
-  REQUIRE(result[1] == 3.0);
-  REQUIRE(result[2] == 4.0);
-  REQUIRE(result[3] == 5.0);
-  REQUIRE(result[4] == 1.0);
-  REQUIRE(result[5] == 2.0);
+  REQUIRE(eq(colon(temp1, temp2), coca(1, 2, 3)) == true);
+
+  REQUIRE(length(1) == length(3.14));
+  REQUIRE(length(1) == length(true));
+
+  sexp temp3 = matrix(4, 2, 2);
+  sexp temp4 = matrix(5, 3, 4);
+
+  REQUIRE(dim(temp3)[0] == 2);
+  REQUIRE(dim(temp3)[1] == 2);
+
+  REQUIRE(dim(temp4)[0] == 3);
+  REQUIRE(dim(temp4)[1] == 4);
 
 }
 
-TEST_CASE( "matrix subsetting" ) {
-  sexp a, r, c;
-  VEC<bool> cb(5);
-  VEC<bool> rb(6);
 
-  a = matrix(colon(1, 15), 5, 3);
-  r = coca(1, 2, 5);
-  c = coca(1, 3, 1, 1);
-  cb[0] = true;
-  cb[1] = false;
-  cb[2] = true;
-  cb[3] = true;
-  cb[4] = true;
+TEST_CASE( "allocation" ) {
 
+  sexp a = vector(50);
+  REQUIRE(length(a) == 50);
+
+  sexp b = vector(3.14, 50);
+  REQUIRE(eq(b, vector(3.14, 50)));
+
+  sexp c = vector(b);
+  REQUIRE(eq(c, vector(3.14, 50)));
+
+  sexp d = matrix(3.5, 2, 2);
+  REQUIRE(eq(d, vector(3.5, 4)));
+
+  sexp e = matrix(2, 5);
+  REQUIRE(length(e) == 10);
+
+  sexp f = matrix(d, 4, 1);
+  REQUIRE(eq(f, vector(3.5, 4)));
+}
+
+
+TEST_CASE( "comparison == " ) {
+  sexp v1 = coca(1, 2, 3, 4);
+  sexp v2 = coca(1, 2, 4, 4);
+
+  VEC<bool> res(4);
+  res[0] = true;
+  res[1] = true;
+  res[2] = false;
+  res[3] = true;
+
+  VEC<bool> a = v1 == v2;
+  REQUIRE(eqb(a, res) == true);
+  REQUIRE(eqb(v1 == v2, res) == true);
+  REQUIRE(eqb(v1 == coca(1, 2, 4, 4), res) == true);
+  REQUIRE(eqb(coca(1,2,3,4) == v2, res) == true);
+  REQUIRE(eqb(coca(1, 2, 3, 4) == coca(1, 2, 4, 4), res) == true);
+
+  res[0] = false;
+  res[1] = false;
+  res[2] = true;
+  res[3] = false;
+  VEC<bool> b = v1 == 3;
+  REQUIRE(eqb(b, res) == true);
+  REQUIRE(eqb(v1 == 3, res) == true);
+
+  res[0] = false;
+  res[1] = false;
+  res[2] = true;
+  res[3] = false;
+  VEC<bool> c = 3 == v1;
+  REQUIRE(eqb(c, res) == true);
+  REQUIRE(eqb(3==v1, res) == true);
+
+  res[0] = false;
+  res[1] = false;
+  res[2] = true;
+  res[3] = false;
+  VEC<bool> d = v1 == 3.0;
+  REQUIRE(eqb(d, res) == true);
+  REQUIRE(eqb(v1 == 3.0, res) == true);
+
+  res[0] = false;
+  res[1] = false;
+  res[2] = true;
+  res[3] = false;
+  VEC<bool> e = 3.0 == v1;
+  REQUIRE(eqb(c, res) == true);
+  REQUIRE(eqb(3.0==v1, res) == true);
+}
+
+
+TEST_CASE( "comparison >= " ) {
+  sexp v1 = coca(1, 2, 3, 4);
+  sexp v2 = coca(1, 2, 4, 4);
+
+  VEC<bool> res(4);
+  res[0] = true;
+  res[1] = true;
+  res[2] = false;
+  res[3] = true;
+
+  VEC<bool> a = v1 >= v2;
+  REQUIRE(eqb(a, res) == true);
+  REQUIRE(eqb(v1 >= v2, res) == true);
+  REQUIRE(eqb(v1 >= coca(1, 2, 4, 4), res) == true);
+  REQUIRE(eqb(coca(1,2,3,4) >= v2, res) == true);
+  REQUIRE(eqb(coca(1, 2, 3, 4) >= coca(1, 2, 4, 4), res) == true);
+
+  res[0] = false;
+  res[1] = false;
+  res[2] = true;
+  res[3] = true;
+  VEC<bool> b = v1 >= 3;
+  REQUIRE(eqb(b, res) == true);
+  REQUIRE(eqb(v1 >= 3, res) == true);
+
+  res[0] = true;
+  res[1] = true;
+  res[2] = true;
+  res[3] = false;
+  VEC<bool> c = 3 >= v1;
+  REQUIRE(eqb(c, res) == true);
+  REQUIRE(eqb(3>=v1, res) == true);
+
+
+  res[0] = false;
+  res[1] = false;
+  res[2] = true;
+  res[3] = true;
+  VEC<bool> d = v1 >= 3.0;
+  REQUIRE(eqb(d, res) == true);
+  REQUIRE(eqb(v1 >= 3.0, res) == true);
+
+  res[0] = true;
+  res[1] = true;
+  res[2] = true;
+  res[3] = false;
+  VEC<bool> e = 3.0 >= v1;
+  REQUIRE(eqb(e, res) == true);
+  REQUIRE(eqb(3.0>=v1, res) == true);
+}
+
+TEST_CASE( "comparison > " ) {
+  sexp v1 = coca(1, 2, 3, 5);
+  sexp v2 = coca(1, 2, 4, 4);
+
+  VEC<bool> res(4);
+  res[0] = false;
+  res[1] = false;
+  res[2] = false;
+  res[3] = true;
+
+  VEC<bool> a = v1 > v2;
+  REQUIRE(eqb(a, res) == true);
+  REQUIRE(eqb(v1 > v2, res) == true);
+  REQUIRE(eqb(v1 > coca(1, 2, 4, 4), res) == true);
+  REQUIRE(eqb(coca(1,2,3,5) > v2, res) == true);
+  REQUIRE(eqb(coca(1, 2, 3, 5) > coca(1, 2, 4, 4), res) == true);
+
+  res[0] = false;
+  res[1] = false;
+  res[2] = false;
+  res[3] = true;
+  VEC<bool> b = v1 > 3.;
+  REQUIRE(eqb(b, res) == true);
+  REQUIRE(eqb(v1 > 3., res) == true);
+
+  res[0] = true;
+  res[1] = true;
+  res[2] = false;
+  res[3] = false;
+  VEC<bool> c = 3. > v1;
+  REQUIRE(eqb(c, res) == true);
+  REQUIRE(eqb(3.>v1, res) == true);
+
+  res[0] = false;
+  res[1] = false;
+  res[2] = false;
+  res[3] = true;
+  VEC<bool> d = v1 > 3;
+  REQUIRE(eqb(d, res) == true);
+  REQUIRE(eqb(v1 > 3, res) == true);
+
+  res[0] = true;
+  res[1] = true;
+  res[2] = false;
+  res[3] = false;
+  VEC<bool> e = 3 > v1;
+  REQUIRE(eqb(e, res) == true);
+  REQUIRE(eqb(3>v1, res) == true);
+}
+
+
+TEST_CASE( "comparison <= " ) {
+  sexp v1 = coca(1, 2, 3, 5);
+  sexp v2 = coca(1, 2, 4, 4);
+
+  VEC<bool> res(4);
+  res[0] = true;
+  res[1] = true;
+  res[2] = true;
+  res[3] = false;
+
+  VEC<bool> a = v1 <= v2;
+  REQUIRE(eqb(a, res) == true);
+  REQUIRE(eqb(v1 <= v2, res) == true);
+  REQUIRE(eqb(v1 <= coca(1, 2, 4, 4), res) == true);
+  REQUIRE(eqb(coca(1,2,3,5) <= v2, res) == true);
+  REQUIRE(eqb(coca(1, 2, 3, 5) <= coca(1, 2, 4, 4), res) == true);
+
+  res[0] = true;
+  res[1] = true;
+  res[2] = true;
+  res[3] = false;
+  VEC<bool> b = v1 <= 3.;
+  REQUIRE(eqb(b, res) == true);
+  REQUIRE(eqb(v1 <= 3., res) == true);
+
+  res[0] = false;
+  res[1] = false;
+  res[2] = true;
+  res[3] = true;
+  VEC<bool> c = 3. <= v1;
+  REQUIRE(eqb(c, res) == true);
+  REQUIRE(eqb(3.<=v1, res) == true);
+
+  res[0] = true;
+  res[1] = true;
+  res[2] = true;
+  res[3] = false;
+  VEC<bool> d = v1 <= 3;
+  REQUIRE(eqb(d, res) == true);
+  REQUIRE(eqb(v1 <= 3, res) == true);
+
+  res[0] = false;
+  res[1] = false;
+  res[2] = true;
+  res[3] = true;
+  VEC<bool> e = 3 <= v1;
+  REQUIRE(eqb(e, res) == true);
+  REQUIRE(eqb(3<=v1, res) == true);
+}
+
+
+TEST_CASE( "comparison < " ) {
+  sexp v1 = coca(1, 2, 3, 5);
+  sexp v2 = coca(1, 2, 4, 6);
+
+  VEC<bool> res(4);
+  res[0] = false;
+  res[1] = false;
+  res[2] = true;
+  res[3] = true;
+
+  VEC<bool> a = v1 < v2;
+  REQUIRE(eqb(a, res) == true);
+  REQUIRE(eqb(v1 < v2, res) == true);
+  REQUIRE(eqb(v1 < coca(1, 2, 4, 6), res) == true);
+  REQUIRE(eqb(coca(1,2,3,5) < v2, res) == true);
+  REQUIRE(eqb(coca(1, 2, 3, 5) < coca(1, 2, 4, 6), res) == true);
+
+  res[0] = true;
+  res[1] = false;
+  res[2] = false;
+  res[3] = false;
+  VEC<bool> b = v1 < 2.;
+  REQUIRE(eqb(b, res) == true);
+  REQUIRE(eqb(v1 < 2., res) == true);
+
+  res[0] = false;
+  res[1] = false;
+  res[2] = false;
+  res[3] = true;
+  VEC<bool> c = 3. < v1;
+  REQUIRE(eqb(c, res) == true);
+  REQUIRE(eqb(3.<v1, res) == true);
+
+  res[0] = true;
+  res[1] = true;
+  res[2] = false;
+  res[3] = false;
+  VEC<bool> d = v1 < 3;
+  REQUIRE(eqb(d, res) == true);
+  REQUIRE(eqb(v1 < 3, res) == true);
+
+  res[0] = false;
+  res[1] = false;
+  res[2] = false;
+  res[3] = true;
+  VEC<bool> e = 3 < v1;
+  REQUIRE(eqb(e, res) == true);
+  REQUIRE(eqb(3<v1, res) == true);
+}
+
+
+
+TEST_CASE( "comparison != " ) {
+  sexp v1 = coca(1, 2, 3, 5);
+  sexp v2 = coca(1, 2, 4, 6);
+
+  VEC<bool> res(4);
+  res[0] = false;
+  res[1] = false;
+  res[2] = true;
+  res[3] = true;
+
+  VEC<bool> a = v1 != v2;
+  REQUIRE(eqb(a, res) == true);
+  REQUIRE(eqb(v1 < v2, res) == true);
+  REQUIRE(eqb(v1 < coca(1, 2, 4, 6), res) == true);
+  REQUIRE(eqb(coca(1,2,3,5) != v2, res) == true);
+  REQUIRE(eqb(coca(1, 2, 3, 5) != coca(1, 2, 4, 6), res) == true);
+
+  res[0] = true;
+  res[1] = false;
+  res[2] = true;
+  res[3] = true;
+  VEC<bool> b = v1 != 2.;
+  REQUIRE(eqb(b, res) == true);
+  REQUIRE(eqb(v1 != 2., res) == true);
+
+  res[0] = true;
+  res[1] = true;
+  res[2] = false;
+  res[3] = true;
+  VEC<bool> c = 3. != v1;
+  REQUIRE(eqb(c, res) == true);
+  REQUIRE(eqb(3.!=v1, res) == true);
+
+  res[0] = true;
+  res[1] = true;
+  res[2] = false;
+  res[3] = true;
+  VEC<bool> d = v1 != 3;
+  REQUIRE(eqb(d, res) == true);
+  REQUIRE(eqb(v1 != 3, res) == true);
+
+  res[0] = true;
+  res[1] = true;
+  res[2] = false;
+  res[3] = true;
+  VEC<bool> e = 3 != v1;
+  REQUIRE(eqb(e, res) == true);
+  REQUIRE(eqb(3!=v1, res) == true);
+}
+
+
+
+TEST_CASE( "concatenate" ) {
+
+  sexp a = coca(1, 2, 3);
+  sexp res1(3);
+  res1[0] = 1.;
+  res1[1] = 2.;
+  res1[2] = 3.;
+  REQUIRE(eq(a, res1) == true);
+
+  sexp b = coca(a, 100);
+  sexp res2(4);
+  res2[0] = 1.;
+  res2[1] = 2.;
+  res2[2] = 3.;
+  res2[3] = 100.;
+  REQUIRE(eq(b, res2) == true);
+
+  sexp c = coca(100, a);
+  sexp res3(4);
+  res3[0] = 100.;
+  res3[1] = 1.;
+  res3[2] = 2.;
+  res3[3] = 3.;
+  REQUIRE(eq(c, res3) == true);
+
+
+  sexp d = coca(a, a);
+  sexp res4(6);
+  res4[0] = 1.;
+  res4[1] = 2.;
+  res4[2] = 3.;
+  res4[3] = 1.;
+  res4[4] = 2.;
+  res4[5] = 3.;
+  REQUIRE(eq(d, res4) == true);
+
+}
+
+
+TEST_CASE( "exponent & log" ) {
+  sexp a = coca(1, 2, 3, 4);
+  a = a^2;
+  sexp res(4);
+  res[0] = 1.;
+  res[1] = 4.;
+  res[2] = 9.;
+  res[3] = 16.;
+  REQUIRE(eq(a, res) == true);
+
+  sexp b = coca(1, 2, 3, 4);
+  b = exp(b, 2);
+  REQUIRE(eq(b, res) == true);
+
+  REQUIRE(exp(2, 2) == 4);
+
+  a = coca(1, 2, 3, 4);
+  a = ln(a);
+  res[0] = 0.;
+  res[1] = 0.693147;
+  res[2] = 1.098612;
+  res[3] = 1.386294;
+  REQUIRE(eq(a, res) == true);
+
+  REQUIRE(ln(1) == 0);
+
+}
+
+TEST_CASE( "printing" ) {
+
+  sexp scalar = 1.5;
+  sexp vec = vector(3.14, 2);
+  sexp mat = matrix(3.14, 2, 3);
+
+  print(1);
+  print(3.14);
+  print("text");
+  print(true);
+  print(scalar);
+  print(vec);
+  print(mat);
+  print();
+  print(coca(1,2));
+  print(matrix(3, 2, 1));
+
+}
+
+
+
+TEST_CASE( "vector subsetting" ) {
+
+  sexp a = colon(1, 5);
+  sexp b = coca(1, 3, 5);
+  sexp res(3);
+  res[0] = 1;
+  res[1] = 3;
+  res[2] = 5;
+
+  REQUIRE(eq(subset(a), a) == true);
+  REQUIRE(eq(subset(a, 1), 1) == true);
+  REQUIRE(eq(subset(a, 1.5), 1) == true);
+  REQUIRE(eq(subset(a, nullptr), a) == true);
+  REQUIRE(eq(subset(a, true), a) == true);
+  REQUIRE(eq(subset(a, false), vector(0)) == true);
+  REQUIRE(eq(subset(a, b), res) == true);
+  REQUIRE(eq(subset(a, coca(1, 3, 5)), res) == true);
+
+
+  VEC<bool> rb(5);
   rb[0] = true;
   rb[1] = false;
-  rb[2] = true;
-  rb[3] = true;
-  rb[4] = true;
-  rb[5] = true;
-
-  sexp result;
-
-  result = subset(a, 1, 2);
-  REQUIRE( result[0] == 6.0);
-  result = subset(a, 5, 3.1);
-  REQUIRE( result[0] == 15.0);
-  result = subset(a, 2., 3.);
-  REQUIRE( result[0] == 12.0);
-  result = subset(a, 4., 1.);
-  REQUIRE( result[0] == 4.0);
-
-  result = subset(a, 1, true);
-  REQUIRE( result[0] == 1.0);
-  REQUIRE( result[1] == 6.0);
-  REQUIRE( result[2] == 11.0);
-
-  result = subset(a, 4, true);
-  REQUIRE( result[0] == 4.0);
-  REQUIRE( result[1] == 9.0);
-  REQUIRE( result[2] == 14.0);
-
-
-  result = subset(a, 1, nullptr);
-  REQUIRE( result[0] == 1.0);
-  REQUIRE( result[1] == 6.0);
-  REQUIRE( result[2] == 11.0);
-
-  result = subset(a, 1, c);
-  REQUIRE( result[0] == 1.0);
-  REQUIRE( result[1] == 11.0);
-  REQUIRE( result[2] == 1.0);
-  REQUIRE( result[3] == 1.0);
-
-  result = subset(a, 5, c);
-  REQUIRE( result[0] == 5.0);
-  REQUIRE( result[1] == 15.0);
-  REQUIRE( result[2] == 5.0);
-  REQUIRE( result[3] == 5.0);
-
-  result = subset(a, 1, cb);
-  REQUIRE( result[0] == 1.0);
-  REQUIRE( result[1] == 11.0);
-  REQUIRE( result[2] == 1.0);
-  REQUIRE( result[3] == 6.0);
-
-  result = subset(a, true, 1);
-  REQUIRE( result[0] == 1.0);
-  REQUIRE( result[1] == 2.0);
-  REQUIRE( result[2] == 3.0);
-  REQUIRE( result[3] == 4.0);
-  REQUIRE( result[4] == 5.0);
-
-  result = subset(a, r, 2);
-  REQUIRE( result[0] == 6.0);
-  REQUIRE( result[1] == 7.0);
-  REQUIRE( result[2] == 10.0);
-
-  result = subset(a, r, 3);
-  REQUIRE( result[0] == 11.0);
-  REQUIRE( result[1] == 12.0);
-  REQUIRE( result[2] == 15.0);
-
-  result = subset(a, rb, 1);
-  REQUIRE( result[0] == 1.0);
-  REQUIRE( result[1] == 3.0);
-  REQUIRE( result[2] == 4.0);
-  REQUIRE( result[3] == 5.0);
-  REQUIRE( result[4] == 1.0);
-
-
-  result = subset(a, true, c);
-  REQUIRE( result[0] == 1.0);
-  REQUIRE( result[1] == 2.0);
-  REQUIRE( result[2] == 3.0);
-  REQUIRE( result[3] == 4.0);
-  REQUIRE( result[4] == 5.0);
-  REQUIRE( result[5] == 11.0);
-  REQUIRE( result[6] == 12.0);
-  REQUIRE( result[7] == 13.0);
-  REQUIRE( result[8] == 14.0);
-  REQUIRE( result[9] == 15.0);
-  REQUIRE( result[10] == 1.0);
-  REQUIRE( result[11] == 2.0);
-  REQUIRE( result[12] == 3.0);
-  REQUIRE( result[13] == 4.0);
-  REQUIRE( result[14] == 5.0);
-  REQUIRE( result[15] == 1.0);
-  REQUIRE( result[16] == 2.0);
-  REQUIRE( result[17] == 3.0);
-  REQUIRE( result[18] == 4.0);
-  REQUIRE( result[19] == 5.0);
-
-  result = subset(a, true, cb);
-  REQUIRE( result[0] == 1.0);
-  REQUIRE( result[1] == 2.0);
-  REQUIRE( result[2] == 3.0);
-  REQUIRE( result[3] == 4.0);
-  REQUIRE( result[4] == 5.0);
-  REQUIRE( result[5] == 11.0);
-  REQUIRE( result[6] == 12.0);
-  REQUIRE( result[7] == 13.0);
-  REQUIRE( result[8] == 14.0);
-  REQUIRE( result[9] == 15.0);
-  REQUIRE( result[10] == 1.0);
-  REQUIRE( result[11] == 2.0);
-  REQUIRE( result[12] == 3.0);
-  REQUIRE( result[13] == 4.0);
-  REQUIRE( result[14] == 5.0);
-  REQUIRE( result[15] == 6.0);
-  REQUIRE( result[16] == 7.0);
-  REQUIRE( result[17] == 8.0);
-  REQUIRE( result[18] == 9.0);
-  REQUIRE( result[19] == 10.0);
-
-  result = subset(a, r, true);
-  REQUIRE( result[0] == 1.0);
-  REQUIRE( result[1] == 2.0);
-  REQUIRE( result[2] == 5.0);
-  REQUIRE( result[3] == 6.0);
-  REQUIRE( result[4] == 7.0);
-  REQUIRE( result[5] == 10.0);
-  REQUIRE( result[6] == 11.0);
-  REQUIRE( result[7] == 12.0);
-  REQUIRE( result[8] == 15.0);
-
-
-  result = subset(a, rb, true);
-  REQUIRE( result[0] == 1.0);
-  REQUIRE( result[1] == 3.0);
-  REQUIRE( result[2] == 4.0);
-  REQUIRE( result[3] == 5.0);
-  REQUIRE( result[4] == 1.0);
-  REQUIRE( result[5] == 6.0);
-  REQUIRE( result[6] == 8.0);
-  REQUIRE( result[7] == 9.0);
-  REQUIRE( result[8] == 10.0);
-  REQUIRE( result[9] == 6.0);
-  REQUIRE( result[10] == 11.0);
-  REQUIRE( result[11] == 13.0);
-  REQUIRE( result[12] == 14.0);
-  REQUIRE( result[13] == 15.0);
-  REQUIRE( result[14] == 11.0);
-
-  result = subset(a, r, c);
-  REQUIRE( result[0] == 1.0);
-  REQUIRE( result[1] == 2.0);
-  REQUIRE( result[2] == 5.0);
-  REQUIRE( result[3] == 11.0);
-  REQUIRE( result[4] == 12.0);
-  REQUIRE( result[5] == 15.0);
-  REQUIRE( result[6] == 1.0);
-  REQUIRE( result[7] == 2.0);
-  REQUIRE( result[8] == 5.0);
-  REQUIRE( result[9] == 1.0);
-  REQUIRE( result[10] == 2.0);
-  REQUIRE( result[11] == 5.0);
-
-
-  result = subset(a, r, cb);
-  REQUIRE( result[0] == 1.0);
-  REQUIRE( result[1] == 2.0);
-  REQUIRE( result[2] == 5.0);
-  REQUIRE( result[3] == 11.0);
-  REQUIRE( result[4] == 12.0);
-  REQUIRE( result[5] == 15.0);
-  REQUIRE( result[6] == 1.0);
-  REQUIRE( result[7] == 2.0);
-  REQUIRE( result[8] == 5.0);
-  REQUIRE( result[9] == 6.0);
-  REQUIRE( result[10] == 7.0);
-  REQUIRE( result[11] == 10.0);
-
-  result = subset(a, rb, c);
-  REQUIRE( result[0] == 1.0);
-  REQUIRE( result[1] == 3.0);
-  REQUIRE( result[2] == 4.0);
-  REQUIRE( result[3] == 5.0);
-  REQUIRE( result[4] == 1.0);
-  REQUIRE( result[5] == 11.0);
-  REQUIRE( result[6] == 13.0);
-  REQUIRE( result[7] == 14.0);
-  REQUIRE( result[8] == 15.0);
-  REQUIRE( result[9] == 11.0);
-  REQUIRE( result[10] == 1.0);
-  REQUIRE( result[11] == 3.0);
-  REQUIRE( result[12] == 4.0);
-  REQUIRE( result[13] == 5.0);
-  REQUIRE( result[14] == 1.0);
-  REQUIRE( result[15] == 1.0);
-  REQUIRE( result[16] == 3.0);
-  REQUIRE( result[17] == 4.0);
-  REQUIRE( result[18] == 5.0);
-  REQUIRE( result[19] == 1.0);
-
-
-  result = subset(a, rb, cb);
-  REQUIRE( result[0] == 1.0);
-  REQUIRE( result[1] == 3.0);
-  REQUIRE( result[2] == 4.0);
-  REQUIRE( result[3] == 5.0);
-  REQUIRE( result[4] == 1.0);
-  REQUIRE( result[5] == 11.0);
-  REQUIRE( result[6] == 13.0);
-  REQUIRE( result[7] == 14.0);
-  REQUIRE( result[8] == 15.0);
-  REQUIRE( result[9] == 11.0);
-  REQUIRE( result[10] == 1.0);
-  REQUIRE( result[11] == 3.0);
-  REQUIRE( result[12] == 4.0);
-  REQUIRE( result[13] == 5.0);
-  REQUIRE( result[14] == 1.0);
-  REQUIRE( result[15] == 6.0);
-  REQUIRE( result[16] == 8.0);
-  REQUIRE( result[17] == 9.0);
-  REQUIRE( result[18] == 10.0);
-  REQUIRE( result[19] == 6.0);
+  rb[2] = false;
+  rb[3] = false;
+  rb[4] = false;
+  REQUIRE(subset(a, a == b)[0] == 1);
+}
 
 
 
+TEST_CASE( "matrix subsetting" ) {
 
+  sexp a = matrix(colon(1, 15), 3, 5);
+  sexp r = coca(1, 3);
+  sexp c = coca(1, 2, 5, 3);
+  sexp res(8);
+  res[0] = 1;
+  res[1] = 3;
+  res[2] = 4;
+  res[3] = 6;
+  res[4] = 13;
+  res[5] = 15;
+  res[6] = 7;
+  res[7] = 9;
+  REQUIRE(eq(subset(a, r, c), res) == true);
+  REQUIRE(eq(subset(a, coca(1, 3), c), res) == true);
+  REQUIRE(eq(subset(a, r, coca(1,2,5,3)), res) == true);
+  REQUIRE(eq(subset(a, coca(1,3), coca(1,2,5,3)), res) == true);
+  REQUIRE(eq(subset(a, true, true), a) == true);
+  REQUIRE(eq(subset(a, true, nullptr), a) == true);
+  REQUIRE(eq(subset(a, nullptr, true), a) == true);
+  REQUIRE(eq(subset(a, nullptr, nullptr), a) == true);
+  REQUIRE(eq(subset(a, false, true), vector(0)) == true);
+  REQUIRE(eq(subset(a, true, false), vector(0)) == true);
+
+  REQUIRE( eq(subset(a, 1, 1), 1) == true);
+  REQUIRE( eq(subset(a, 1, 1.5),1)== true);
+  REQUIRE( eq(subset(a, 1.5, 1), 1)== true);
+  REQUIRE( eq(subset(a, 1.5, 1.5), 1)== true);
+
+  res = coca(1, 4, 7, 10, 13);
+  REQUIRE(eq(subset(a, 1, true), res) == true);
+  REQUIRE(eq(subset(a, 1.5, true), res) == true);
+  REQUIRE(eq(subset(a, 1, false), vector(0)) == true);
+  REQUIRE(eq(subset(a, 1, nullptr), res) == true);
+  REQUIRE(eq(subset(a, 1.5, nullptr), res) == true);
+
+  res = coca(1, 4, 13, 7);
+  REQUIRE(eq(subset(a, 1, c), res) == true);
+
+  sexp temp1 = coca(1, 1, 1, 1, 2);
+  sexp temp2 = coca(1, 1, 1, 1, 1);
+  res = coca(1, 4, 7, 10);
+  REQUIRE(eq(subset(a, 1, temp1 == temp2), res) == true);
+
+  res = coca(1, 2, 3);
+  REQUIRE(eq(subset(a, true, 1), res) == true);
+  REQUIRE(eq(subset(a, nullptr, 1), res) == true);
+
+  res = coca(4, 6);
+  REQUIRE(eq(subset(a, r, 2), res) == true);
+
+  temp1 = coca(1, 2, 3);
+  temp2 = coca(1, 3, 3);
+  res = coca(1, 3);
+  REQUIRE(eq(subset(a, temp1 == temp2, 1), res) == true);
+
+  REQUIRE(subset(a, 1.5, 1.5)[0] == 1);
+
+  res = coca(1, 7);
+  REQUIRE(eq(subset(a, 1.5, coca(1, 3)), res) == true);
+
+  temp1 = coca(1, 5);
+  temp2 = coca(1, 1);
+  res = coca(1);
+  REQUIRE(eq(subset(a, 1.5, temp1 == temp2), res) == true);
+
+  res = coca(1, 2, 3);
+  REQUIRE(eq(subset(a, true, 1.5), res) == true);
+  REQUIRE(eq(subset(a, nullptr, 1.5), res) == true);
+
+  res = coca(1, 2, 2);
+  REQUIRE(eq(subset(a, coca(1, 2, 2), 1.5), res) == true);
+
+  temp1 = coca(1, 2, 3);
+  temp2 = coca(1, 1, 3);
+  res = coca(13, 15);
+  REQUIRE(eq(subset(a, temp1 == temp2, 5.5), res) == true);
+
+
+  c = coca(1, 2, 5);
+  res = coca(1, 2, 3, 4, 5, 6, 13, 14, 15);
+  REQUIRE(eq(subset(a, true, c), res) == true);
+  REQUIRE(eq(subset(a, nullptr, c), res) == true);
+
+  res = coca(1, 2, 3, 7, 8, 9);
+  REQUIRE(eq(subset(a, true, temp1 == temp2), res) == true);
+  REQUIRE(eq(subset(a, nullptr, temp1 == temp2), res) == true);
+
+  r = coca(2);
+  res = coca(2, 5, 8, 11, 14);
+  REQUIRE(eq(subset(a, r, true), res) == true);
+
+  res = coca(1, 2, 3, 7, 8, 9);
+  REQUIRE(eq(subset(a, true, temp1 == temp2), res) == true);
 }
 
 
@@ -819,57 +1091,5 @@ REQUIRE(subset(a, 1, 3)[0] == 4.0);
 REQUIRE(subset(a, 2, 3)[0] == 5.0);
 REQUIRE(subset(a, 3, 3)[0] == 6.0);
 print(sinus(0));
-
-r == c;
-r >= c;
-r != c;
-r > c;
-r < c;
-r <= c;
-
-
-}
-
-
-
-
-TEST_CASE( "stuff" ) {
-
-  sexp a = coca(1,2, 3, 4);
-  sexp b = coca(1, 2., 100.5, 4.000001);
-
-  sexp vec1 = vector(4);
-  sexp vec2 = vector(3.14, 4);
-  sexp m1 = matrix(2, 5);
-  sexp m2 = matrix(3.14, 5, 5);
-
-  sexp vec3 = colon(1, 5);
-  sexp vec4 = colon(1, 5.5);
-  sexp vec5 = colon(1.5, 4);
-  sexp vec6 = colon(vec3, 7);
-  sexp temp1 = 9;
-  sexp vec7 = colon(1, temp1);
-  sexp temp2 = 1;
-  sexp vec8 = colon(temp2, temp1);
-  sexp vec9 = colon(temp2, 10);
-  length(vec9);
-  dim(m1);
-  dim(1);
-  dim(true);
-  dim(3.14);
-
-
-  VEC<bool> tb;
-  print(a == b);
-  print(a != b);
-  print(a >= b);
-  print(a <= b);
-  print(a > b);
-  print(a < b);
-
-  tb = a < b;
-  REQUIRE(tb[0] == true);
-
-
 
 }

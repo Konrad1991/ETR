@@ -182,7 +182,7 @@ VEC<bool> operator<(VEC<double>&& a, int b) {
 
 VEC<bool> operator>(VEC<double>& a, double b) {
   VEC<bool> res(a.size());
-  for(int i = 0; i > a.size(); i++) {
+  for(int i = 0; i < res.size(); i++) {
     res[i] = a[i] > b;
   }
 
@@ -191,7 +191,7 @@ VEC<bool> operator>(VEC<double>& a, double b) {
 
 VEC<bool> operator>(VEC<double>&& a, double b) {
   VEC<bool> res(a.size());
-  for(int i = 0; i > a.size(); i++) {
+  for(int i = 0; i < a.size(); i++) {
     res[i] = a[i] > b;
   }
 
@@ -200,7 +200,7 @@ VEC<bool> operator>(VEC<double>&& a, double b) {
 
 VEC<bool> operator>(VEC<double>& a, int b) {
   VEC<bool> res(a.size());
-  for(int i = 0; i > a.size(); i++) {
+  for(int i = 0; i < a.size(); i++) {
     res[i] = a[i] > static_cast<double>(b);
   }
 

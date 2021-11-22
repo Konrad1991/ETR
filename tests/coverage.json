@@ -1,24 +1,24 @@
 Filename                                 Regions    Missed Regions     Cover   Functions  Missed Functions  Executed       Lines      Missed Lines     Cover    Branches   Missed Branches     Cover
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-include/etr_bits/add.hpp                      61                16    73.77%          14                 0   100.00%          88                12    86.36%          38                19    50.00%
+include/etr_bits/add.hpp                      68                18    73.53%          21                 2    90.48%         107                18    83.18%          38                19    50.00%
 include/etr_bits/allocation.hpp                6                 0   100.00%           6                 0   100.00%          35                 0   100.00%           0                 0         -
-include/etr_bits/colon.hpp                    47                18    61.70%          17                 8    52.94%         105                44    58.10%          20                 7    65.00%
-include/etr_bits/comparison.hpp              793               743     6.31%          49                41    16.33%         891               790    11.34%         576               548     4.86%
-include/etr_bits/concatenate.hpp              39                26    33.33%           6                 3    50.00%          71                37    47.89%          64                38    40.62%
-include/etr_bits/divide.hpp                   61                16    73.77%          14                 0   100.00%          88                12    86.36%          38                19    50.00%
-include/etr_bits/exponent.hpp                  3                 3     0.00%           3                 3     0.00%           9                 9     0.00%           0                 0         -
-include/etr_bits/mul.hpp                      61                16    73.77%          14                 0   100.00%          88                12    86.36%          38                19    50.00%
-include/etr_bits/pointer_storage.hpp          60                22    63.33%          14                 2    85.71%         130                52    60.00%          72                41    43.06%
-include/etr_bits/print.hpp                    76                66    13.16%           9                 6    33.33%          92                77    16.30%          46                42     8.70%
-include/etr_bits/subset.hpp                 1067               796    25.40%          73                51    30.14%        1804              1366    24.28%         754               572    24.14%
+include/etr_bits/colon.hpp                    47                 4    91.49%          17                 3    82.35%         105                15    85.71%          20                 1    95.00%
+include/etr_bits/comparison.hpp              793               488    38.46%          49                13    73.47%         891               413    53.65%         576               392    31.94%
+include/etr_bits/concatenate.hpp              44                18    59.09%           8                 2    75.00%          94                26    72.34%         100                51    49.00%
+include/etr_bits/divide.hpp                   68                18    73.53%          21                 2    90.48%         107                18    83.18%          38                19    50.00%
+include/etr_bits/exponent.hpp                 22                 7    68.18%          18                 5    72.22%          62                23    62.90%           4                 2    50.00%
+include/etr_bits/mul.hpp                      68                18    73.53%          21                 2    90.48%         107                18    83.18%          38                19    50.00%
+include/etr_bits/pointer_storage.hpp          60                22    63.33%          14                 2    85.71%         130                52    60.00%          62                30    51.61%
+include/etr_bits/print.hpp                    76                33    56.58%           9                 2    77.78%          92                41    55.43%          46                24    47.83%
+include/etr_bits/subset.hpp                 1067               691    35.24%          73                30    58.90%        1804              1166    35.37%         754               524    30.50%
 include/etr_bits/subsetassign.hpp           1085               791    27.10%          73                47    35.62%        1802              1350    25.08%         766               579    24.41%
-include/etr_bits/subtract.hpp                 61                16    73.77%          14                 0   100.00%          88                12    86.36%          38                19    50.00%
+include/etr_bits/subtract.hpp                 68                18    73.53%          21                 2    90.48%         107                18    83.18%          38                19    50.00%
 include/etr_bits/trigo.hpp                    18                17     5.56%          18                17     5.56%          54                51     5.56%           0                 0         -
 include/etr_bits/util.hpp                      7                 1    85.71%           2                 0   100.00%          13                 3    76.92%           4                 1    75.00%
-include/etr_bits/vec.hpp                      73                14    80.82%          28                 2    92.86%         134                23    82.84%         118                48    59.32%
-tests/alltests.cpp                           423                 0   100.00%          11                 0   100.00%         690                 0   100.00%          50                 0   100.00%
+include/etr_bits/vec.hpp                      72                10    86.11%          27                 1    96.30%         133                15    88.72%         152                49    67.76%
+tests/alltests.cpp                           403                 3    99.26%          23                 0   100.00%         850                 9    98.94%          32                 3    90.62%
 
 Files which contain no functions:
 include/etr.hpp                                0                 0         -           0                 0         -           0                 0         -           0                 0         -
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-TOTAL                                       3941              2561    35.02%         365               180    50.68%        6182              3850    37.72%        2622              1952    25.55%
+TOTAL                                       3972              2157    45.69%         421               130    69.12%        6493              3236    50.16%        2668              1732    35.08%

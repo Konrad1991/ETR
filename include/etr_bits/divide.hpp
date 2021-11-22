@@ -183,7 +183,7 @@ public:
      r(a), l(b), ismatrix(ismatrix_), nrows(nrows_), ncols(ncols_) { }
 
    T operator[](const int i) const {
-     return l[i] / r;
+     return r/l[i];
    }
 
    int size() const {

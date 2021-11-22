@@ -1,8 +1,0 @@
-#!/bin/bash
-
-clang++ -fprofile-instr-generate -fcoverage-mapping alltests.cpp -o foo -std=c++17
-LLVM_PROFILE_FILE="foo.profraw" ./foo
-llvm-profdata merge -sparse foo.profraw -o foo.profdata
-llvm-cov report ./foo -instr-profile=foo.profdata 
-llvm-cov report ./foo -instr-profile=foo.profdata > coverage.json
-
