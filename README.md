@@ -16,6 +16,7 @@
 
 # Overview 
 
+
 ETR is an expression template library for C++ with syntax almost similar to R. It provides one class (**sexp**) which can hold a scalar, vector or matrix. The type can dynamically be changed during runtime. 
 Furthermore, basic arithmetic operations (+, -, \*, /) can be applied to these objects. Thus, it is easy to write C++ which almost looks like R code. 
 
