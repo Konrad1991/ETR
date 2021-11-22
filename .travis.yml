@@ -8,7 +8,9 @@ cache:
 
 addons:
   apt:
-    packages: lcov
+    packages: 
+    	- lcov
+        - libstdc++-7-dev
 
 install:
 - mkdir -p $HOME/.cache
