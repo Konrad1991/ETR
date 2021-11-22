@@ -10,9 +10,9 @@ addons:
   apt:
     packages: lcov
 
-install:
-- mkdir -p $HOME/.cache
-- touch $HOME/.cache/mydependency.so
+#install:
+#- mkdir -p $HOME/.cache
+#- touch $HOME/.cache/mydependency.so
 
 script: ./testing
 
