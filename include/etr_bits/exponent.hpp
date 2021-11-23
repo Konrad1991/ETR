@@ -48,7 +48,7 @@ public:
    }
 
    T operator[](const int i) const {
-     return std::pow(r[i], exponent);
+     return pow(r[i], exponent);
    }
 
    int size() const {
@@ -83,7 +83,7 @@ VEC< T, VVEXP< T, L, R> > exp(const VEC<T, L>& a, const R exponent) {
 
 
 double exp(double base, double exponent) {
-  return std::pow(base, exponent);
+  return pow(base, exponent);
 }
 
 
@@ -118,7 +118,7 @@ public:
   }
 
    T operator[](const int i) const {
-     return std::log(r[i]);
+     return log(r[i]);
    }
 
    int size() const {
@@ -147,11 +147,11 @@ VEC< T, VVlog< T, L> > ln(const VEC<T, L>& a) {
 
 
 double ln(double base) {
-  return std::log(base);
+  return log(base);
 }
 
 double ln(int base) {
-  return std::log(static_cast<long double>(base));
+  return log(static_cast<long double>(base));
 }
 
 

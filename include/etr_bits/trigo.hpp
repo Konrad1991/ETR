@@ -47,7 +47,7 @@ public:
   }
 
    T operator[](const int i) const {
-     return std::sin(r[i]);
+     return sin(r[i]);
    }
 
    int size() const {
@@ -76,11 +76,11 @@ VEC< T, VVSIN< T, L> > sinus(const VEC<T, L>& a) {
 
 
 double sinus(double base) {
-  return std::sin(base);
+  return sin(base);
 }
 
 double sinus(int base) {
-  return std::sin(static_cast<double>(base));
+  return sin(static_cast<double>(base));
 }
 
 
@@ -107,7 +107,7 @@ public:
   }
 
    T operator[](const int i) const {
-     return std::sinh(r[i]);
+     return sinh(r[i]);
    }
 
    int size() const {
@@ -136,11 +136,11 @@ VEC< T, VVsinh< T, L> > sinush(const VEC<T, L>& a) {
 
 
 double sinush(double base) {
-  return std::sinh(base);
+  return sinh(base);
 }
 
 double sinush(int base) {
-  return std::sinh(static_cast<double>(base));
+  return sinh(static_cast<double>(base));
 }
 
 
@@ -166,7 +166,7 @@ public:
   }
 
    T operator[](const int i) const {
-     return std::asin(r[i]);
+     return asin(r[i]);
    }
 
    int size() const {
@@ -195,11 +195,11 @@ VEC< T, VVasin< T, L> > asinus(const VEC<T, L>& a) {
 
 
 double asinus(double base) {
-  return std::asin(base);
+  return asin(base);
 }
 
 double asinus(int base) {
-  return std::asin(static_cast<double>(base));
+  return asin(static_cast<double>(base));
 }
 
 
@@ -228,7 +228,7 @@ public:
   }
 
    T operator[](const int i) const {
-     return std::cos(r[i]);
+     return cos(r[i]);
    }
 
    int size() const {
@@ -257,11 +257,11 @@ VEC< T, VVCOS< T, L> > cosinus(const VEC<T, L>& a) {
 
 
 double cosinus(double base) {
-  return std::cos(base);
+  return cos(base);
 }
 
 double cosinus(int base) {
-  return std::cos(static_cast<double>(base));
+  return cos(static_cast<double>(base));
 }
 
 
@@ -291,7 +291,7 @@ public:
   }
 
    T operator[](const int i) const {
-     return std::acos(r[i]);
+     return acos(r[i]);
    }
 
    int size() const {
@@ -320,11 +320,11 @@ VEC< T, VVacos< T, L> > acosinus(const VEC<T, L>& a) {
 
 
 double acosinus(double base) {
-  return std::acos(base);
+  return acos(base);
 }
 
 double acosinus(int base) {
-  return std::acos(static_cast<double>(base));
+  return acos(static_cast<double>(base));
 }
 
 
@@ -353,7 +353,7 @@ public:
   }
 
    T operator[](const int i) const {
-     return std::cosh(r[i]);
+     return cosh(r[i]);
    }
 
    int size() const {
@@ -382,11 +382,11 @@ VEC< T, VVCOSH< T, L> > cosinush(const VEC<T, L>& a) {
 
 
 double cosinush(double base) {
-  return std::cosh(base);
+  return cosh(base);
 }
 
 double cosinush(int base) {
-  return std::cosh(static_cast<double>(base));
+  return cosh(static_cast<double>(base));
 }
 
 
@@ -417,7 +417,7 @@ public:
   }
 
    T operator[](const int i) const {
-     return std::tan(r[i]);
+     return tan(r[i]);
    }
 
    int size() const {
@@ -446,11 +446,11 @@ VEC< T, VVtan< T, L> > tangens(const VEC<T, L>& a) {
 
 
 double tangens(double base) {
-  return std::tan(base);
+  return tan(base);
 }
 
 double tangens(int base) {
-  return std::tan(static_cast<double>(base));
+  return tan(static_cast<double>(base));
 }
 
 
@@ -479,7 +479,7 @@ public:
   }
 
    T operator[](const int i) const {
-     return std::atan(r[i]);
+     return atan(r[i]);
    }
 
    int size() const {
@@ -508,11 +508,11 @@ VEC< T, VVatan< T, L> > atangens(const VEC<T, L>& a) {
 
 
 double atangens(double base) {
-  return std::atan(base);
+  return atan(base);
 }
 
 double atangens(int base) {
-  return std::atan(static_cast<double>(base));
+  return atan(static_cast<double>(base));
 }
 
 
@@ -541,7 +541,7 @@ public:
   }
 
    T operator[](const int i) const {
-     return std::tanh(r[i]);
+     return tanh(r[i]);
    }
 
    int size() const {
@@ -570,11 +570,11 @@ VEC< T, VVtanh< T, L> > tangensh(const VEC<T, L>& a) {
 
 
 double tangensh(double base) {
-  return std::tanh(base);
+  return tanh(base);
 }
 
 double tangensh(int base) {
-  return std::tanh(static_cast<double>(base));
+  return tanh(static_cast<double>(base));
 }
 
 #endif
