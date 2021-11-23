@@ -6,6 +6,7 @@ addons:
             - sourceline: 'ppa:ubuntu-toolchain-r/test'
           packages:
             - g++-9
+            - gcov-9
 
 compiler:
   - gcc-9
