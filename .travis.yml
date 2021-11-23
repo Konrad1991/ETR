@@ -12,7 +12,11 @@ addons:
     	- lcov
         - libstdc++-7-dev
 
+before_install:
+  - sudo apt-get -y install libxml2-dev
+
 install:
+- make get-deps
 - mkdir -p $HOME/.cache
 - touch $HOME/.cache/mydependency.so
 
