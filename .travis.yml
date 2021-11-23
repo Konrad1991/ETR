@@ -6,6 +6,7 @@ addons:
             - sourceline: 'ppa:ubuntu-toolchain-r/test'
           packages:
             - g++-9
+            - lcov
 
 compiler:
   - gcc-9
@@ -14,8 +15,8 @@ cache:
 - directories:
   - $HOME/.cache
 
-before_install:
-  - sudo apt-get -y install lcov
+#before_install:
+ # - sudo apt-get -y install lcov
 
 script: ./testing
 
