@@ -5,17 +5,16 @@ addons:
           sources:
             - sourceline: 'ppa:ubuntu-toolchain-r/test'
           packages:
-            - g++-10
+            - g++-9
 
 compiler:
-  - gcc
+  - gcc-9
 
 cache:
 - directories:
   - $HOME/.cache
 
 before_install:
-  - sudo apt-get -y install libxml2-dev
   - sudo apt-get -y install lcov
 
 script: ./testing
