@@ -5,10 +5,10 @@ addons:
           sources:
             - sourceline: 'ppa:ubuntu-toolchain-r/test'
           packages:
-            - g++-7
+            - g++-9
 
 compiler:
-  - gcc-7
+  - gcc-9
 
 cache:
 - directories:
