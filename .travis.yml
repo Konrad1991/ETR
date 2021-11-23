@@ -1,8 +1,9 @@
 anguage: cpp
 os: linux
-compiler: 
-  - gcc
+
+compiler:
   - clang
+  - gcc
 
 cache:
 - directories:
