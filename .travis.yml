@@ -3,12 +3,19 @@ os: linux
 
 compiler:
   - clang
-  - gcc
+
+cache:
+- directories:
+  - $HOME/.cache
+
+addons:
+  apt:
+    packages: 
+    	- lcov
+        - libstdc++-7-dev
 
 before_install:
   - sudo apt-get -y install libxml2-dev
-  - sudo apt-get -y install lcov
-  - sudo apt-get -y install libstdc++-7-dev
 
 install:
 - make get-deps
