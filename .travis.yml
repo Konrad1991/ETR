@@ -29,7 +29,7 @@ before_script:
       cd $BUILD_COVERAGE;
       cmake ${TRAVIS_BUILD_DIR} -DBUILD_COVERAGE=ON;
       make check;
-      ${TRAVIS_BUILD_DIR}/lcov-1.11/bin/lcov --gcov-tool /usr/bin/gcov-9  --capture --directory …;
+      ${TRAVIS_BUILD_DIR}/lcov-1.14/bin/lcov --gcov-tool /usr/bin/gcov-9  --capture --directory …;
     fi
 
 script: ./testing
