@@ -110,6 +110,7 @@ VEC<double> coca (Ts && ... multi_inputs)
 
 
 
+
 template <typename ... Ts>
 VEC<double> coca (Ts & ... multi_inputs)
 {
