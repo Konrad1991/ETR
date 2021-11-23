@@ -1,5 +1,4 @@
 #!/bin/bash
-g++ ./tests/alltests.cpp -std=c++17
-g++ --coverage ./tests/alltests.cpp -std=c++17
+clang++ --coverage ./tests/alltests.cpp -std=c++17
 ./a.out
 
