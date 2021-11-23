@@ -19,7 +19,7 @@ cache:
  # - sudo apt-get -y install lcov
 
 after_success:
-  - if [ "$CC" = "gcc-9.0" ];
+  - if [ "$CC" = "gcc-9" ];
     then
       echo "test"
       cd ${TRAVIS_BUILD_DIR};
@@ -30,7 +30,7 @@ after_success:
       cd $BUILD_COVERAGE;
       cmake ${TRAVIS_BUILD_DIR} -DBUILD_COVERAGE=ON;
       make check;
-      ${TRAVIS_BUILD_DIR}/lcov-1.11/bin/lcov --gcov-tool /usr/bin/gcov-9.0  --capture --directory …;
+      ${TRAVIS_BUILD_DIR}/lcov-1.11/bin/lcov --gcov-tool /usr/bin/gcov-9  --capture --directory …;
     fi
 
 script: ./testing
