@@ -8,12 +8,6 @@ cache:
 - directories:
   - $HOME/.cache
 
-addons:
-  apt:
-    packages: 
-    	- lcov
-        - libstdc++-7-dev
-
 before_install:
   - sudo apt-get -y install libxml2-dev
 
