@@ -17,7 +17,7 @@ cache:
 
 before_install:
   - sudo apt-get -y install lcov
-  - sudo apt install gcov-dev
+  - sudo apt install gcc-dev
 
 script: ./testing
 
