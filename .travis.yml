@@ -1,13 +1,9 @@
-anguage: cpp
+language: cpp
 os: linux
 
 compiler:
   - clang
   - gcc
-
-cache:
-- directories:
-  - $HOME/.cache
 
 before_install:
   - sudo apt-get -y install libxml2-dev
