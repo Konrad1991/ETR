@@ -21,7 +21,6 @@ cache:
 before_script:
   - if [ "$CC" = "gcc-9" ];
     then
-      echo "test"
       cd ${TRAVIS_BUILD_DIR};
       wget http://downloads.sourceforge.net/ltp/lcov-1.14.tar.gz;
       tar xvfz lcov-1.14.tar.gz;
