@@ -1,5 +1,5 @@
 #!/bin/bash
-g++-10 --coverage ./tests/alltests.cpp -std=c++17
+g++-9 --coverage ./tests/alltests.cpp -std=c++17
 ./a.out
 lcov --directory . --capture --output-file coverage.info
 lcov --remove coverage.info '/usr/*' './tests/catch/*' "${HOME}"'/.cache/*' --output-file coverage.info
