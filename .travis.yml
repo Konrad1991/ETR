@@ -6,7 +6,7 @@ addons:
             - sourceline: 'ppa:ubuntu-toolchain-r/test'
           packages:
             - g++-9
-            - lcov
+            #- lcov
 
 compiler:
   - gcc-9
@@ -15,12 +15,27 @@ cache:
 - directories:
   - $HOME/.cache
 
-before_install:
-  - sudo apt-get -y install lcov
+#before_install:
+ # - sudo apt-get -y install lcov
+
+after_success:
+  - if [ "$CC" = "gcc-9.0" ];
+    then
+      cd ${TRAVIS_BUILD_DIR};
+      wget http://downloads.sourceforge.net/ltp/lcov-1.14.tar.gz;
+      tar xvfz lcov-1.14.tar.gz;
+      make -C lcov-1.14;
+      mkdir $BUILD_COVERAGE;
+      cd $BUILD_COVERAGE;
+      cmake ${TRAVIS_BUILD_DIR} -DBUILD_COVERAGE=ON;
+      make check;
+      ${TRAVIS_BUILD_DIR}/lcov-1.11/bin/lcov --gcov-tool /usr/bin/gcov-9.0  --capture --directory …;
+    fi
 
 script: ./testing
 
 after_success:
+
 - bash <(curl -s https://codecov.io/bash) -f coverage.info || echo "Codecov did not collect coverage reports"
 
 
