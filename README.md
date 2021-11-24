@@ -390,9 +390,9 @@ print(res);
 
 ### Pointer Interface
 
-You can pass the information of data stored on heap to a **sexp** object. The constructor for vector accepts 3 arguments. The first is an int defining the size of the data. The second argument is the pointer to the data and the last argument is an int called **cob**. \
+You can pass the information of data stored on heap to a **sexp** object. The constructor for vector accepts 3 arguments. The first is an int defining the size of the data. The second argument is the pointer to the data and the last argument is an int called **cob** (*copy, ownership, borrow*). \
 If **cob** is 0 then the data is copied. \
-Else if **cob** is 1 then the pointer itself is copied. Meaning that the ownership is transferred to the **sexp** object and the user should not call delete [] on the pointer. Be aware that only one **secp** variable can take ownership of one vector otherwise the memory is double freed. \
+Else if **cob** is 1 then the pointer itself is copied. Meaning that the ownership is transferred to the **sexp** object and the user should not call delete [] on the pointer. Be aware that only one **sexp** variable can take ownership of one vector otherwise the memory is double freed. \
 Else if **cob** is 2 then the ownership of the pointer is only borrowed. Meaning that the **sexp** object cannot be resized. The user is responsible for freeing the memory!
 
 
