@@ -90,6 +90,7 @@ public:
       }
 
       subsetted = false;
+
   }
 
   // constructor for COMPARISON
@@ -100,7 +101,12 @@ public:
     for(int i = 0; i < d.size(); i++) {
       d[i] = other_vec[i];
     }
+
   }
+
+  // constructor for pointer
+  VEC(const int n, T* ptr, int cob) : d(n, ptr, cob), subsetted(0), ismatrix(0) {} //cob = copy, owning, borrow
+  VEC(const int r, const int c, T* ptr, int cob) : d(r*c, ptr, cob), subsetted(0), ismatrix(1), nrows(r), ncols(c) {} //cob = copy, owning, borrow
 
   explicit operator bool() const{return d[0];}
 
@@ -124,6 +130,7 @@ public:
 
   VEC& operator=(const VEC& other_vec) {
 
+    /*
     if(this == &other_vec) {
       VEC temp(other_vec.indices.size());
       for(int i = 0; i < other_vec.indices.size(); i++) {
@@ -132,6 +139,7 @@ public:
 
       this -> d = temp.d;
     }
+    */
 
     if(subsetted == false) {
       if(d.size() != other_vec.size()) {

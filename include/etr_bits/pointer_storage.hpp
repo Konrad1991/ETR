@@ -51,6 +51,7 @@ public:
   int capacity;
   bool todelete;
   bool allocated = false;
+  int cob = 0; //cob = copy, owning, borrow, 0, 1, 2
 
   // Constructors
   STORE(const STORE<T>& other) {
@@ -134,7 +135,7 @@ public:
     allocated = true;
   }
 
-  STORE(const int n, T* pinp, bool copy) {
+  STORE(const int n, T* pinp, int cob_) {
 
     if(allocated == true) {
       ass(p != nullptr, "try to delete nullptr");
@@ -142,13 +143,7 @@ public:
       p = nullptr;
     }
 
-    if(copy == false) {
-      sz = n;
-      capacity = sz;
-      p = pinp;
-      todelete = false;
-      allocated = true; //?
-    } else if(copy == true) {
+    if(cob_ == 0) { // copy
       sz = n;
       capacity = sz;
       p = new T[n];
@@ -157,9 +152,23 @@ public:
       }
       todelete = true;
       allocated = true;
+    } else if(cob_ == 1) { // owning pointer
+      sz = n;
+      capacity = sz;
+      p = pinp;
+      todelete = true;
+      allocated = true; //?
+    } else if(cob_ == 2) { // borrow pointer
+      sz = n;
+      capacity = sz;
+      p = pinp;
+      todelete = false;
+      allocated = true;
+      cob = 2;
     }
   }
 
+  /*
   STORE& init(const int n, T* pinp, bool copy) {
 
         if(allocated == true) {
@@ -186,10 +195,11 @@ public:
         }
     return *this;
   }
+  */
 
   // Destructors
   ~STORE() {
-    if(todelete == true) {
+    if( todelete == true ) {
       if(p != nullptr) {
         ass(p != nullptr, "try to delete nullptr");
         delete [] p;
@@ -243,6 +253,7 @@ public:
   }
 
   void resize(int new_size) {
+    ass(cob < 2, "try to delete borrowed pointer");
     if(allocated == true) {
       ass(p != nullptr, "try to delete nullptr");
       delete [] p;
@@ -254,6 +265,7 @@ public:
   }
 
   void realloc(int new_size) {
+    ass(cob < 2, "try to delete borrowed pointer");
     T* temp;
     int temp_size;
     temp = new T[sz];
@@ -275,6 +287,7 @@ public:
   }
 
   void push_back(T input) {
+    ass(cob < 2, "try to delete borrowed pointer");
     if(sz == capacity) {
       realloc(sz*2);
       capacity = sz;

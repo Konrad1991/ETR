@@ -13,6 +13,7 @@
     + [Looping](#looping)
     + [Math functions](#math-functions)
     + [Interpolation](#interpolation)
+    + [Pointer Interface](#pointer-interface)
 
 # Overview 
 
@@ -387,4 +388,54 @@ print(res);
 
 ```
 
+### Pointer Interface
 
+You can pass the information of data stored on heap to a **sexp** object. The constructor for vector accepts 3 arguments. The first is an int defining the size of the data. The second argument is the pointer to the data and the last argument is an int called **cob**. \
+If **cob** is 0 then the data is copied. \
+Else if **cob** is 1 then the pointer itself is copied. Meaning that the ownership is transferred to the **sexp** object and the user should not call delete [] on the pointer. Be aware that only one **secp** variable can take ownership of one vector otherwise the memory is double freed. \
+Else if **cob** is 2 then the ownership of the pointer is only borrowed. Meaning that the **sexp** object cannot be resized. The user is responsible for freeing the memory!
+
+
+```Cpp
+#include "etr.hpp"
+
+int main() {
+    int size = 10;
+    
+    double* ptr1;
+    ptr1 = new double[size];
+    int cob = 0;
+    sexp a(size, ptr1, cob); // copy
+    delete [] ptr1;
+    a = vector(3.14, 5);
+    print(a);
+    
+    print();
+    
+    double* ptr2;
+    ptr2 = new double[size];
+    cob = 1;
+    sexp b(size, ptr2, cob); // take ownership
+    b = vector(5, 3);
+    print(b);
+    
+    print();
+    
+    double* ptr3;
+    ptr3 = new double[size];
+    cob = 2;
+    sexp c(size, ptr3, cob); // borrow ownership
+    //c = vector(5, 3); --> error calls resize
+    c = vector(4, 10);
+    print(c);
+    
+    print();
+    sexp d(size, ptr3, cob);
+    d = d + 10;
+    print(d);
+    print();
+    
+    delete[] ptr3;
+}
+
+```
