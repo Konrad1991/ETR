@@ -677,7 +677,6 @@ TEST_CASE( "vector subsetting" ) {
   REQUIRE(eq(subset(a, b), res) == true);
   REQUIRE(eq(subset(a, coca(1, 3, 5)), res) == true);
 
-
   VEC<bool> rb(5);
   rb[0] = true;
   rb[1] = false;
@@ -704,6 +703,7 @@ TEST_CASE( "matrix subsetting" ) {
   res[6] = 7;
   res[7] = 9;
   REQUIRE(eq(subset(a, r, c), res) == true);
+  REQUIRE(eq(subset(a, coca(1, 3), coca(1,2,5,3)), res) == true);
   REQUIRE(eq(subset(a, coca(1, 3), c), res) == true);
   REQUIRE(eq(subset(a, r, coca(1,2,5,3)), res) == true);
   REQUIRE(eq(subset(a, coca(1,3), coca(1,2,5,3)), res) == true);
@@ -733,6 +733,7 @@ TEST_CASE( "matrix subsetting" ) {
   sexp temp2 = coca(1, 1, 1, 1, 1);
   res = coca(1, 4, 7, 10);
   REQUIRE(eq(subset(a, 1, temp1 == temp2), res) == true);
+  REQUIRE(eq(subset(a, 1, coca(1,1,1,1,2) == coca(1,1,1,1,1)), res) == true);
 
   res = coca(1, 2, 3);
   REQUIRE(eq(subset(a, true, 1), res) == true);
@@ -740,11 +741,13 @@ TEST_CASE( "matrix subsetting" ) {
 
   res = coca(4, 6);
   REQUIRE(eq(subset(a, r, 2), res) == true);
+  REQUIRE(eq(subset(a, coca(1, 3), 2), res) == true);
 
   temp1 = coca(1, 2, 3);
   temp2 = coca(1, 3, 3);
   res = coca(1, 3);
   REQUIRE(eq(subset(a, temp1 == temp2, 1), res) == true);
+  REQUIRE(eq(subset(a, coca(1,2,3) == coca(1,3,3), 1), res) == true);
 
   REQUIRE(subset(a, 1.5, 1.5)[0] == 1);
 
@@ -755,6 +758,7 @@ TEST_CASE( "matrix subsetting" ) {
   temp2 = coca(1, 1);
   res = coca(1);
   REQUIRE(eq(subset(a, 1.5, temp1 == temp2), res) == true);
+  REQUIRE(eq(subset(a, 1.5, coca(1,5) == coca(1,1)), res) == true);
 
   res = coca(1, 2, 3);
   REQUIRE(eq(subset(a, true, 1.5), res) == true);
@@ -767,6 +771,7 @@ TEST_CASE( "matrix subsetting" ) {
   temp2 = coca(1, 1, 3);
   res = coca(13, 15);
   REQUIRE(eq(subset(a, temp1 == temp2, 5.5), res) == true);
+  REQUIRE(eq(subset(a, coca(1,2,3) == coca(1,1,3), 5.5), res) == true);
 
 
   c = coca(1, 2, 5);
@@ -784,312 +789,621 @@ TEST_CASE( "matrix subsetting" ) {
 
   res = coca(1, 2, 3, 7, 8, 9);
   REQUIRE(eq(subset(a, true, temp1 == temp2), res) == true);
+
+  r = coca(1, 3);
+  res = coca(1, 3, 4, 6, 7, 9, 10, 12, 13, 15);
+  REQUIRE(eq(subset(a, r, nullptr), res) == true);
+
+  temp1 = coca(1, 3, 3);
+  temp2 = coca(1, 2, 3);
+  REQUIRE(eq(subset(a, temp1 == temp2, nullptr), res) == true);
+
+  r = coca(1, 3, 1);
+  c = coca(1, 5);
+  res = coca(1, 3, 1, 13, 15, 13);
+  REQUIRE(eq(subset(a, r, c), res) == true);
+
+  temp1 = coca(1, 3, 5, 4, 5);
+  temp2 = coca(1, 2, 3, 3, 5);
+  REQUIRE(eq(subset(a, r, temp1 == temp2), res ) == true);
+
+  temp1 = coca(1, 3, 5);
+  temp2 = coca(1, 2, 5);
+  res = coca(1, 3, 13, 15);
+  REQUIRE(eq(subset(a,temp1 == temp2, c), res ) == true);
+
+
+  sexp temp3 = coca(1, 2, 2, 2, 5);
+  sexp temp4 = coca(1, 3, 3, 3, 5);
+  REQUIRE(eq(subset(a,temp1 == temp2, temp3 == temp4), res ) == true);
 }
 
 
 
 
 TEST_CASE( "subassign vector" ) {
+  sexp a = colon(1, 5);
+  sexp t = a;
+  sexp b = coca(1, 3, 5);
+  sexp res;
 
-sexp a, pos, temp;
-
-a = vector(colon(0, 9));
-temp = a;
-
-subassign(a, 1) = 100;
-subassign(a, 2.5) = 200;
-REQUIRE(subset(a, 1)[0] == 100.0);
-REQUIRE(subset(a, 2.5)[0] == 200.0);
-a = temp;
-
-pos = coca(1, 6, 7, 2);
-subassign(a, pos) = range(1, 4);
-REQUIRE(subset(a, 1)[0] == 1.0);
-REQUIRE(subset(a, 6)[0] == 2.0);
-REQUIRE(subset(a, 7)[0] == 3.0);
-REQUIRE(subset(a, 2)[0] == 4.0);
-a = temp;
-
-VEC<bool> pb(4);
-pb[0] = true;
-pb[1] = true;
-pb[2] = false;
-pb[3] = true;
-subassign(a, pb) = range(1, 3);
-REQUIRE(subset(a, 1)[0] == 1.0);
-REQUIRE(subset(a, 2)[0] == 2.0);
-REQUIRE(subset(a, 4)[0] == 3.0);
-a = temp;
+  subassign(a, a) = colon(2, 6);
+  res = colon(2, 6);
+  REQUIRE(eq(a, res) == true);
+  a = t;
+  res = a;
 
 
-subassign(a, true) = -60;
-for(auto i: a) {
-  REQUIRE(i == -60);
+  subassign(a, 1) = 100;
+  res[0] = 100;
+  REQUIRE(eq(a, res) == true);
+  a = t;
+
+
+  subassign(a, 1.5) = 100;
+  res[0] = 100;
+  REQUIRE(eq(a, res) == true);
+  a = t;
+
+  subassign(a, nullptr) = colon(2, 6);
+  res = colon(2, 6);
+  REQUIRE(eq(a, res) == true);
+  a = t;
+
+  subassign(a, true) = colon(2, 6);
+  res = colon(2, 6);
+  REQUIRE(eq(a, res) == true);
+  a = t;
+
+
+  subassign(a, b) = coca(10, 30, 50);
+  res = coca(10,2, 30,4, 50);
+  REQUIRE(eq(a, res) == true);
+  a = t;
+
+  subassign(a, coca(1, 3, 5)) = coca(10, 30, 50);
+  res = coca(10,2, 30,4, 50);
+  REQUIRE(eq(a, res) == true);
+  a = t;
+
+
+  subassign(a, a == b) = coca(10, 30, 50);
+  res = coca(10,2, 3,4, 5);
+  REQUIRE(eq(a, res) == true);
+  a = t;
+
 }
-subassign(a, nullptr) = -50;
-for(auto i: a) {
-  REQUIRE(i == -50);
+
+
+void test_subass(sexp& inp, sexp&& r, sexp&& c, sexp fill, sexp& res) {
+  subassign(inp, r, c) = fill;
+  REQUIRE(eq(inp, res) == true);
+  inp = matrix(colon(1, 15), 3, 5);
+  res = colon(1, 15);
 }
 
+void test_subass(sexp& inp, sexp& r, sexp& c, sexp fill, sexp& res) {
+  subassign(inp, r, c) = fill;
+  REQUIRE(eq(inp, res) == true);
+  inp = matrix(colon(1, 15), 3, 5);
+  res = colon(1, 15);
 }
-
 
 
 TEST_CASE( "subassign matrix" ) {
-
-  sexp a, r, c, temp;
-  VEC<bool> cb(8);
-  VEC<bool> rb(6);
-
-  a = matrix(colon(0, 34), 5, 7);
-  temp = a;
-  r = coca(1, 2, 5);
-  c = coca(1, 3, 2);
-  cb[0] = true;
-  cb[1] = true;
-  cb[2] = true;
-  cb[3] = true;
-  cb[4] = false;
-  cb[5] = false;
-  cb[6] = false;
-  cb[7] = true;
-
-  rb[0] = true;
-  rb[1] = false;
-  rb[2] = true;
-  rb[3] = true;
-  rb[4] = true;
-  rb[5] = true;
-
-subassign(a, 1, 1) = 100;
-subassign(a, 1, 2.5) = 200;
-REQUIRE(subset(a, 1, 1)[0] == 100.0);
-REQUIRE(subset(a, 1, 2.5)[0] == 200.0);
-
-c = coca(1, 5);
-subassign(a, 3, c) = coca(1000, 2000);
-subassign(a, 4, cb) = coca(100, 200, 300, 400, 500);
-REQUIRE(subset(a, 3, 1)[0] == 1000.0);
-REQUIRE(subset(a, 3, 5)[0] == 2000.0);
-
-REQUIRE(subset(a, 4, cb)[0] == 500.0);
-REQUIRE(subset(a, 4, cb)[1] == 200.0);
-REQUIRE(subset(a, 4, cb)[2] == 300.0);
-REQUIRE(subset(a, 4, cb)[3] == 400.0);
-REQUIRE(subset(a, 4, cb)[4] == 500.0);
+  sexp a = matrix(colon(1, 15), 3, 5);
+  sexp r = coca(1, 3);
+  sexp c = coca(1, 2, 5);
+  sexp res;
+  sexp fill = 10;
+  res = colon(1, 15);
+  res[0] = 10;
+  res[2] = 10;
+  res[3] = 10;
+  res[5] = 10;
+  res[12] = 10;
+  res[14] = 10;
+  test_subass(a, r, c, fill, res);
+  res[0] = 10;
+  res[2] = 10;
+  res[3] = 10;
+  res[5] = 10;
+  res[12] = 10;
+  res[14] = 10;
+  test_subass(a, coca(1, 3), coca(1, 2, 5), fill, res);
 
 
-a = temp;
-subassign(a, true, 5) = coca(-1, -2, -3, -4, -5);
-subassign(a, nullptr, 1) = coca(-1, -2, -3, -4, -5);
-REQUIRE(subset(a, true, 5)[0] == -1);
-REQUIRE(subset(a, true, 5)[1] == -2);
-REQUIRE(subset(a, true, 5)[2] == -3);
-REQUIRE(subset(a, true, 5)[3] == -4);
-REQUIRE(subset(a, true, 5)[4] == -5);
+  res = vector(10, 15);
+  subassign(a, true, true) = vector(10, 15);
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
 
-REQUIRE(subset(a, true, 1)[0] == -1);
-REQUIRE(subset(a, true, 1)[1] == -2);
-REQUIRE(subset(a, true, 1)[2] == -3);
-REQUIRE(subset(a, true, 1)[3] == -4);
-REQUIRE(subset(a, true, 1)[4] == -5);
-a = temp;
+  res = vector(10, 15);
+  subassign(a, true, nullptr) = vector(10, 15);
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
 
-r = coca(1, 2, 3);
-subassign(a, r, 2) = coca(1.5, 2.5, 3.5);
-VEC<bool> rb_(6);
-rb_[0] = true;
-rb_[1] = true;
-rb_[2] = true;
-rb_[3] = false;
-rb_[4] = false;
-rb_[5] = true;
-subassign(a, rb_, 3) = coca(1, 2, 3, 50);
-REQUIRE(subset(a, rb_, 3)[0] == 50);
-REQUIRE(subset(a, rb_, 3)[1] == 2);
-REQUIRE(subset(a, rb_, 3)[2] == 3);
-a = temp;
+  res = vector(10, 15);
+  subassign(a, nullptr, true) = vector(10, 15);
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
 
-subassign(a, true, true) = -50;
-for(auto i: a) {
-  REQUIRE(i == -50);
+  res = vector(10, 15);
+  subassign(a, nullptr, nullptr) = vector(10, 15);
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+
+
+  res = colon(1, 15);
+  res[0] = 100;
+  subassign(a, 1, 1) = 100.;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+  res = colon(1, 15);
+  res[0] = 100;
+  subassign(a, 1.5, 1) = 100.;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+  res = colon(1, 15);
+  res[0] = 100;
+  subassign(a, 1, 1.5) = 100.;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+  res = colon(1, 15);
+  res[0] = 100;
+  subassign(a, 1.6, 1.7) = 100.;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+
+  res = colon(1, 15);
+  res[0] = 100;
+  res[3] = 100;
+  res[6] = 100;
+  res[9] = 100;
+  res[12] = 100;
+  subassign(a, 1, true) = vector(100, 5);
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+
+  res = colon(1, 15);
+  res[0] = 100;
+  res[3] = 100;
+  res[6] = 100;
+  res[9] = 100;
+  res[12] = 100;
+  subassign(a, 1.5, true) = vector(100, 5);
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+
+  res = colon(1, 15);
+  res[0] = 100;
+  res[3] = 100;
+  res[6] = 100;
+  res[9] = 100;
+  res[12] = 100;
+  subassign(a, 1, nullptr) = vector(100, 5);
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+  res = colon(1, 15);
+  res[0] = 100;
+  res[3] = 100;
+  res[6] = 100;
+  res[9] = 100;
+  res[12] = 100;
+  subassign(a, 1.5, nullptr) = vector(100, 5);
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+
+  res = colon(1, 15);
+  res[0] = 100;
+  res[3] = 100;
+  res[12] = 100;
+  c = coca(1, 2, 5);
+  subassign(a, 1, c) = vector(100, 3);
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+
+  res = colon(1, 15);
+  res[0] = 100;
+  res[3] = 100;
+  res[12] = 100;
+  c = coca(1, 2, 5);
+  subassign(a, 1.5, c) = vector(100, 3);
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+
+
+
+
+  sexp temp1 = coca(1, 1, 1, 1, 2);
+  sexp temp2 = coca(1, 1, 1, 1, 1);
+  subassign(a, 1, temp1 == temp2) = vector(100, 4);
+  res = colon(1, 15);
+  res[0] = 100;
+  res[3] = 100;
+  res[6] = 100;
+  res[9] = 100;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+  subassign(a, 1, coca(1, 1, 1, 1, 2) == coca(1, 1, 1, 1, 1)) = vector(100, 4);
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+
+  subassign(a, true, 1) = vector(100, 3);
+  res = colon(1, 15);
+  res[0] = 100;
+  res[1] = 100;
+  res[2] = 100;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+  subassign(a, nullptr, 1) = vector(100, 3);
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+  r = coca(1, 3);
+  subassign(a, r, 2) = vector(100, 2);
+  res = colon(1, 15);
+  res[3] = 100;
+  res[5] = 100;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+  subassign(a, coca(1, 3), 2) = vector(100, 2);
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+
+  temp1 = coca(1, 2, 3);
+  temp2 = coca(1, 3, 3);
+  res = colon(1, 15);
+  subassign(a, temp1 == temp2, 1) = vector(100, 2);
+  res[0] = 100;
+  res[2] = 100;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+  subassign(a, coca(1, 2, 3) == coca(1, 3, 3)) = vector(200, 2);
+  res[0] = 200;
+  res[2] = 200;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+  subassign(a, 1.5, 1.5) = 12;
+  res = colon(1, 15);
+  res[0] = 12;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+
+  res = colon(1, 15);
+  subassign(a, 1.5, coca(1, 3)) = vector(200, 2);
+  res[0] = 200;
+  res[6] = 200;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+  temp1 = coca(1, 5);
+  temp2 = coca(1, 1);
+  res = colon(1, 15);
+  subassign(a, 1.5, temp1 == temp2) = vector(300, 1);
+  res[0] = 300;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+  subassign(a, 1.5, coca(1, 5) == coca(1, 1)) = vector(400, 1);
+  res[0] = 400;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+
+  subassign(a, true, 1.5) = vector(100, 3);
+  res = colon(1, 15);
+  res[0] = 100;
+  res[1] = 100;
+  res[2] = 100;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+
+  subassign(a, nullptr, 1.5) = vector(100, 3);
+  res = colon(1, 15);
+  res[0] = 100;
+  res[1] = 100;
+  res[2] = 100;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+  subassign(a, coca(1, 2, 3), 1.5) = vector(100, 3);
+  res = colon(1, 15);
+  res[0] = 100;
+  res[1] = 100;
+  res[2] = 100;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+
+  temp1 = coca(1, 2, 3);
+  temp2 = coca(1, 1, 3);
+  subassign(a, temp1 == temp2, 1.5) = vector(100, 2);
+  res = colon(1, 15);
+  res[0] = 100;
+  res[2] = 100;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+  subassign(a, coca(1, 2, 3) == coca(1, 1, 3), 1.5) = vector(100, 6);
+  res = colon(1, 15);
+  res[0] = 100;
+  res[2] = 100;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+
+
+  c = coca(1, 2, 5);
+  subassign(a, true, c) = vector(100, 9);
+  res = colon(1, 15);
+  res[0] = 100;
+  res[1] = 100;
+  res[2] = 100;
+  res[3] = 100;
+  res[4] = 100;
+  res[5] = 100;
+  res[12] = 100;
+  res[13] = 100;
+  res[14] = 100;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+  c = coca(1, 2, 5);
+  subassign(a, nullptr, c) = vector(100, 9);
+  res = colon(1, 15);
+  res[0] = 100;
+  res[1] = 100;
+  res[2] = 100;
+  res[3] = 100;
+  res[4] = 100;
+  res[5] = 100;
+  res[12] = 100;
+  res[13] = 100;
+  res[14] = 100;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+  temp1 = coca(1, 2, 3, 4, 5);
+  temp2 = coca(1, 0, 0,0, 5);
+  c = coca(1, 2, 5);
+  subassign(a, true, temp1 == temp2) = vector(100, 9);
+  res = colon(1, 15);
+  res[0] = 100;
+  res[1] = 100;
+  res[2] = 100;
+  res[12] = 100;
+  res[13] = 100;
+  res[14] = 100;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+
+  c = coca(1, 2, 5);
+  subassign(a, nullptr, temp1 == temp2) = vector(100, 9);
+  res = colon(1, 15);
+  res[0] = 100;
+  res[1] = 100;
+  res[2] = 100;
+  res[12] = 100;
+  res[13] = 100;
+  res[14] = 100;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+
+  subassign(a, coca(2), true) = vector(100, 5);
+  res = colon(1, 15);
+  res[1] = 100;
+  res[4] = 100;
+  res[7] = 100;
+  res[10] = 100;
+  res[13] = 100;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+  r = coca(2);
+  subassign(a, r, true) = vector(100, 5);
+  res = colon(1, 15);
+  res[1] = 100;
+  res[4] = 100;
+  res[7] = 100;
+  res[10] = 100;
+  res[13] = 100;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+  r = coca(2);
+  subassign(a, r, nullptr) = vector(100, 5);
+  res = colon(1, 15);
+  res[1] = 100;
+  res[4] = 100;
+  res[7] = 100;
+  res[10] = 100;
+  res[13] = 100;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+  temp1 = coca(1, 5);
+  temp2 = coca(1, 6);
+  subassign(a, true, temp1 == temp2) = vector(100, 3);
+  res = colon(1, 15);
+  res[0] = 100;
+  res[1] = 100;
+  res[2] = 100;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+
+
+  temp1 = coca(1, 3, 3);
+  temp2 = coca(1, 2, 3);
+  subassign(a, temp1 == temp2, nullptr) = vector(100, 10);
+  res = colon(1, 15);
+  res[0] = 100;
+  res[2] = 100;
+  res[3] = 100;
+  res[5] = 100;
+  res[6] = 100;
+  res[8] = 100;
+  res[9] = 100;
+  res[11] = 100;
+  res[12] = 100;
+  res[14] = 100;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+  r = coca(1, 3);
+  c = coca(1, 5);
+  subassign(a, r, c) = vector(100, 4);
+  res = colon(1, 15);
+  res[0] = 100;
+  res[2] = 100;
+  res[12] = 100;
+  res[14] = 100;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+
+  r = coca(1, 3);
+  temp1 = coca(1, 3, 5, 4, 5);
+  temp2 = coca(1, 2, 3, 3, 5);
+  subassign(a, r, temp1 == temp2) = vector(100, 4);
+  res = colon(1, 15);
+  res[0] = 100;
+  res[2] = 100;
+  res[12] = 100;
+  res[14] = 100;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+
+  temp1 = coca(1, 2, 6);
+  temp2 = coca(1, 2, 5);
+  c = coca(1, 4);
+  subassign(a, temp1 == temp2, c) = vector(100, 4);
+  res = colon(1, 15);
+  res[0] = 100;
+  res[1] = 100;
+  res[9] = 100;
+  res[10] = 100;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
+
+  temp1 = coca(1, 2, 6);
+  temp2 = coca(1, 2, 5);
+  sexp temp3 = coca(1, 2, 2, 2, 5);
+  sexp temp4 = coca(1, 3, 3, 3, 5);
+  subassign(a, temp1 == temp2, temp3 == temp4) = vector(100, 4);
+  res = colon(1, 15);
+  res[0] = 100;
+  res[1] = 100;
+  res[12] = 100;
+  res[13] = 100;
+  REQUIRE(eq(a, res) == true);
+  a = matrix(colon(1, 15), 3, 5);
 }
-subassign(a, true, nullptr) = -60;
-for(auto i: a) {
-  REQUIRE(i == -60);
-}
-
-a = temp;
-
-c = coca(1, 5, 7);
-subassign(a, true, c) = colon(101, 115);
-REQUIRE(subset(a, true, c)[0] == 101.0);
-REQUIRE(subset(a, true, c)[1] == 102.0);
-REQUIRE(subset(a, true, c)[2] == 103.0);
-REQUIRE(subset(a, true, c)[3] == 104.0);
-REQUIRE(subset(a, true, c)[4] == 105.0);
-REQUIRE(subset(a, true, c)[5] == 106.0);
-REQUIRE(subset(a, true, c)[6] == 107.0);
-REQUIRE(subset(a, true, c)[7] == 108.0);
-REQUIRE(subset(a, true, c)[8] == 109.0);
-REQUIRE(subset(a, true, c)[9] == 110.0);
-REQUIRE(subset(a, true, c)[10] == 111.0);
-REQUIRE(subset(a, true, c)[11] == 112.0);
-REQUIRE(subset(a, true, c)[12] == 113.0);
-REQUIRE(subset(a, true, c)[13] == 114.0);
-REQUIRE(subset(a, true, c)[14] == 115.0);
-a = temp;
 
 
 
-VEC<bool> cb_(8);
-cb_[0] = true;
-cb_[1] = false;
-cb_[2] = false;
-cb_[3] = false;
-cb_[4] = false;
-cb_[5] = false;
-cb_[6] = true;
-cb_[7] = true;
-subassign(a, true, cb_) = colon(91, 105);
-REQUIRE(subset(a, 1, 1)[0] == 101.0);
-REQUIRE(subset(a, 2, 1)[0] == 102.0);
-REQUIRE(subset(a, 3, 1)[0] == 103.0);
-REQUIRE(subset(a, 4, 1)[0] == 104.0);
-REQUIRE(subset(a, 5, 1)[0] == 105.0);
-REQUIRE(subset(a, 1, 7)[0] == 96.0);
-REQUIRE(subset(a, 2, 7)[0] == 97.0);
-REQUIRE(subset(a, 3, 7)[0] == 98.0);
-REQUIRE(subset(a, 4, 7)[0] == 99.0);
-REQUIRE(subset(a, 5, 7)[0] == 100.0);
+TEST_CASE( "trigo" ) {
 
-a = temp;
+double pi = 3.14159265359;
+
+sexp a = coca(0, pi/6, pi/2, pi);
+sexp b = sinus(a);
+sexp res = coca(0, 0.5, 1, 0);
+subassign(b, 1) = sinus(0);
+REQUIRE(eq(b, res) == true);
 
 
-subassign(a, nullptr, true) = -10;
-for(auto i: a) {
-  REQUIRE(i == -10);
-}
-a = temp;
+a = coca(0, 0.5, 1);
+b = asinus(a);
+res = coca(0, pi/6, pi/2);
+subassign(b, 1) = asinus(0);
+REQUIRE(eq(b, res) == true);
+
+a = coca(0, 0.5, 1);
+b = sinush(a);
+res = coca(0, 0.5210953, 1.175201);
+subassign(b, 1) = sinush(0);
+REQUIRE(eq(b, res) == true);
 
 
-r = coca(1, 5, 3);
-subassign(a, r, true) = colon(1, 21);
-REQUIRE(subset(a, 1, 1)[0] == 1.0);
-REQUIRE(subset(a, 5, 1)[0] == 2.0);
-REQUIRE(subset(a, 3, 1)[0] == 3.0);
-REQUIRE(subset(a, 1, 2)[0] == 4.0);
-REQUIRE(subset(a, 5, 2)[0] == 5.0);
-REQUIRE(subset(a, 3, 2)[0] == 6.0);
-REQUIRE(subset(a, 1, 3)[0] == 7.0);
-REQUIRE(subset(a, 5, 3)[0] == 8.0);
-REQUIRE(subset(a, 3, 3)[0] == 9.0);
-REQUIRE(subset(a, 1, 4)[0] == 10.0);
-REQUIRE(subset(a, 5, 4)[0] == 11.0);
-REQUIRE(subset(a, 3, 4)[0] == 12.0);
-REQUIRE(subset(a, 1, 5)[0] == 13.0);
-REQUIRE(subset(a, 5, 5)[0] == 14.0);
-REQUIRE(subset(a, 3, 5)[0] == 15.0);
-REQUIRE(subset(a, 1, 6)[0] == 16.0);
-REQUIRE(subset(a, 5, 6)[0] == 17.0);
-REQUIRE(subset(a, 3, 6)[0] == 18.0);
-REQUIRE(subset(a, 1, 7)[0] == 19.0);
-REQUIRE(subset(a, 5, 7)[0] == 20.0);
-REQUIRE(subset(a, 3, 7)[0] == 21.0);
-a = temp;
+a = coca(0, pi/3, pi/2, pi);
+b = cosinus(a);
+res = coca(1, 0.5, 0, -1);
+subassign(b, 1) = cosinus(0);
+REQUIRE(eq(b, res) == true);
+
+a = coca(0, 0.5, 1);
+b = acosinus(a);
+res = coca(pi/2, pi/3, 0);
+subassign(b, 1) = acosinus(0);
+REQUIRE(eq(b, res) == true);
+
+a = coca(0, 0.5, 1);
+b = cosinush(a);
+res = coca(1,  1.127626, 1.543081);
+subassign(b, 1) = cosinush(0);
+REQUIRE(eq(b, res) == true);
 
 
-VEC<bool> temp_(2);
-temp_[0] = true;
-temp_[1] = true;
-subassign(a, temp_, true) = range(1, 14);
-REQUIRE(subset(a, 1, 1)[0] == 1.0);
-REQUIRE(subset(a, 2, 1)[0] == 2.0);
-REQUIRE(subset(a, 1, 2)[0] == 3.0);
-REQUIRE(subset(a, 2, 2)[0] == 4.0);
-REQUIRE(subset(a, 1, 3)[0] == 5.0);
-REQUIRE(subset(a, 2, 3)[0] == 6.0);
-REQUIRE(subset(a, 1, 4)[0] == 7.0);
-REQUIRE(subset(a, 2, 4)[0] == 8.0);
-REQUIRE(subset(a, 1, 5)[0] == 9.0);
-REQUIRE(subset(a, 2, 5)[0] == 10.0);
-REQUIRE(subset(a, 1, 6)[0] == 11.0);
-REQUIRE(subset(a, 2, 6)[0] == 12.0);
-REQUIRE(subset(a, 1, 7)[0] == 13.0);
-REQUIRE(subset(a, 2, 7)[0] == 14.0);
-a = temp;
+a = coca(0, pi/4, pi);
+b = tangens(a);
+res = coca(0, 1, 0);
+subassign(b, 1) = tangens(0);
+REQUIRE(eq(b, res) == true);
+
+a = coca(0,  1);
+b = atangens(a);
+res = coca(0, pi/4);
+subassign(b, 1) = atangens(0);
+REQUIRE(eq(b, res) == true);
 
 
-subassign(a, nullptr, nullptr) = -20;
-for(auto i: a) {
-  REQUIRE(i == -20);
-}
-a = temp; print();
+a = coca(0,  1);
+b = tangensh(a);
+res = coca(0, 0.7615942);
+subassign(b, 1) = tangensh(0);
+REQUIRE(eq(b, res) == true);
 
 
-r = coca(1, 5, 3);
-c = coca(1, 7, 5);
-subassign(a, r, c) = range(1, 9);
+sinus(1);
+sinus(1.0);
+sinush(1);
+sinush(1.0);
+asinus(1);
+asinus(1.0);
 
-REQUIRE(subset(a, 1, 1)[0] == 1.0);
-REQUIRE(subset(a, 5, 1)[0] == 2.0);
-REQUIRE(subset(a, 3, 1)[0] == 3.0);
-REQUIRE(subset(a, 1, 7)[0] == 4.0);
-REQUIRE(subset(a, 5, 7)[0] == 5.0);
-REQUIRE(subset(a, 3, 7)[0] == 6.0);
-REQUIRE(subset(a, 1, 5)[0] == 7.0);
-REQUIRE(subset(a, 5, 5)[0] == 8.0);
-REQUIRE(subset(a, 3, 5)[0] == 9.0);
-a = temp;
+cosinus(1);
+cosinus(1.0);
+cosinush(1);
+cosinush(1.0);
+acosinus(1);
+acosinus(1.0);
 
+tangens(1);
+tangens(1.0);
+tangensh(1);
+tangensh(1.0);
+atangens(1);
+atangens(1.0);
 
-VEC<bool> temp2(4);
-temp2[0] = true;
-temp2[1] = true;
-temp2[2] = false;
-temp2[3] = true;
-subassign(a, r, temp2) = colon(1, 9);
-REQUIRE(subset(a, 1, 1)[0] == 1.0);
-REQUIRE(subset(a, 5, 1)[0] == 2.0);
-REQUIRE(subset(a, 3, 1)[0] == 3.0);
-REQUIRE(subset(a, 1, 2)[0] == 4.0);
-REQUIRE(subset(a, 5, 2)[0] == 5.0);
-REQUIRE(subset(a, 3, 2)[0] == 6.0);
-REQUIRE(subset(a, 1, 4)[0] == 7.0);
-REQUIRE(subset(a, 5, 4)[0] == 8.0);
-REQUIRE(subset(a, 3, 4)[0] == 9.0);
-
-a = temp;
-c = coca(1, 7, 2);
-subassign(a, temp2, c) = range(1, 9);
-REQUIRE(subset(a, 1, 1)[0] == 1.0);
-REQUIRE(subset(a, 2, 1)[0] == 2.0);
-REQUIRE(subset(a, 4, 1)[0] == 3.0);
-REQUIRE(subset(a, 1, 7)[0] == 4.0);
-REQUIRE(subset(a, 2, 7)[0] == 5.0);
-REQUIRE(subset(a, 4, 7)[0] == 6.0);
-REQUIRE(subset(a, 1, 2)[0] == 7.0);
-REQUIRE(subset(a, 2, 2)[0] == 8.0);
-REQUIRE(subset(a, 4, 2)[0] == 9.0);
-a = temp;
-
-
-VEC<bool> temp3(3);
-temp3[0] = true;
-temp3[1] = true;
-temp3[2] = true;
-
-VEC<bool> temp4(3);
-temp4[0] = true;
-temp4[1] = false;
-temp4[2] = true;
-subassign(a, temp3, temp4) = range(1, 6);
-REQUIRE(subset(a, 1, 1)[0] == 1.0);
-REQUIRE(subset(a, 2, 1)[0] == 2.0);
-REQUIRE(subset(a, 3, 1)[0] == 3.0);
-REQUIRE(subset(a, 1, 3)[0] == 4.0);
-REQUIRE(subset(a, 2, 3)[0] == 5.0);
-REQUIRE(subset(a, 3, 3)[0] == 6.0);
-print(sinus(0));
 
 }

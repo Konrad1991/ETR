@@ -432,6 +432,8 @@ VEC<double>& subassign(VEC<double>& inp, double row_, bool c) {
     inp.indices[j] = pst;
   }
 
+  inp.subsetted = true;
+
   return inp;
 }
 
@@ -560,6 +562,8 @@ VEC<double>& subassign(VEC<double>& inp, void* ptr, double col_) {
     inp.indices[j] = pst;
   }
 
+  inp.subsetted = true;
+
   return inp;
 }
 
@@ -643,7 +647,7 @@ VEC<double>& subassign(VEC<double>& inp, bool r, bool c) {
   }
 
   inp.subsetted = true;
-  inp.rsi(0);
+
   return inp;
 }
 
@@ -664,7 +668,7 @@ VEC<double>& subassign(VEC<double>& inp, bool r, void* c) {
   }
 
   inp.subsetted = true;
-  inp.rsi(0);
+
   return inp;
 }
 
