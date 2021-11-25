@@ -1,4 +1,4 @@
-https://img.shields.io/badge/<Code coverage>-<84.3%>-<brightgreen>
+[![Generic badge](https://img.shields.io/badge/<code coverage>-<84.3>-<brightgreen>.svg)](https://shields.io/)
 
 - [Overview](#overview)
 - [Integrate ETR in your project](#integrate-etr-in-your-project)
