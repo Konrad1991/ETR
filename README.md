@@ -1,3 +1,5 @@
+![Coverage Badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/<konrad1991>/<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>/raw/<ETR>__pull_##.json)
+
 - [Overview](#overview)
 - [Integrate ETR in your project](#integrate-etr-in-your-project)
 - [How to use it](#how-to-use-it)
