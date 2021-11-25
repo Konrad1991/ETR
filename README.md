@@ -1,5 +1,3 @@
-[![Generic badge](https://img.shields.io/badge/<code coverage>-<84.3>-<brightgreen>.svg)](https://shields.io/)
-
 - [Overview](#overview)
 - [Integrate ETR in your project](#integrate-etr-in-your-project)
 - [How to use it](#how-to-use-it)
