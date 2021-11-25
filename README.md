@@ -1,4 +1,3 @@
-
 - [Overview](#overview)
 - [Integrate ETR in your project](#integrate-etr-in-your-project)
 - [How to use it](#how-to-use-it)
@@ -23,7 +22,7 @@ Furthermore, basic arithmetic operations (+, -, \*, /) can be applied to these o
 
 # Integrate ETR in your project
 
-Notably, it is a header-only library and thus can be easly integrated in other projects. Simply clone the repository and add the 'etr_bits' folder in your project (can be found in the 'include' folder). Afterwards you have to include the 'etr.hpp' file in your codebase (*#include 'etr.hpp'*). The file can also be found in the 'include' folder. Use of C++17 is required, i.e. compile a program using: 'g++ test.cpp -std=c++17'. 
+Notably, it is a header-only library and thus can be easly integrated in other projects. Simply clone the repository and add the 'etr_bits' folder in your project (can be found in the 'include' folder). Afterwards you have to include the 'etr.hpp' file in your codebase (*#include 'etr.hpp'*). The file can also be found in the 'include' folder. Use of C++17 is required, i.e. compile a program using: 'g++ test.cpp -std=c++17'. There is also a problem with older versions of gcc. The tests all run successfully using gcc-10. Code coverage can be found in folder tests (84.3%).
 
 How the program works in detail, is explained below using small examples. 
 
@@ -452,3 +451,5 @@ int main() {
 }
 
 ```
+
+
