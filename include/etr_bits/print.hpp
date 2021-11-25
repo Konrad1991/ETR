@@ -25,6 +25,8 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 
 #include "subset.hpp"
 
+namespace etr {
+
 // print empty line
 void print() {
   std::cout << std::endl;
@@ -155,6 +157,7 @@ void print(VEC<bool>& inp) { // const
 
 }
 
+}
 
 
 #endif

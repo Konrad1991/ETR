@@ -1,5 +1,5 @@
 #include "../include/etr.hpp"
-
+using namespace etr;
 
 #define CATCH_CONFIG_MAIN
 #include "./catch/catch.hpp"

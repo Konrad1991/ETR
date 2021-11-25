@@ -24,6 +24,8 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 
 #include "vec.hpp"
 
+namespace etr {
+
 template<typename T, typename L, typename R>
 class VVTIMES {
 
@@ -211,6 +213,8 @@ public:
 template<typename T, typename L, typename R>
 VEC< T, SVTIMES< T, L, R > > operator*(const R& a, const VEC<T, L>&  b) {
     return VEC<T, SVTIMES<T, L, R> > (SVTIMES<T, L, R>(a, b.data(), b.im(), b.nr(), b.nc() ) );
+}
+
 }
 
 #endif

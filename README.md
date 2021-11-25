@@ -34,6 +34,7 @@ The **print** function can be used to print strings, scalar values, vectors or m
 
 ```Cpp
 #include "etr.hpp"
+using namespace etr;
 
 int main() {
   print("Hello World");
@@ -47,6 +48,7 @@ Notably, it is possible to change the type of a variable within the program. You
 
 ```Cpp
 #include "etr.hpp"
+using namespace etr;
 
 int main() {
 
@@ -76,6 +78,7 @@ You can apply basic functions like **+**, **-**, **/** and **\*** to scalar, vec
 
 ```Cpp
 #include "etr.hpp"
+using namespace etr;
 
 int main() {
 
@@ -98,6 +101,7 @@ Currently you have to use the function **subset** to extract certain elements (l
 
 ```Cpp
 #include "etr.hpp"
+using namespace etr;
 
 int main() {
 
@@ -122,6 +126,7 @@ In the program below you can see all the cases of subsetting a vector (matrix su
 
 ```Cpp
 #include "etr.hpp"
+using namespace etr;
 
 int main() {
   sexp v = colon(1, 6);
@@ -170,6 +175,7 @@ In the program below you can see all the cases of subsetting a matrix.
 
 ```Cpp
 #include "etr.hpp"
+using namespace etr;
 
 int main() {
   sexp m = matrix(colon(1, 15), 5, 3);
@@ -222,6 +228,7 @@ Currently you have to use the function **subassign** to extract only certain ele
 
 ```Cpp
 #include "etr.hpp"
+using namespace etr;
 
 int main() {
 
@@ -240,6 +247,7 @@ In order to extract informations about variables. You can use the **length** fun
 
 ```Cpp
 #include "etr.hpp"
+using namespace etr;
 
 int main() {
 
@@ -258,6 +266,7 @@ As usual in R you can use **==**, **!=**, **<=**, **>=**, **<** and **>**. If on
 
 ```Cpp
 #include "etr.hpp"
+using namespace etr;
 
 int main() {
   sexp a = coca(1, 2, 3);
@@ -304,6 +313,7 @@ You can use range based for loops in order to loop over **sexp** objects.
 
 ```Cpp
 #include "etr.hpp"
+using namespace etr;
 
 int main() {
 
@@ -342,6 +352,7 @@ It is possible to use a catmull-rome interpolation function called **cmr**. The 
 
 ```Cpp
 #include "etr.hpp"
+using namespace etr;
 
 int main() {
 
@@ -398,6 +409,7 @@ Else if **cob** is 2 then the ownership of the pointer is only borrowed. Meaning
 
 ```Cpp
 #include "etr.hpp"
+using namespace etr;
 
 int main() {
     int size = 10;

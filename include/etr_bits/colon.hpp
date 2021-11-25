@@ -25,6 +25,7 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 
 #include "vec.hpp"
 
+namespace etr {
 
 VEC<double> colon(int start, int end) {
   VEC<double> ret(end - start + 1);
@@ -164,5 +165,6 @@ void dim(double inp) {
     exit(0);
 }
 
+}
 
 #endif

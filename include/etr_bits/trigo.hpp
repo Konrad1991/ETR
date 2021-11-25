@@ -25,6 +25,8 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 
 #include "vec.hpp"
 
+namespace etr {
+
 template<typename T, typename L>
 class VVSIN {
 
@@ -575,6 +577,8 @@ double tangensh(double base) {
 
 double tangensh(int base) {
   return tanh(static_cast<double>(base));
+}
+
 }
 
 #endif

@@ -25,6 +25,8 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 
 #include "vec.hpp"
 
+namespace etr {
+
 bool cd(double a, double b) {
       return fabs(a - b) < 1E-3;
 }
@@ -1294,6 +1296,6 @@ VEC<bool> operator!=(VEC<double>&& a, VEC<double>& b) {
 }
 
 
-
+}
 
 #endif

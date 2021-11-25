@@ -1,4 +1,5 @@
 #include "../include/etr.hpp"
+using namespace etr;
 
 int main() {
 

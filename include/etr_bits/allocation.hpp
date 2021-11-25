@@ -25,6 +25,8 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 
 #include "vec.hpp"
 
+namespace etr {
+
 VEC<double> vector(int length) {
   VEC<double> ret(length);
   return ret;
@@ -68,5 +70,6 @@ VEC<double> matrix(VEC<double> inp, int nrows_, int ncols_) {
   return ret;
 }
 
+}
 
 #endif

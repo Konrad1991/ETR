@@ -23,6 +23,8 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 
 #include "pointer_storage.hpp"
 
+namespace etr {
+
 /*
 Vector & matrix module
 */
@@ -279,5 +281,7 @@ int d2i(double inp) {
   return static_cast<int>(inp);
 }
 
+
+}
 
 #endif

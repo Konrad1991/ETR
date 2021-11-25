@@ -25,6 +25,8 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 
 #include "vec.hpp"
 
+namespace etr {
+
 template<typename T>
 double li(double t, VEC<T> &time_vec, VEC<T> &par_vec) {
   double t0, t1;
@@ -248,6 +250,8 @@ double cmr(double t, VEC<T> &&time_vec, VEC<T> &&par_vec){
     + (pow(x,3) -pow(x,2)) *(t2-t1) *m2
   );
   return res;
+}
+
 }
 
 #endif

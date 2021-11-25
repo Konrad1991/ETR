@@ -24,6 +24,7 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 
 #include "vec.hpp"
 
+namespace etr {
 
 VEC<double> combine(VEC<double>&& a, VEC<double>&& b) {
   //a.ismatrix = false;
@@ -132,5 +133,7 @@ VEC<double> coca (Ts & ... multi_inputs)
     return ret;
 }
 
+
+}
 
 #endif

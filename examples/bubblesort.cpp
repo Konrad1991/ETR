@@ -1,5 +1,5 @@
 #include "../include/etr.hpp"
-
+using namespace etr;
 
 void bs(sexp& arr) {
   sexp size = length(arr);

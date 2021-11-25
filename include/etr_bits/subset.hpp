@@ -22,6 +22,8 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 #ifndef SUBSETTING
 #define SUBSETTING
 
+namespace etr {
+
 VEC<double> subset(VEC<double>& inp) {
   VEC<double> ret;
   ret = inp;
@@ -2249,6 +2251,8 @@ VEC<double> subset(VEC<double>& inp, VEC<bool>&& rows, VEC<bool>& cols) {
   }
 
   return ret;
+}
+
 }
 
 #endif

@@ -25,6 +25,8 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 
 #include "vec.hpp"
 
+namespace etr {
+
 VEC<double>& subassign(VEC<double>& inp) {
   inp.rsi(inp.size());
   for(int i = 0; i < inp.size(); i++) {
@@ -2252,6 +2254,8 @@ VEC<double>& subassign(VEC<double>& inp, VEC<bool>& rows, VEC<bool>&& cols) {
   }
 
   return inp;
+}
+
 }
 
 #endif

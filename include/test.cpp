@@ -1,8 +1,9 @@
 #include "etr.hpp"
 
-
+using namespace etr;
 
 int main() {
+
 
     int size = 10;
 
@@ -40,5 +41,7 @@ int main() {
     print();
 
     delete[] ptr3;
+
+    
 
 }

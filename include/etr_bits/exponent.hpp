@@ -25,6 +25,8 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 
 #include "vec.hpp"
 
+namespace etr {
+
 template<typename T, typename L, typename R>
 class VVEXP {
 
@@ -162,7 +164,7 @@ double ln(int base) {
 
 
 
-
+}
 
 
 

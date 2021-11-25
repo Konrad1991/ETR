@@ -24,6 +24,8 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 
 #include "header.hpp"
 
+namespace etr {
+
 // error function --> stop program & show message
 void ass(bool inp, std::string message) {
   if(inp == false) {
@@ -41,5 +43,6 @@ std::vector<double> range(int start, int end) {
   return ret;
 }
 
+}
 
 #endif
