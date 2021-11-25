@@ -1,3 +1,5 @@
+https://img.shields.io/badge/<Code coverage>-<84.3%>-<brightgreen>
+
 - [Overview](#overview)
 - [Integrate ETR in your project](#integrate-etr-in-your-project)
 - [How to use it](#how-to-use-it)
