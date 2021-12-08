@@ -19,14 +19,30 @@ You should have received a copy of the GNU General Public License along with etr
 If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 */
 
-#ifndef HEADER_H
-#define HEADER_H
+#ifndef LOOPING
+#define LOOPING
 
-#include <iostream>
-#include <iterator>
-#include <memory>
-#include <vector>
-#include <math.h>
 
+#include <functional>
+#include "vec.hpp"
+
+namespace etr {
+
+  template<typename T, typename F>
+  void for_(VEC<T>&& inp, F&&f) {
+    for(auto& i: inp) {
+      f(i);
+    }
+  }
+
+  template<typename T, typename F>
+  void for_(VEC<T>& inp, F&&f) {
+    for(auto& i: inp) {
+      f(i);
+    }
+  }
+
+
+}
 
 #endif

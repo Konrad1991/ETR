@@ -2,6 +2,7 @@
 
 using namespace etr;
 
+
 int main() {
 
   sexp a;
@@ -10,5 +11,5 @@ int main() {
 
   a = b + b * b - 2;
 
-  print(a);
+  for_(a, [&](auto i) { print(i);});
 }

@@ -40,6 +40,7 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 #include "etr_bits/trigo.hpp"
 #include "etr_bits/interpolation.hpp"
 #include "etr_bits/comparison.hpp"
+#include "etr_bits/looping.hpp"
 
 //#define vec VEC<double>
 //#define mat VEC<double>
