@@ -182,7 +182,7 @@ public:
       for(int i = 0; i < d.size(); i++) {
             this -> d[i] = other_vec[i];
       }
-      if(other_vec.d.im() == true) {
+      if(other_vec.im() == true) {
         ismatrix = true;
         ncols = other_vec.d.nc();
         nrows = other_vec.d.nr();

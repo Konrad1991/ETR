@@ -11,5 +11,11 @@ int main() {
 
   a = b + b * b - 2;
 
-  for_(a, [&](auto i) { print(i);});
+  for_(a, [&](auto& i) {
+    print("a");
+    print(i);
+    b = a + i;
+    print("b");
+    print(b);
+  });
 }

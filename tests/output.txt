@@ -3,22 +3,22 @@ Reading tracefile coverage.info
 Filename                                  |Rate     Num|Rate    Num|Rate     Num
 ================================================================================
 [/home/konrad/Documents/0Uni/programming/ETR/]
-include/etr_bits/add.hpp                  |83.5%     85|90.5%    21|    -      0
+include/etr_bits/add.hpp                  |71.1%     83|70.0%    20|    -      0
 include/etr_bits/allocation.hpp           | 100%     29| 100%     6|    -      0
 include/etr_bits/colon.hpp                |85.9%     78|82.4%    17|    -      0
 include/etr_bits/comparison.hpp           |54.3%    626|73.5%    49|    -      0
 include/etr_bits/concatenate.hpp          |70.2%     57|97.8%    90|    -      0
-include/etr_bits/divide.hpp               |83.5%     85|85.7%    28|    -      0
-include/etr_bits/exponent.hpp             |63.6%     44|72.2%    18|    -      0
-include/etr_bits/mul.hpp                  |83.5%     85|85.7%    28|    -      0
+include/etr_bits/divide.hpp               |71.1%     83|69.2%    26|    -      0
+include/etr_bits/exponent.hpp             |60.0%     40|68.8%    16|    -      0
+include/etr_bits/mul.hpp                  |71.1%     83|69.2%    26|    -      0
 include/etr_bits/pointer_storage.hpp      |81.9%     72| 100%    22|    -      0
 include/etr_bits/print.hpp                |59.1%     66|77.8%     9|    -      0
 include/etr_bits/subset.hpp               |43.9%   1389|64.4%    73|    -      0
 include/etr_bits/subsetassign.hpp         |42.9%   1381|61.6%    73|    -      0
-include/etr_bits/subtract.hpp             |83.5%     85|90.5%    21|    -      0
-include/etr_bits/trigo.hpp                |68.2%    198|77.8%    81|    -      0
+include/etr_bits/subtract.hpp             |71.1%     83|70.0%    20|    -      0
+include/etr_bits/trigo.hpp                |65.4%    182|75.3%    73|    -      0
 include/etr_bits/util.hpp                 |60.0%      5| 100%     1|    -      0
-include/etr_bits/vec.hpp                  |94.5%     91| 100%   131|    -      0
+include/etr_bits/vec.hpp                  |91.2%     91| 100%   149|    -      0
 tests/alltests.cpp                        |99.4%   1084| 100%    26|    -      0
 ================================================================================
-                                    Total:|62.1%   5460|84.3%   694|    -      0
+                                    Total:|61.1%   5432|82.0%   696|    -      0
