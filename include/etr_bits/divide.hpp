@@ -32,73 +32,17 @@ class VVDIV {
 private:
   const L& l; //const L& l;
   const R& r; //const R& r;
-  std::vector<int> indices1;
-  std::vector<int> indices2;
   int columns_;
   int rows_;
   bool ismatrix;
 
 public:
 
-  VVDIV(const L &a, const R &b, bool l_ismatrix, bool r_ismatrix,
-        int l_rows, int l_cols, int r_rows, int r_cols) : l(a), r(b) {
-
-    bool _l_ismatrix = l_ismatrix;
-    bool _r_ismatrix = r_ismatrix;
-    int _l_nrow = l_rows;
-    int _r_nrow = r_rows;
-    int _l_ncol = l_cols;
-    int _r_ncol = r_cols;
-
-    if( ((_l_ismatrix == true) || (_r_ismatrix == true )) ||
-        ((_l_ismatrix == true) && (_r_ismatrix == true )) ) {
-        ismatrix = true;
-      if( (_l_ismatrix == true) && (_r_ismatrix == false) ){
-        columns_ = _l_ncol;
-        rows_ = _l_nrow;
-      } else if ((_l_ismatrix == false) && (_r_ismatrix == true)) {
-        columns_ = _r_ncol;
-        rows_ = _r_nrow;
-      } else if((_l_ismatrix == true) && (_r_ismatrix == true)) {
-        columns_ = (_l_ncol > _r_ncol) ? _l_ncol : _r_ncol;
-        rows_ = (_l_nrow > _r_nrow) ? _l_nrow : _r_nrow;
-      } else {
-        exit(0);
-      }
-    }
-
-       if(l.size() > r.size()) {
-         //ass((l.size() % r.size()) == 0, "Vector is not multiple of other vector");
-         indices1.resize(l.size());
-         indices2.resize(l.size());
-         for(int i = 0; i < indices2.size(); i++) {
-           indices1[i] = i;
-
-           int times = floor(i/r.size());
-           indices2[i] =  i - times*r.size();
-         }
-       } else if(r.size() > l.size()) {
-         //ass((l.size() % r.size()) == 0, "Vector is not multiple of other vector");
-         indices1.resize(r.size());
-         indices2.resize(r.size());
-         for(int i = 0; i < indices2.size(); i++) {
-           indices2[i] = i;
-
-           int times = floor(i/l.size());
-           indices1[i] =  i - times*l.size();
-         }
-     } else if(r.size() == l.size()) {
-       indices1.resize(l.size());
-       indices2.resize(r.size());
-       for(int i = 0; i < indices2.size(); i++) {
-         indices1[i] = i;
-         indices2[i] = i;
-       }
-     }
-   }
+  VVDIV(const L &a, const R &b, bool ismatrix_, int rows, int cols) : l(a), r(b),
+         ismatrix(ismatrix_), rows_(rows), columns_(cols) {}
 
    T operator[](const int i) const {
-     return l[indices1[i]] / r[indices2[i]];
+     return l[i % l.size()] / r[i % r.size()];
    }
 
    int size() const {
@@ -122,9 +66,39 @@ public:
 
 template<typename T, typename L, typename R>
 VEC< T, VVDIV< T, L, R > > operator/(const VEC<T, L>& a, const VEC<T, R>& b) {
-    return VEC<T, VVDIV<T, L, R> > (VVDIV<T, L, R>(a.data(), b.data(),
-                                     a.im(), b.im(),
-                                     a.nrow(), a.ncol(), b.nrow(), b.ncol() )  );
+
+  bool ismatrix_ = false;
+  int nrows_ = 0;
+  int ncols_ = 0;
+  if( (a.im() == true) || (b.im() == true) || (a.im() == true && b.im() == true) ) {
+    ismatrix_ = true;
+
+    if( (a.im() == true) && (b.im() == true) ) {
+      nrows_ = (a.nr() > b.nr()) ? a.nr() : b.nr();
+      ncols_ = (a.nc() > b.nc()) ? a.nc() : b.nc();
+    } else if( (a.im() == false) && (b.im() == true) ) {
+      nrows_ = b.nr();
+      ncols_ = b.nc();
+    } else if( (a.im() == true) && (b.im() == false) ) {
+      nrows_ = a.nr();
+      ncols_ = a.nc();
+    } else {
+      #ifdef R
+        Rcpp::stop("Error");
+      #else
+        exit (EXIT_FAILURE);
+      #endif  
+    }
+
+  }
+
+  VEC<T, VVDIV<T, L, R> > ret(VVDIV<T, L, R>(a.data(), b.data(), ismatrix_, nrows_, ncols_));
+
+  ret.ismatrix = ismatrix_;
+  ret.ncols = ncols_;
+  ret.nrows = nrows_;
+
+  return ret;
 }
 
 template<typename T, typename L, typename R>
@@ -142,7 +116,7 @@ public:
      l(a), r(b), ismatrix(ismatrix_), nrows(nrows_), ncols(ncols_) {}
 
    T operator[](const int i) const {
-     return l[i] / r;
+     return l[i % l.size()] / r;
    }
 
    int size() const {
@@ -166,7 +140,24 @@ public:
 
 template<typename T, typename L, typename R>
 VEC< T, VSDIV< T, L, R > > operator/(const VEC<T, L>& a, const R& b) {
-    return VEC<T, VSDIV<T, L, R> > (VSDIV<T, L, R>(a.data(), b, a.im(), a.nr(), a.nc() ) );
+
+  bool ismatrix_ = false;
+  int nrows_ = 0;
+  int ncols_ = 0;
+
+  if(a.im() == true) {
+    ismatrix_ = true;
+    nrows_ = a.nr();
+    ncols_ = a.nc();
+  }
+
+  VEC<T, VSDIV<T, L, R> > ret (VSDIV<T, L, R>(a.data(), b, a.im(), a.nr(), a.nc() ) );
+
+  ret.ismatrix = ismatrix_;
+  ret.ncols = ncols_;
+  ret.nrows = nrows_;
+
+  return ret;
 }
 
 
@@ -185,7 +176,7 @@ public:
      r(a), l(b), ismatrix(ismatrix_), nrows(nrows_), ncols(ncols_) { }
 
    T operator[](const int i) const {
-     return r/l[i];
+     return r/l[i % l.size()];
    }
 
    int size() const {
@@ -210,7 +201,24 @@ public:
 
 template<typename T, typename L, typename R>
 VEC< T, SVDIV< T, L, R > > operator/(const R& a, const VEC<T, L>&  b) {
-    return VEC<T, SVDIV<T, L, R> > (SVDIV<T, L, R>(a, b.data(), b.im(), b.nr(), b.nc() ) );
+
+  bool ismatrix_ = false;
+  int nrows_ = 0;
+  int ncols_ = 0;
+
+  if(b.im() == true) {
+    ismatrix_ = true;
+    nrows_ = b.nr();
+    ncols_ = b.nc();
+  }
+
+  VEC<T, SVDIV<T, L, R> > ret (SVDIV<T, L, R>(a, b.data(), b.im(), b.nr(), b.nc() ) );
+
+  ret.ismatrix = ismatrix_;
+  ret.ncols = ncols_;
+  ret.nrows = nrows_;
+
+  return ret;
 }
 
 }

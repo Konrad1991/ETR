@@ -50,7 +50,7 @@ public:
    }
 
    T operator[](const int i) const {
-     return pow(r[i], exponent);
+     return pow(r[i% r.size()], exponent);
    }
 
    int size() const {
@@ -74,13 +74,47 @@ public:
 
 template<typename T, typename L, typename R>
 VEC< T, VVEXP< T, L, R> > operator^(const VEC<T, L>& a, const R exponent) {
-    return VEC<T, VVEXP<T, L, R> > (VVEXP<T, L, R>(a.data(), a.im(), a.nrow(), a.ncol(), exponent) );
+
+  bool ismatrix_ = false;
+  int nrows_ = 0;
+  int ncols_ = 0;
+
+  if(a.im() == true) {
+    ismatrix_ = true;
+    nrows_ = a.nr();
+    ncols_ = a.nc();
+  }
+
+  VEC<T, VVEXP<T, L, R> > ret (VVEXP<T, L, R>(a.data(), a.im(), a.nrow(), a.ncol(), exponent) );
+
+  ret.ismatrix = ismatrix_;
+  ret.ncols = ncols_;
+  ret.nrows = nrows_;
+
+  return ret;
 }
 
 
 template<typename T, typename L, typename R>
 VEC< T, VVEXP< T, L, R> > exp(const VEC<T, L>& a, const R exponent) {
-    return VEC<T, VVEXP<T, L, R> > (VVEXP<T, L, R>(a.data(), a.im(), a.nrow(), a.ncol(), exponent) );
+
+    bool ismatrix_ = false;
+    int nrows_ = 0;
+    int ncols_ = 0;
+
+    if(a.im() == true) {
+      ismatrix_ = true;
+      nrows_ = a.nr();
+      ncols_ = a.nc();
+    }
+
+    VEC<T, VVEXP<T, L, R> > ret (VVEXP<T, L, R>(a.data(), a.im(), a.nrow(), a.ncol(), exponent) );
+
+    ret.ismatrix = ismatrix_;
+    ret.ncols = ncols_;
+    ret.nrows = nrows_;
+
+    return ret;
 }
 
 
@@ -120,7 +154,7 @@ public:
   }
 
    T operator[](const int i) const {
-     return log(r[i]);
+     return log(r[i% r.size()]);
    }
 
    int size() const {
@@ -144,7 +178,24 @@ public:
 
 template<typename T, typename L>
 VEC< T, VVlog< T, L> > ln(const VEC<T, L>& a) {
-    return VEC<T, VVlog<T, L> > (VVlog<T, L>(a.data(), a.im(), a.nrow(), a.ncol()) );
+
+    bool ismatrix_ = false;
+    int nrows_ = 0;
+    int ncols_ = 0;
+
+    if(a.im() == true) {
+      ismatrix_ = true;
+      nrows_ = a.nr();
+      ncols_ = a.nc();
+    }
+
+    VEC<T, VVlog<T, L> > ret(VVlog<T, L>(a.data(), a.im(), a.nrow(), a.ncol()) );
+
+    ret.ismatrix = ismatrix_;
+    ret.ncols = ncols_;
+    ret.nrows = nrows_;
+
+    return ret;
 }
 
 

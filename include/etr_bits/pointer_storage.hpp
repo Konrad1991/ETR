@@ -170,8 +170,7 @@ public:
     }
   }
 
-  /*
-  STORE& init(const int n, T* pinp, bool copy) {
+  void init(const int n, T* pinp) {
 
         if(allocated == true) {
           ass(p != nullptr, "try to delete nullptr");
@@ -179,25 +178,19 @@ public:
           p = nullptr;
         }
 
-        if(copy == false) {
-          sz = n;
-          capacity = sz;
-          p = pinp;
-          todelete = false;
-          allocated = true; //?
-        } else if(copy == true) {
-          sz = n;
-          capacity = sz;
-          p = new T[n];
-          for(int i = 0; i < sz; i++) {
-            p[i] = pinp[i];
-          }
-          todelete = true;
-          allocated = true;
+        sz = n;
+        capacity = sz;
+
+        p = new T[n];
+        for(int i = 0; i < sz; i++) {
+          p[i] = pinp[i];
         }
-    return *this;
+
+        todelete = true;
+        allocated = true;
+
   }
-  */
+
 
   // Destructors
   ~STORE() {
@@ -208,6 +201,23 @@ public:
         p = nullptr;
       }
     }
+  }
+
+  // move it
+  STORE& moveit(STORE<T>& other) {
+    T* temporary = other.p;
+    int temp_size = other.sz;
+    int temp_capacity = other.capacity;
+
+    other.p = this -> p;
+    other.sz = this -> sz;
+    other.capacity = this -> capacity;
+
+    this -> p = temporary;
+    this -> sz = temp_size;
+    this -> capacity = temp_capacity;
+
+    return *this;
   }
 
   int size() const {
@@ -246,24 +256,39 @@ public:
   T& operator[](int pos) const {
     if(pos < 0) {
       std::cerr << "Error: out of boundaries --> value below 1" << std::endl;
-      exit(0);
+
+      #ifdef R
+        Rcpp::stop("Error");
+      #else
+        std::terminate();
+      #endif
     } else if(pos >= sz) {
       std::cerr << "Error: out of boundaries --> value beyond size of vector" << std::endl;
-      exit(0);
+      #ifdef R
+        Rcpp::stop("Error");
+      #else
+        std::terminate();
+      #endif
     }
     return p[pos];
   }
 
   void resize(int new_size) {
     ass(cob < 2, "try to delete borrowed pointer");
-    if(allocated == true) {
-      ass(p != nullptr, "try to delete nullptr");
-      delete [] p;
-      p = nullptr;
+    if(new_size > sz) {
+      if(allocated == true) {
+        ass(p != nullptr, "try to delete nullptr");
+        delete [] p;
+        p = nullptr;
+      }
+
+      p = new T[static_cast<int>(new_size*1.15)]; //*2
+      sz = new_size;
+      capacity = static_cast<int>(new_size*1.15); //*2
+    } else {
+      sz = new_size;
     }
-    p = new T[new_size*2];
-    sz = new_size;
-    capacity = new_size*2;
+
   }
 
   void realloc(int new_size) {

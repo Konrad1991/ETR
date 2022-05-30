@@ -26,6 +26,8 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 
 namespace etr {
 
+
+/*
 template<typename T, typename L, typename R>
 class VVPLUS {
 
@@ -40,32 +42,8 @@ private:
 
 public:
 
-  VVPLUS(const L &a, const R &b, bool l_ismatrix, bool r_ismatrix,
-        int l_rows, int l_cols, int r_rows, int r_cols) : l(a), r(b) {
-
-    bool _l_ismatrix = l_ismatrix;
-    bool _r_ismatrix = r_ismatrix;
-    int _l_nrow = l_rows;
-    int _r_nrow = r_rows;
-    int _l_ncol = l_cols;
-    int _r_ncol = r_cols;
-
-    if( ((_l_ismatrix == true) || (_r_ismatrix == true )) ||
-        ((_l_ismatrix == true) && (_r_ismatrix == true )) ) {
-        ismatrix = true;
-      if( (_l_ismatrix == true) && (_r_ismatrix == false) ){
-        columns_ = _l_ncol;
-        rows_ = _l_nrow;
-      } else if ((_l_ismatrix == false) && (_r_ismatrix == true)) {
-        columns_ = _r_ncol;
-        rows_ = _r_nrow;
-      } else if((_l_ismatrix == true) && (_r_ismatrix == true)) {
-        columns_ = (_l_ncol > _r_ncol) ? _l_ncol : _r_ncol;
-        rows_ = (_l_nrow > _r_nrow) ? _l_nrow : _r_nrow;
-      } else {
-        exit(0);
-      }
-    }
+  VVPLUS(const L &a, const R &b, bool ismatrix_, int rows, int cols) : l(a), r(b),
+         ismatrix(ismatrix_), rows_(rows), columns_(cols) {
 
        if(l.size() > r.size()) {
          //ass((l.size() % r.size()) == 0, "Vector is not multiple of other vector");
@@ -107,7 +85,49 @@ public:
    }
 
    bool im() const {
-     return ismatrix;
+     return this -> ismatrix;
+   }
+
+   int nc() const {
+     return columns_;
+   }
+
+   int nr() const {
+     return rows_;
+   }
+
+};
+*/
+
+
+
+
+template<typename T, typename L, typename R>
+class VVPLUS {
+
+private:
+  const L& l;
+  const R& r;
+  int columns_;
+  int rows_;
+  bool ismatrix;
+
+public:
+
+  VVPLUS(const L &a, const R &b, bool ismatrix_, int rows, int cols) : l(a), r(b),
+         ismatrix(ismatrix_), rows_(rows), columns_(cols) {}
+
+   T operator[](const int i) const {
+     return l[i % l.size()] + r[i % r.size()];
+   }
+
+   int size() const {
+     int sz = (l.size() > r.size()) ? l.size() : r.size();
+     return   sz;      //l.size(); // correct?
+   }
+
+   bool im() const {
+     return this -> ismatrix;
    }
 
    int nc() const {
@@ -121,12 +141,45 @@ public:
 };
 
 
+
 template<typename T, typename L, typename R>
 VEC< T, VVPLUS< T, L, R > > operator+(const VEC<T, L>& a, const VEC<T, R>& b) {
-    return VEC<T, VVPLUS<T, L, R> > (VVPLUS<T, L, R>(a.data(), b.data(),
-                                     a.im(), b.im(),
-                                     a.nrow(), a.ncol(), b.nrow(), b.ncol()) );
+
+  bool ismatrix_ = false;
+  int nrows_ = 0;
+  int ncols_ = 0;
+  if( (a.im() == true) || (b.im() == true) || (a.im() == true && b.im() == true) ) {
+    ismatrix_ = true;
+
+    if( (a.im() == true) && (b.im() == true) ) {
+      nrows_ = (a.nr() > b.nr()) ? a.nr() : b.nr();
+      ncols_ = (a.nc() > b.nc()) ? a.nc() : b.nc();
+    } else if( (a.im() == false) && (b.im() == true) ) {
+      nrows_ = b.nr();
+      ncols_ = b.nc();
+    } else if( (a.im() == true) && (b.im() == false) ) {
+      nrows_ = a.nr();
+      ncols_ = a.nc();
+    } else {
+      #ifdef R
+        Rcpp::stop("Error");
+      #else
+        exit (EXIT_FAILURE);
+      #endif  
+    }
+
+  }
+
+  VEC<T, VVPLUS<T, L, R> > ret(VVPLUS<T, L, R>(a.data(), b.data(), ismatrix_, nrows_, ncols_));
+
+  ret.ismatrix = ismatrix_;
+  ret.ncols = ncols_;
+  ret.nrows = nrows_;
+
+  return ret;
 }
+
+
 
 
 template<typename T, typename L, typename R>
@@ -141,10 +194,10 @@ private:
 
 public:
   VSPLUS(const L &a, const R &b, bool ismatrix_, int nrows_, int ncols_ ) :
-     l(a), r(b), ismatrix(ismatrix_), nrows(nrows_), ncols(ncols_) {}
+     l(a), r(b), ismatrix(ismatrix_), nrows(nrows_), ncols(ncols_) { }
 
    T operator[](const int i) const {
-     return l[i] + r;
+     return l[i % l.size()] + r;
    }
 
    int size() const {
@@ -168,7 +221,24 @@ public:
 
 template<typename T, typename L, typename R>
 VEC< T, VSPLUS< T, L, R > > operator+(const VEC<T, L>& a, const R& b) {
-    return VEC<T, VSPLUS<T, L, R> > (VSPLUS<T, L, R>(a.data(), b, a.im(), a.nr(), a.nc() ) );
+
+    bool ismatrix_ = false;
+    int nrows_ = 0;
+    int ncols_ = 0;
+
+    if(a.im() == true) {
+      ismatrix_ = true;
+      nrows_ = a.nr();
+      ncols_ = a.nc();
+    }
+
+    VEC<T, VSPLUS<T, L, R> > ret (VSPLUS<T, L, R>(a.data(), b, a.im(), a.nr(), a.nc() ) );
+
+    ret.ismatrix = ismatrix_;
+    ret.ncols = ncols_;
+    ret.nrows = nrows_;
+
+    return ret;
 }
 
 
@@ -189,7 +259,7 @@ public:
      r(a), l(b), ismatrix(ismatrix_), nrows(nrows_), ncols(ncols_) { }
 
    T operator[](const int i) const {
-     return l[i] + r;
+     return l[i % l.size()] + r;
    }
 
    int size() const {
@@ -214,7 +284,24 @@ public:
 
 template<typename T, typename L, typename R>
 VEC< T, SVPLUS< T, L, R > > operator+(const R& a, const VEC<T, L>&  b) {
-    return VEC<T, SVPLUS<T, L, R> > (SVPLUS<T, L, R>(a, b.data(), b.im(), b.nr(), b.nc() ) );
+
+  bool ismatrix_ = false;
+  int nrows_ = 0;
+  int ncols_ = 0;
+
+  if(b.im() == true) {
+    ismatrix_ = true;
+    nrows_ = b.nr();
+    ncols_ = b.nc();
+  }
+
+  VEC<T, SVPLUS<T, L, R> > ret (SVPLUS<T, L, R>(a, b.data(), b.im(), b.nr(), b.nc() ) );
+
+  ret.ismatrix = ismatrix_;
+  ret.ncols = ncols_;
+  ret.nrows = nrows_;
+
+  return ret;
 }
 
 }

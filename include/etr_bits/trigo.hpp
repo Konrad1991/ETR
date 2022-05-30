@@ -49,7 +49,7 @@ public:
   }
 
    T operator[](const int i) const {
-     return sin(r[i]);
+     return sin(r[i % r.size()]);
    }
 
    int size() const {
@@ -73,7 +73,24 @@ public:
 
 template<typename T, typename L>
 VEC< T, VVSIN< T, L> > sinus(const VEC<T, L>& a) {
-    return VEC<T, VVSIN<T, L> > (VVSIN<T, L>(a.data(), a.im(), a.nrow(), a.ncol()) );
+
+  bool ismatrix_ = false;
+  int nrows_ = 0;
+  int ncols_ = 0;
+
+  if(a.im() == true) {
+    ismatrix_ = true;
+    nrows_ = a.nr();
+    ncols_ = a.nc();
+  }
+
+  VEC<T, VVSIN<T, L> > ret (VVSIN<T, L>(a.data(), a.im(), a.nrow(), a.ncol()) );
+
+  ret.ismatrix = ismatrix_;
+  ret.ncols = ncols_;
+  ret.nrows = nrows_;
+
+  return ret;
 }
 
 
@@ -109,7 +126,7 @@ public:
   }
 
    T operator[](const int i) const {
-     return sinh(r[i]);
+     return sinh(r[i % r.size()]);
    }
 
    int size() const {
@@ -133,7 +150,24 @@ public:
 
 template<typename T, typename L>
 VEC< T, VVsinh< T, L> > sinush(const VEC<T, L>& a) {
-    return VEC<T, VVsinh<T, L> > (VVsinh<T, L>(a.data(), a.im(), a.nrow(), a.ncol()) );
+
+  bool ismatrix_ = false;
+  int nrows_ = 0;
+  int ncols_ = 0;
+
+  if(a.im() == true) {
+    ismatrix_ = true;
+    nrows_ = a.nr();
+    ncols_ = a.nc();
+  }
+
+  VEC<T, VVsinh<T, L> > ret (VVsinh<T, L>(a.data(), a.im(), a.nrow(), a.ncol()) );
+
+  ret.ismatrix = ismatrix_;
+  ret.ncols = ncols_;
+  ret.nrows = nrows_;
+
+  return ret;
 }
 
 
@@ -168,7 +202,7 @@ public:
   }
 
    T operator[](const int i) const {
-     return asin(r[i]);
+     return asin(r[i % r.size()]);
    }
 
    int size() const {
@@ -192,7 +226,24 @@ public:
 
 template<typename T, typename L>
 VEC< T, VVasin< T, L> > asinus(const VEC<T, L>& a) {
-    return VEC<T, VVasin<T, L> > (VVasin<T, L>(a.data(), a.im(), a.nrow(), a.ncol()) );
+
+  bool ismatrix_ = false;
+  int nrows_ = 0;
+  int ncols_ = 0;
+
+  if(a.im() == true) {
+    ismatrix_ = true;
+    nrows_ = a.nr();
+    ncols_ = a.nc();
+  }
+
+  VEC<T, VVasin<T, L> > ret (VVasin<T, L>(a.data(), a.im(), a.nrow(), a.ncol()) );
+
+  ret.ismatrix = ismatrix_;
+  ret.ncols = ncols_;
+  ret.nrows = nrows_;
+
+  return ret;
 }
 
 
@@ -230,7 +281,7 @@ public:
   }
 
    T operator[](const int i) const {
-     return cos(r[i]);
+     return cos(r[i% r.size()]);
    }
 
    int size() const {
@@ -254,7 +305,24 @@ public:
 
 template<typename T, typename L>
 VEC< T, VVCOS< T, L> > cosinus(const VEC<T, L>& a) {
-    return VEC<T, VVCOS<T, L> > (VVCOS<T, L>(a.data(), a.im(), a.nrow(), a.ncol()) );
+
+  bool ismatrix_ = false;
+  int nrows_ = 0;
+  int ncols_ = 0;
+
+  if(a.im() == true) {
+    ismatrix_ = true;
+    nrows_ = a.nr();
+    ncols_ = a.nc();
+  }
+
+  VEC<T, VVCOS<T, L> > ret (VVCOS<T, L>(a.data(), a.im(), a.nrow(), a.ncol()) );
+
+  ret.ismatrix = ismatrix_;
+  ret.ncols = ncols_;
+  ret.nrows = nrows_;
+
+  return ret;
 }
 
 
@@ -293,7 +361,7 @@ public:
   }
 
    T operator[](const int i) const {
-     return acos(r[i]);
+     return acos(r[i% r.size()]);
    }
 
    int size() const {
@@ -317,7 +385,24 @@ public:
 
 template<typename T, typename L>
 VEC< T, VVacos< T, L> > acosinus(const VEC<T, L>& a) {
-    return VEC<T, VVacos<T, L> > (VVacos<T, L>(a.data(), a.im(), a.nrow(), a.ncol()) );
+
+  bool ismatrix_ = false;
+  int nrows_ = 0;
+  int ncols_ = 0;
+
+  if(a.im() == true) {
+    ismatrix_ = true;
+    nrows_ = a.nr();
+    ncols_ = a.nc();
+  }
+
+  VEC<T, VVacos<T, L> > ret (VVacos<T, L>(a.data(), a.im(), a.nrow(), a.ncol()) );
+
+  ret.ismatrix = ismatrix_;
+  ret.ncols = ncols_;
+  ret.nrows = nrows_;
+
+  return ret;
 }
 
 
@@ -355,7 +440,7 @@ public:
   }
 
    T operator[](const int i) const {
-     return cosh(r[i]);
+     return cosh(r[i% r.size()]);
    }
 
    int size() const {
@@ -379,7 +464,24 @@ public:
 
 template<typename T, typename L>
 VEC< T, VVCOSH< T, L> > cosinush(const VEC<T, L>& a) {
-    return VEC<T, VVCOSH<T, L> > (VVCOSH<T, L>(a.data(), a.im(), a.nrow(), a.ncol()) );
+
+  bool ismatrix_ = false;
+  int nrows_ = 0;
+  int ncols_ = 0;
+
+  if(a.im() == true) {
+    ismatrix_ = true;
+    nrows_ = a.nr();
+    ncols_ = a.nc();
+  }
+
+  VEC<T, VVCOSH<T, L> > ret (VVCOSH<T, L>(a.data(), a.im(), a.nrow(), a.ncol()) );
+
+  ret.ismatrix = ismatrix_;
+  ret.ncols = ncols_;
+  ret.nrows = nrows_;
+
+  return ret;
 }
 
 
@@ -419,7 +521,7 @@ public:
   }
 
    T operator[](const int i) const {
-     return tan(r[i]);
+     return tan(r[i% r.size()]);
    }
 
    int size() const {
@@ -443,7 +545,24 @@ public:
 
 template<typename T, typename L>
 VEC< T, VVtan< T, L> > tangens(const VEC<T, L>& a) {
-    return VEC<T, VVtan<T, L> > (VVtan<T, L>(a.data(), a.im(), a.nrow(), a.ncol()) );
+  bool ismatrix_ = false;
+  int nrows_ = 0;
+  int ncols_ = 0;
+
+  if(a.im() == true) {
+    ismatrix_ = true;
+    nrows_ = a.nr();
+    ncols_ = a.nc();
+  }
+
+  VEC<T, VVtan<T, L> > ret (VVtan<T, L>(a.data(), a.im(), a.nrow(), a.ncol()) );
+
+  ret.ismatrix = ismatrix_;
+  ret.ncols = ncols_;
+  ret.nrows = nrows_;
+
+  return ret;
+
 }
 
 
@@ -481,7 +600,7 @@ public:
   }
 
    T operator[](const int i) const {
-     return atan(r[i]);
+     return atan(r[i% r.size()]);
    }
 
    int size() const {
@@ -505,7 +624,23 @@ public:
 
 template<typename T, typename L>
 VEC< T, VVatan< T, L> > atangens(const VEC<T, L>& a) {
-    return VEC<T, VVatan<T, L> > (VVatan<T, L>(a.data(), a.im(), a.nrow(), a.ncol()) );
+  bool ismatrix_ = false;
+  int nrows_ = 0;
+  int ncols_ = 0;
+
+  if(a.im() == true) {
+    ismatrix_ = true;
+    nrows_ = a.nr();
+    ncols_ = a.nc();
+  }
+
+  VEC<T, VVatan<T, L> > ret (VVatan<T, L>(a.data(), a.im(), a.nrow(), a.ncol()) );
+
+  ret.ismatrix = ismatrix_;
+  ret.ncols = ncols_;
+  ret.nrows = nrows_;
+
+  return ret;
 }
 
 
@@ -543,7 +678,7 @@ public:
   }
 
    T operator[](const int i) const {
-     return tanh(r[i]);
+     return tanh(r[i% r.size()]);
    }
 
    int size() const {
@@ -567,7 +702,23 @@ public:
 
 template<typename T, typename L>
 VEC< T, VVtanh< T, L> > tangensh(const VEC<T, L>& a) {
-    return VEC<T, VVtanh<T, L> > (VVtanh<T, L>(a.data(), a.im(), a.nrow(), a.ncol()) );
+  bool ismatrix_ = false;
+  int nrows_ = 0;
+  int ncols_ = 0;
+
+  if(a.im() == true) {
+    ismatrix_ = true;
+    nrows_ = a.nr();
+    ncols_ = a.nc();
+  }
+
+  VEC<T, VVtanh<T, L> > ret (VVtanh<T, L>(a.data(), a.im(), a.nrow(), a.ncol()) );
+
+  ret.ismatrix = ismatrix_;
+  ret.ncols = ncols_;
+  ret.nrows = nrows_;
+
+  return ret;
 }
 
 
