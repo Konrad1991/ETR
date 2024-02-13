@@ -2,6 +2,50 @@
 #include "../include/etr.hpp"
 using namespace etr;
 
+#define CATCH_CONFIG_MAIN
+#include "./catch/catch.hpp"
+
+bool deq(double a, double b) {
+      return std::fabs(a - b) < 1E-3;
+}
+
+bool eq(sexp inp1, sexp inp2) {
+  ass(inp1.size() == inp2.size(), "Error");
+  bool test = true;
+  for(int i = 0; i < inp1.size(); i++) {
+    if(deq(inp1[i], inp2[i]) == false) {
+      test = false;
+      break;
+    }
+  }
+  return test;
+}
+
+bool eq(sexp inp1, double inp2) {
+  bool test = true;
+  for(int i = 0; i < inp1.size(); i++) {
+    if(deq(inp1[i], inp2) == false) {
+      test = false;
+      break;
+    }
+  }
+
+  return test;
+}
+
+bool eqb(Vec<bool> inp1, Vec<bool> inp2) {
+  ass(inp1.size() == inp2.size(), "Error");
+  bool test = true;
+  for(int i = 0; i < inp1.size(); i++) {
+    if(inp1[i] != inp2[i]) {
+      test = false;
+      break;
+    }
+  }
+  return test;
+}
+
+
 sexp testall(BorrowPtr a, double type_test) {
 	 sexp size;
  	 sexp temp;
@@ -1361,6 +1405,44 @@ sexp testall(BorrowPtr a, double type_test) {
 	 return(ret);	 
 }
 
-int main() {
+TEST_CASE( "nainf" ) {
+  std::vector<double> vec(3);
+  BorrowPtr bp(vec.data(), vec.size());
+  auto res = testall(bp, 22.1);
+  REQUIRE(std::isnan(res[0]));
+  REQUIRE(std::isinf(res[1]));
+  REQUIRE(std::isinf(res[2]));
 
 }
+
+TEST_CASE( "plus" ) {
+
+  sexp s, v, m;
+  s = 1.0;
+  s = s + 3.0;
+
+  REQUIRE(subset(s, 1)[0] == 4);
+
+  v = s + vector(4, 4);
+  REQUIRE(eq(v, vector(8, 4)) == true);
+
+  v = vector(4, 4);
+  v = v + 30.0;
+  REQUIRE(eq(v, vector(34, 4)) == true);
+
+  REQUIRE(eq(v + 3.0, vector(37, 4)) == true);
+  REQUIRE(eq(3.0 + v, vector(37, 4)) == true);
+
+  m = s + matrix(2, 2, 2);
+  REQUIRE(eq(m, vector(6, 4)));
+
+  m = m + 40.0;
+  REQUIRE(eq(m, vector(46, 4)));
+
+  m = v + m;
+  REQUIRE(eq(m, vector(80, 4)));
+
+  m = m + v;
+  REQUIRE(eq(m, vector(114, 4)));
+}
+
