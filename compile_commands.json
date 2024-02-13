@@ -1,0 +1,9 @@
+[
+  {
+    "directory": "/home/konrad/Documents/GitHub/etr_supplement/ETR",
+    "command": "g++ -std=c++20 -I//home/konrad/Documents/GitHub/etr_supplement/ETR/include -I//home/konrad/Documents/GitHub/etr_supplement/ETR/tests -I/home/konrad/Documents/GitHub/etr_supplement/ETR/include/etr_bits -c /home/konrad/Documents/GitHub/etr_supplement/ETR/tests/test.cpp",
+    "file": "/home/konrad/Documents/GitHub/etr_supplement/ETR/tests/test.cpp"
+  }
+  // Add more entries for each source file if needed
+]
+
