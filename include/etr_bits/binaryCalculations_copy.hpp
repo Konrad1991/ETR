@@ -31,8 +31,8 @@ struct BinaryOperation {
                       &other) // issue: needs move constructor
       : l(other.l), r(other.r), mp(other.mp) {}
   RetType operator[](size_t i) const {
-    constexpr bool isDoubleL = std::is_arithmetic_v<L>;
-    constexpr bool isDoubleR = std::is_arithmetic_v<R>;
+    constexpr bool isDoubleL = std::is_same_v<L, double>;
+    constexpr bool isDoubleR = std::is_same_v<R, double>;
     if constexpr (isDoubleL && isDoubleR) {
       if constexpr (std::is_same_v<CTrait, ComparisonTrait>) {
         return Trait::f(l, r);
@@ -60,8 +60,8 @@ struct BinaryOperation {
     }
   }
   size_t size() const {
-    constexpr bool isDoubleL = std::is_arithmetic_v<L>;
-    constexpr bool isDoubleR = std::is_arithmetic_v<R>;
+    constexpr bool isDoubleL = std::is_same_v<L, double>;
+    constexpr bool isDoubleR = std::is_same_v<R, double>;
     if constexpr (isDoubleL && isDoubleR) {
       return 1;
     } else if constexpr (!isDoubleL && isDoubleR) {
@@ -101,26 +101,26 @@ auto operator+(const L &l, const R &r)
     -> Vec<double,
            BinaryOperation<decltype(convert(l).d), decltype(convert(r).d),
                            Addition, PlusTrait>> {
-  constexpr bool isDoubleL = std::is_arithmetic_v<L>;
-  constexpr bool isDoubleR = std::is_arithmetic_v<R>;
+  constexpr bool isDoubleL = std::is_same_v<L, double>;
+  constexpr bool isDoubleR = std::is_same_v<R, double>;
   if constexpr (isDoubleL && isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
-    return Vec<double, BinaryOperation<L, R, Addition, PlusTrait>>(
-        BinaryOperation<L, R, Addition, PlusTrait>(l, r, mp));
+    return Vec<double, BinaryOperation<double, double, Addition, PlusTrait>>(
+        BinaryOperation<double, double, Addition, PlusTrait>(l, r, mp));
   } else if constexpr (!isDoubleL && isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
     return Vec<double,
-               BinaryOperation<decltype(l.d), R, Addition, PlusTrait>>(
-        BinaryOperation<decltype(l.d), R, Addition, PlusTrait>(l.d, r,
+               BinaryOperation<decltype(l.d), double, Addition, PlusTrait>>(
+        BinaryOperation<decltype(l.d), double, Addition, PlusTrait>(l.d, r,
                                                                     mp));
   } else if constexpr (isDoubleL && !isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
     return Vec<double,
-               BinaryOperation<L, decltype(r.d), Addition, PlusTrait>>(
-        BinaryOperation<L, decltype(r.d), Addition, PlusTrait>(l, r.d,
+               BinaryOperation<double, decltype(r.d), Addition, PlusTrait>>(
+        BinaryOperation<double, decltype(r.d), Addition, PlusTrait>(l, r.d,
                                                                     mp));
   } else if constexpr (!isDoubleL && !isDoubleR) {
     MatrixParameter mp;
@@ -136,25 +136,25 @@ template <typename L, typename R>
 auto operator-(const L &l, const R &r)
     -> Vec<double, BinaryOperation<decltype(convert(l).d),
                                    decltype(convert(r).d), Minus, MinusTrait>> {
-  constexpr bool isDoubleL = std::is_arithmetic_v<L>;
-  constexpr bool isDoubleR = std::is_arithmetic_v<R>;
+  constexpr bool isDoubleL = std::is_same_v<L, double>;
+  constexpr bool isDoubleR = std::is_same_v<R, double>;
   if constexpr (isDoubleL && isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
-    return Vec<double, BinaryOperation<L, R, Minus, MinusTrait>>(
-        BinaryOperation<L, R, Minus, MinusTrait>(l, r, mp));
+    return Vec<double, BinaryOperation<double, double, Minus, MinusTrait>>(
+        BinaryOperation<double, double, Minus, MinusTrait>(l, r, mp));
   } else if constexpr (!isDoubleL && isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
     return Vec<double,
-               BinaryOperation<decltype(l.d), R, Minus, MinusTrait>>(
-        BinaryOperation<decltype(l.d), R, Minus, MinusTrait>(l.d, r, mp));
+               BinaryOperation<decltype(l.d), double, Minus, MinusTrait>>(
+        BinaryOperation<decltype(l.d), double, Minus, MinusTrait>(l.d, r, mp));
   } else if constexpr (isDoubleL && !isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
     return Vec<double,
-               BinaryOperation<L, decltype(r.d), Minus, MinusTrait>>(
-        BinaryOperation<L, decltype(r.d), Minus, MinusTrait>(l, r.d, mp));
+               BinaryOperation<double, decltype(r.d), Minus, MinusTrait>>(
+        BinaryOperation<double, decltype(r.d), Minus, MinusTrait>(l, r.d, mp));
   } else if constexpr (!isDoubleL && !isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
@@ -169,25 +169,25 @@ template <typename L, typename R>
 auto operator*(const L &l, const R &r)
     -> Vec<double, BinaryOperation<decltype(convert(l).d),
                                    decltype(convert(r).d), Times, TimesTrait>> {
-  constexpr bool isDoubleL = std::is_arithmetic_v<L>;
-  constexpr bool isDoubleR = std::is_arithmetic_v<R>;
+  constexpr bool isDoubleL = std::is_same_v<L, double>;
+  constexpr bool isDoubleR = std::is_same_v<R, double>;
   if constexpr (isDoubleL && isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
-    return Vec<double, BinaryOperation<L, R, Times, TimesTrait>>(
-        BinaryOperation<L, R, Times, TimesTrait>(l, r, mp));
+    return Vec<double, BinaryOperation<double, double, Times, TimesTrait>>(
+        BinaryOperation<double, double, Times, TimesTrait>(l, r, mp));
   } else if constexpr (!isDoubleL && isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
     return Vec<double,
-               BinaryOperation<decltype(l.d), R, Times, TimesTrait>>(
-        BinaryOperation<decltype(l.d), R, Times, TimesTrait>(l.d, r, mp));
+               BinaryOperation<decltype(l.d), double, Times, TimesTrait>>(
+        BinaryOperation<decltype(l.d), double, Times, TimesTrait>(l.d, r, mp));
   } else if constexpr (isDoubleL && !isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
     return Vec<double,
-               BinaryOperation<L, decltype(r.d), Times, TimesTrait>>(
-        BinaryOperation<L, decltype(r.d), Times, TimesTrait>(l, r.d, mp));
+               BinaryOperation<double, decltype(r.d), Times, TimesTrait>>(
+        BinaryOperation<double, decltype(r.d), Times, TimesTrait>(l, r.d, mp));
   } else if constexpr (!isDoubleL && !isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
@@ -203,26 +203,26 @@ auto operator/(const L &l, const R &r)
     -> Vec<double,
            BinaryOperation<decltype(convert(l).d), decltype(convert(r).d),
                            Divide, DivideTrait>> {
-  constexpr bool isDoubleL = std::is_arithmetic_v<L>;
-  constexpr bool isDoubleR = std::is_arithmetic_v<R>;
+  constexpr bool isDoubleL = std::is_same_v<L, double>;
+  constexpr bool isDoubleR = std::is_same_v<R, double>;
   if constexpr (isDoubleL && isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
-    return Vec<double, BinaryOperation<L, R, Divide, DivideTrait>>(
-        BinaryOperation<L, R, Divide, DivideTrait>(l, r, mp));
+    return Vec<double, BinaryOperation<double, double, Divide, DivideTrait>>(
+        BinaryOperation<double, double, Divide, DivideTrait>(l, r, mp));
   } else if constexpr (!isDoubleL && isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
     return Vec<double,
-               BinaryOperation<decltype(l.d), R, Divide, DivideTrait>>(
-        BinaryOperation<decltype(l.d), R, Divide, DivideTrait>(l.d, r,
+               BinaryOperation<decltype(l.d), double, Divide, DivideTrait>>(
+        BinaryOperation<decltype(l.d), double, Divide, DivideTrait>(l.d, r,
                                                                     mp));
   } else if constexpr (isDoubleL && !isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
     return Vec<double,
-               BinaryOperation<L, decltype(r.d), Divide, DivideTrait>>(
-        BinaryOperation<L, decltype(r.d), Divide, DivideTrait>(l, r.d,
+               BinaryOperation<double, decltype(r.d), Divide, DivideTrait>>(
+        BinaryOperation<double, decltype(r.d), Divide, DivideTrait>(l, r.d,
                                                                     mp));
   } else if constexpr (!isDoubleL && !isDoubleR) {
     MatrixParameter mp;
@@ -238,23 +238,23 @@ template <typename L, typename R>
 auto operator^(const L &l, const R &r)
     -> Vec<double, BinaryOperation<decltype(convert(l).d),
                                    decltype(convert(r).d), Pow, PowTrait>> {
-  constexpr bool isDoubleL = std::is_arithmetic_v<L>;
-  constexpr bool isDoubleR = std::is_arithmetic_v<R>;
+  constexpr bool isDoubleL = std::is_same_v<L, double>;
+  constexpr bool isDoubleR = std::is_same_v<R, double>;
   if constexpr (isDoubleL && isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
-    return Vec<double, BinaryOperation<L, R, Pow, PowTrait>>(
-        BinaryOperation<L, R, Pow, PowTrait>(l, r, mp));
+    return Vec<double, BinaryOperation<double, double, Pow, PowTrait>>(
+        BinaryOperation<double, double, Pow, PowTrait>(l, r, mp));
   } else if constexpr (!isDoubleL && isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
-    return Vec<double, BinaryOperation<decltype(l.d), R, Pow, PowTrait>>(
-        BinaryOperation<decltype(l.d), R, Pow, PowTrait>(l.d, r, mp));
+    return Vec<double, BinaryOperation<decltype(l.d), double, Pow, PowTrait>>(
+        BinaryOperation<decltype(l.d), double, Pow, PowTrait>(l.d, r, mp));
   } else if constexpr (isDoubleL && !isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
-    return Vec<double, BinaryOperation<L, decltype(r.d), Pow, PowTrait>>(
-        BinaryOperation<L, decltype(r.d), Pow, PowTrait>(l, r.d, mp));
+    return Vec<double, BinaryOperation<double, decltype(r.d), Pow, PowTrait>>(
+        BinaryOperation<double, decltype(r.d), Pow, PowTrait>(l, r.d, mp));
   } else if constexpr (!isDoubleL && !isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
@@ -269,28 +269,28 @@ template <typename L, typename R>
 auto operator==(const L &l, const R &r)
     -> Vec<bool, BinaryOperation<decltype(convert(l).d), decltype(convert(r).d),
                                  Equal, EqualTrait, ComparisonTrait>> {
-  constexpr bool isDoubleL = std::is_arithmetic_v<L>;
-  constexpr bool isDoubleR = std::is_arithmetic_v<R>;
+  constexpr bool isDoubleL = std::is_same_v<L, double>;
+  constexpr bool isDoubleR = std::is_same_v<R, double>;
   if constexpr (isDoubleL && isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
-    return Vec<bool, BinaryOperation<L, R, Equal, EqualTrait,
+    return Vec<bool, BinaryOperation<double, double, Equal, EqualTrait,
                                      ComparisonTrait>>(
-        BinaryOperation<L, R, Equal, EqualTrait, ComparisonTrait>(
+        BinaryOperation<double, double, Equal, EqualTrait, ComparisonTrait>(
             l, r, mp));
   } else if constexpr (!isDoubleL && isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
-    return Vec<bool, BinaryOperation<decltype(l.d), R, Equal, EqualTrait,
+    return Vec<bool, BinaryOperation<decltype(l.d), double, Equal, EqualTrait,
                                      ComparisonTrait>>(
-        BinaryOperation<decltype(l.d), R, Equal, EqualTrait,
+        BinaryOperation<decltype(l.d), double, Equal, EqualTrait,
                         ComparisonTrait>(l.d, r, mp));
   } else if constexpr (isDoubleL && !isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
-    return Vec<bool, BinaryOperation<L, decltype(r.d), Equal, EqualTrait,
+    return Vec<bool, BinaryOperation<double, decltype(r.d), Equal, EqualTrait,
                                      ComparisonTrait>>(
-        BinaryOperation<L, decltype(r.d), Equal, EqualTrait,
+        BinaryOperation<double, decltype(r.d), Equal, EqualTrait,
                         ComparisonTrait>(l, r.d, mp));
   } else if constexpr (!isDoubleL && !isDoubleR) {
     MatrixParameter mp;
@@ -306,28 +306,28 @@ template <typename L, typename R>
 auto operator!=(const L &l, const R &r)
     -> Vec<bool, BinaryOperation<decltype(convert(l).d), decltype(convert(r).d),
                                  UnEqual, UnEqualTrait, ComparisonTrait>> {
-  constexpr bool isDoubleL = std::is_arithmetic_v<L>;
-  constexpr bool isDoubleR = std::is_arithmetic_v<R>;
+  constexpr bool isDoubleL = std::is_same_v<L, double>;
+  constexpr bool isDoubleR = std::is_same_v<R, double>;
   if constexpr (isDoubleL && isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
-    return Vec<bool, BinaryOperation<L, R, UnEqual, UnEqualTrait,
+    return Vec<bool, BinaryOperation<double, double, UnEqual, UnEqualTrait,
                                      ComparisonTrait>>(
-        BinaryOperation<L, R, UnEqual, UnEqualTrait, ComparisonTrait>(
+        BinaryOperation<double, double, UnEqual, UnEqualTrait, ComparisonTrait>(
             l, r, mp));
   } else if constexpr (!isDoubleL && isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
-    return Vec<bool, BinaryOperation<decltype(l.d), R, UnEqual,
+    return Vec<bool, BinaryOperation<decltype(l.d), double, UnEqual,
                                      UnEqualTrait, ComparisonTrait>>(
-        BinaryOperation<decltype(l.d), R, UnEqual, UnEqualTrait,
+        BinaryOperation<decltype(l.d), double, UnEqual, UnEqualTrait,
                         ComparisonTrait>(l.d, r, mp));
   } else if constexpr (isDoubleL && !isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
-    return Vec<bool, BinaryOperation<L, decltype(r.d), UnEqual,
+    return Vec<bool, BinaryOperation<double, decltype(r.d), UnEqual,
                                      UnEqualTrait, ComparisonTrait>>(
-        BinaryOperation<L, decltype(r.d), UnEqual, UnEqualTrait,
+        BinaryOperation<double, decltype(r.d), UnEqual, UnEqualTrait,
                         ComparisonTrait>(l, r.d, mp));
   } else if constexpr (!isDoubleL && !isDoubleR) {
     MatrixParameter mp;
@@ -343,28 +343,28 @@ template <typename L, typename R>
 auto operator>(const L &l, const R &r)
     -> Vec<bool, BinaryOperation<decltype(convert(l).d), decltype(convert(r).d),
                                  Larger, LargerTrait, ComparisonTrait>> {
-  constexpr bool isDoubleL = std::is_arithmetic_v<L>;
-  constexpr bool isDoubleR = std::is_arithmetic_v<R>;
+  constexpr bool isDoubleL = std::is_same_v<L, double>;
+  constexpr bool isDoubleR = std::is_same_v<R, double>;
   if constexpr (isDoubleL && isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
-    return Vec<bool, BinaryOperation<L, R, Larger, LargerTrait,
+    return Vec<bool, BinaryOperation<double, double, Larger, LargerTrait,
                                      ComparisonTrait>>(
-        BinaryOperation<L, R, Larger, LargerTrait, ComparisonTrait>(
+        BinaryOperation<double, double, Larger, LargerTrait, ComparisonTrait>(
             l, r, mp));
   } else if constexpr (!isDoubleL && isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
-    return Vec<bool, BinaryOperation<decltype(l.d), R, Larger, LargerTrait,
+    return Vec<bool, BinaryOperation<decltype(l.d), double, Larger, LargerTrait,
                                      ComparisonTrait>>(
-        BinaryOperation<decltype(l.d), R, Larger, LargerTrait,
+        BinaryOperation<decltype(l.d), double, Larger, LargerTrait,
                         ComparisonTrait>(l.d, r, mp));
   } else if constexpr (isDoubleL && !isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
-    return Vec<bool, BinaryOperation<L, decltype(r.d), Larger, LargerTrait,
+    return Vec<bool, BinaryOperation<double, decltype(r.d), Larger, LargerTrait,
                                      ComparisonTrait>>(
-        BinaryOperation<L, decltype(r.d), Larger, LargerTrait,
+        BinaryOperation<double, decltype(r.d), Larger, LargerTrait,
                         ComparisonTrait>(l, r.d, mp));
   } else if constexpr (!isDoubleL && !isDoubleR) {
     MatrixParameter mp;
@@ -381,28 +381,28 @@ auto operator>=(const L &l, const R &r)
     -> Vec<bool,
            BinaryOperation<decltype(convert(l).d), decltype(convert(r).d),
                            LargerEqual, LargerEqualTrait, ComparisonTrait>> {
-  constexpr bool isDoubleL = std::is_arithmetic_v<L>;
-  constexpr bool isDoubleR = std::is_arithmetic_v<R>;
+  constexpr bool isDoubleL = std::is_same_v<L, double>;
+  constexpr bool isDoubleR = std::is_same_v<R, double>;
   if constexpr (isDoubleL && isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
-    return Vec<bool, BinaryOperation<L, R, LargerEqual,
+    return Vec<bool, BinaryOperation<double, double, LargerEqual,
                                      LargerEqualTrait, ComparisonTrait>>(
-        BinaryOperation<L, R, LargerEqual, LargerEqualTrait,
+        BinaryOperation<double, double, LargerEqual, LargerEqualTrait,
                         ComparisonTrait>(l, r, mp));
   } else if constexpr (!isDoubleL && isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
-    return Vec<bool, BinaryOperation<decltype(l.d), R, LargerEqual,
+    return Vec<bool, BinaryOperation<decltype(l.d), double, LargerEqual,
                                      LargerEqualTrait, ComparisonTrait>>(
-        BinaryOperation<decltype(l.d), R, LargerEqual, LargerEqualTrait,
+        BinaryOperation<decltype(l.d), double, LargerEqual, LargerEqualTrait,
                         ComparisonTrait>(l.d, r, mp));
   } else if constexpr (isDoubleL && !isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
-    return Vec<bool, BinaryOperation<L, decltype(r.d), LargerEqual,
+    return Vec<bool, BinaryOperation<double, decltype(r.d), LargerEqual,
                                      LargerEqualTrait, ComparisonTrait>>(
-        BinaryOperation<L, decltype(r.d), LargerEqual, LargerEqualTrait,
+        BinaryOperation<double, decltype(r.d), LargerEqual, LargerEqualTrait,
                         ComparisonTrait>(l, r.d, mp));
   } else if constexpr (!isDoubleL && !isDoubleR) {
     MatrixParameter mp;
@@ -418,28 +418,28 @@ template <typename L, typename R>
 auto operator<(const L &l, const R &r)
     -> Vec<bool, BinaryOperation<decltype(convert(l).d), decltype(convert(r).d),
                                  Smaller, SmallerTrait, ComparisonTrait>> {
-  constexpr bool isDoubleL = std::is_arithmetic_v<L>;
-  constexpr bool isDoubleR = std::is_arithmetic_v<R>;
+  constexpr bool isDoubleL = std::is_same_v<L, double>;
+  constexpr bool isDoubleR = std::is_same_v<R, double>;
   if constexpr (isDoubleL && isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
-    return Vec<bool, BinaryOperation<L, R, Smaller, SmallerTrait,
+    return Vec<bool, BinaryOperation<double, double, Smaller, SmallerTrait,
                                      ComparisonTrait>>(
-        BinaryOperation<L, R, Smaller, SmallerTrait, ComparisonTrait>(
+        BinaryOperation<double, double, Smaller, SmallerTrait, ComparisonTrait>(
             l, r, mp));
   } else if constexpr (!isDoubleL && isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
-    return Vec<bool, BinaryOperation<decltype(l.d), R, Smaller,
+    return Vec<bool, BinaryOperation<decltype(l.d), double, Smaller,
                                      SmallerTrait, ComparisonTrait>>(
-        BinaryOperation<decltype(l.d), R, Smaller, SmallerTrait,
+        BinaryOperation<decltype(l.d), double, Smaller, SmallerTrait,
                         ComparisonTrait>(l.d, r, mp));
   } else if constexpr (isDoubleL && !isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
-    return Vec<bool, BinaryOperation<L, decltype(r.d), Smaller,
+    return Vec<bool, BinaryOperation<double, decltype(r.d), Smaller,
                                      SmallerTrait, ComparisonTrait>>(
-        BinaryOperation<L, decltype(r.d), Smaller, SmallerTrait,
+        BinaryOperation<double, decltype(r.d), Smaller, SmallerTrait,
                         ComparisonTrait>(l, r.d, mp));
   } else if constexpr (!isDoubleL && !isDoubleR) {
     MatrixParameter mp;
@@ -456,28 +456,28 @@ auto operator<=(const L &l, const R &r)
     -> Vec<bool,
            BinaryOperation<decltype(convert(l).d), decltype(convert(r).d),
                            SmallerEqual, SmallerEqualTrait, ComparisonTrait>> {
-  constexpr bool isDoubleL = std::is_arithmetic_v<L>;
-  constexpr bool isDoubleR = std::is_arithmetic_v<R>;
+  constexpr bool isDoubleL = std::is_same_v<L, double>;
+  constexpr bool isDoubleR = std::is_same_v<R, double>;
   if constexpr (isDoubleL && isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
-    return Vec<bool, BinaryOperation<L, R, SmallerEqual,
+    return Vec<bool, BinaryOperation<double, double, SmallerEqual,
                                      SmallerEqualTrait, ComparisonTrait>>(
-        BinaryOperation<L, R, SmallerEqual, SmallerEqualTrait,
+        BinaryOperation<double, double, SmallerEqual, SmallerEqualTrait,
                         ComparisonTrait>(l, r, mp));
   } else if constexpr (!isDoubleL && isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
-    return Vec<bool, BinaryOperation<decltype(l.d), R, SmallerEqual,
+    return Vec<bool, BinaryOperation<decltype(l.d), double, SmallerEqual,
                                      SmallerEqualTrait, ComparisonTrait>>(
-        BinaryOperation<decltype(l.d), R, SmallerEqual, SmallerEqualTrait,
+        BinaryOperation<decltype(l.d), double, SmallerEqual, SmallerEqualTrait,
                         ComparisonTrait>(l.d, r, mp));
   } else if constexpr (isDoubleL && !isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
-    return Vec<bool, BinaryOperation<L, decltype(r.d), SmallerEqual,
+    return Vec<bool, BinaryOperation<double, decltype(r.d), SmallerEqual,
                                      SmallerEqualTrait, ComparisonTrait>>(
-        BinaryOperation<L, decltype(r.d), SmallerEqual, SmallerEqualTrait,
+        BinaryOperation<double, decltype(r.d), SmallerEqual, SmallerEqualTrait,
                         ComparisonTrait>(l, r.d, mp));
   } else if constexpr (!isDoubleL && !isDoubleR) {
     MatrixParameter mp;
