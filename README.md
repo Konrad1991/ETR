@@ -2,26 +2,22 @@
 - [Integrate ETR in your project](#integrate-etr-in-your-project)
 - [How to use it](#how-to-use-it)
     + [Hello World from ETR](#hello-world-from-etr)
-    + [Variable declaration](#variable-declaration)
+    + [Variable declaration & borrowing of raw pointers](#variable-declaration)
     + [Basic arithmetic](#basic-arithmetic)
     + [Subsetting](#subsetting)
-      - [Subsetting vector in detail](#subsetting-vector-in-detail)
-      - [Subsetting matrix in detail](#subsetting-matrix-in-detail)
-    + [Assign to a subset](#assign-to-a-subset)
     + [Helper functions](#helper-functions)
     + [Comparison functions](#comparison-functions)
     + [Looping](#looping)
     + [Math functions](#math-functions)
     + [Interpolation](#interpolation)
-    + [Pointer Interface](#pointer-interface)
 
 # Overview 
 
 ETR is an expression template library for C++ with syntax almost similar to R. Within this repository the standalone version can be found. As the C++ code is used in the R package ast2ast (https://github.com/Konrad1991/ast2ast) also R specific code is included. 
-By using *#define STANDALONE* the R specific code is removed. The library contains one class:
+By using *#define STANDALONE* the R specific code is removed. The library contains one main type:
     
     * The main type: template <typename T, typename R = Buffer<T>, typename Trait = VectorTrait> struct Vec;
-There exists also offer containter responsible for storing the memory (typename R). Within the standalone library the *Borrow* struct is most importantly. See in the documention above about how to use it.
+There exists also other container responsible for storing the memory (typename R). Within the standalone library the *Borrow* struct is most importantly. See in the documention above about how to use it.
 The class Vec can hold a scalar, vector or a matrix. Moreover, the type can change dynamically at runtime. 
 
 # Integrate ETR in your project
