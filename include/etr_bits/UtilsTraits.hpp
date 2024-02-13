@@ -130,6 +130,11 @@ using T = BoolConstant<true>;
 using FALSE = BoolConstant<false>;
 using F = BoolConstant<false>;
 
+#ifdef STANDALONE
+const double NA_REAL = std::numeric_limits<double>::quiet_NaN();
+const double R_PosInf = std::numeric_limits<double>::infinity();
+#endif
+
 inline int d2i(double inp) { return static_cast<int>(inp); }
 
 inline double i2d(int inp) { return static_cast<double>(inp); }
