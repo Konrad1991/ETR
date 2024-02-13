@@ -548,6 +548,19 @@ template <typename T, typename R, typename Trait> struct Vec {
   }
   #endif 
 
+  #ifdef STANDALONE
+    template<typename I>
+    auto operator()(const I& idx) {
+      return subset(*this, idx);
+    } 
+
+    template<typename IL, typename IR>
+    auto operator()(const IL& idxL, const IR& idxR) {
+      return subset(*this, idxL, idxR);
+    } 
+
+  #endif
+
 };
 
 } // namespace etr
