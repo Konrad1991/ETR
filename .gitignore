@@ -6,4 +6,8 @@ $ cat .git/info/exclude
 *.gcda
 *.gcno
 *.out
+*.html
+a.out
+
+/.cache/
 

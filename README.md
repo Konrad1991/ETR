@@ -17,13 +17,16 @@
 
 # Overview 
 
-ETR is an expression template library for C++ with syntax almost similar to R. It provides one class (**sexp**) which can hold a scalar, vector or matrix. The type can dynamically be changed during runtime. 
-Furthermore, basic arithmetic operations (+, -, \*, /) can be applied to these objects. Thus, it is easy to write C++ which almost looks like R code. 
+ETR is an expression template library for C++ with syntax almost similar to R. Within this repository the standalone version can be found. As the C++ code is used in the R package ast2ast (https://github.com/Konrad1991/ast2ast) also R specific code is included. 
+By using *#define STANDALONE* the R specific code is removed. The library contains one class:
+    
+    * The main type: template <typename T, typename R = Buffer<T>, typename Trait = VectorTrait> struct Vec;
+There exists also offer containter responsible for storing the memory (typename R). Within the standalone library the *Borrow* struct is most importantly. See in the documention above about how to use it.
+The class Vec can hold a scalar, vector or a matrix. Moreover, the type can change dynamically at runtime. 
 
 # Integrate ETR in your project
 
 Notably, it is a header-only library and thus can be easly integrated in other projects. Simply clone the repository and add the 'etr_bits' folder in your project (can be found in the 'include' folder). Afterwards you have to include the 'etr.hpp' file in your codebase (*#include 'etr.hpp'*). The file can also be found in the 'include' folder. Use of C++17 is required, i.e. compile a program using: 'g++ test.cpp -std=c++17'. There is also a problem with older versions of gcc. The tests all run successfully using gcc-10. Code coverage can be found in folder tests (84.3%).
-
 How the program works in detail, is explained below using small examples. 
 
 # How to use it
@@ -41,10 +44,13 @@ int main() {
 }
 ```
 
-### Variable declaration
+### Variable declaration & borrowing of raw pointers
 
 All variables are of type **sexp**. This type can hold a scalar, a vector or a matrix (The only type that can be hold by these containers is a **double**). If you want to allocate memory you can use the functions **vector** or **matrix**. Another possibility to allocate memory are the functions **colon** and **coca**. The **colon** function excepts a start and a end value and returns a vector with n-values seperated by an interval with length 1 respectively. The **coca** functions concatenates the given input. \
 Notably, it is possible to change the type of a variable within the program. You can see below that at the end the variable *scalar* contains a vector. 
+Beyond that, it is possible to borrow a pointer. In the example below a raw pointer is used to allocate memory on the heap. Afterwards it is wrapped in a BorrowPtr class instance. On the one hand it is more convinient to use the Vector class. Furthermore, it protects from unallowed access i.e. you cannot assign longer elements than that which was borrowed.
+
+Currently, I work on using other types as double. This is still work in progress even though many things work already. 
 
 ```Cpp
 #include "etr.hpp"
@@ -52,23 +58,35 @@ using namespace etr;
 
 int main() {
 
-sexp scalar; // currently scalar has to be first declared without initialization 
-scalar = 1;
-print("This is a scalar:");
-print(scalar);
+  sexp scalar = 1.0; print(scalar);
 
-sexp empty_vec = vector(10); // vector with 10 elements
-sexp full_vec = vector(3.14, 10); // vector with 10 elements all contain 3.14
+  sexp empty_vec = vector(10); // vector with 10 elements
+  sexp full_vec = vector(3.14, 10); // vector with 10 elements all contain 3.14
 
-sexp emtpy_mat = matrix(5, 2); // matrix with 10 elements; 5 rows and 2 cols
-sexp full_mat = matrix(10.5, 5, 4); // matrix with 10 elements; 5 rows and 4 cols all contain 10.5
+  sexp emtpy_mat = matrix(5, 2); // matrix with 10 elements; 5 rows and 2 cols
+  sexp full_mat = matrix(10.5, 5, 4); // matrix with 10 elements; 5 rows and 4 cols all contain 10.5
 
-sexp vec_range = colon(1, 10); // vector containing 1, 2, 3, ..., 10
-sexp vec = coca(1, 5, 6, vec_range); // vector containing 1, 5, 6, vec_range
+  sexp vec_range = colon(1, 10); // vector containing 1, 2, 3, ..., 10
+  sexp vec = coca(1, 5, 6, vec_range); // vector containing 1, 5, 6, vec_range
 
-// change the type
-scalar = vector(5.2, 12);
-print(scalar);
+  // change the type
+  scalar = vector(5.2, 12);
+  print(scalar);
+
+  // you can borrow a raw pointer
+   size_t size = 3; 
+  double* ptr = new double[size];
+  
+  BorrowPtr v_borrow(ptr, size);
+  v_borrow = colon(1, 3);
+  print(v_borrow);
+  
+  ptr[0] = 3.14;
+  print(v_borrow);
+
+  std::cout << ptr[0] << " " << ptr[1] << " " << ptr[2] << std::endl;
+
+  delete[] ptr; // you are responsible to not use v_borrow after deleting ptr!
 }
 ```
 
@@ -84,7 +102,7 @@ int main() {
 
 sexp v = colon(1, 10);
 
-v = v/1 + 10;
+v = v/1.0 + 10.0;
 print(v);
 
 sexp m = matrix(3., 5, 2);
@@ -95,9 +113,7 @@ print(m);
 
 ### Subsetting
 
-Currently you have to use the function **subset** to extract certain elements (later usage of **()** will be possible). The **subset** function returns a **sexp** object. Indices starts counting from 1 (as usual in R). To subset a vector use one parameter either of type scalar, bool, nothing (use **nullptr**) or another sexp object. In case you want to subset a matrix you can use either one or two arguments which are from the types scalar, bool, nothing (use **nullptr**) or another sexp objects. 
-
-**Caveat: You cannot delete objects using negative indices as in R**
+You can use the operator() to subset a variable. 
 
 ```Cpp
 #include "etr.hpp"
@@ -105,145 +121,26 @@ using namespace etr;
 
 int main() {
 
-sexp v1 = colon(1, 2);
-sexp v2 = vector(3, 5);
+  sexp a = coca(1, 2.2, 3);
+  print(a);
+  
+  sexp b = matrix(colon(1, 16), 4, 4);
+  print(b);
 
-v1 = v1 + subset(v2, coca(1, 5));
+  print(b(1));
+ 
+  b(3) = 4.5;
 
-print(subset(v1, 1));
-print(subset(v1, true));
-print();
-
-sexp m = matrix(colon(1, 15), 3, 5);
-print(subset(m, coca(1, 3, 2), coca(5, 2, 1)));
-}
-```
-
-#### Subsetting vector in detail
-<details>
-  <summary>Click to expand!</summary>
-In the program below you can see all the cases of subsetting a vector (matrix subsetting behaves in the same way). 
-
-```Cpp
-#include "etr.hpp"
-using namespace etr;
-
-int main() {
-  sexp v = colon(1, 6);
-  print(v);
-  print();
-
-  print("bool");
-  print("true: ");
-  print(subset(v, true));
-  print("false: ");
-  print(subset(v, false));
-  print();
-
-  print("integer or double");
-  print(subset(v, 1));
-  print(subset(v, 5.5));
-  print();
-
-  print("nothing (nullptr):");
-  print(subset(v, nullptr));
-  print();
-
-  sexp positions = coca(1, 6, 2, 3);
-  print("other vec:");
-  print(subset(v, positions));
-  print();
-
-  VEC<bool> vec_bool(4); // output e.g. of comparison of two vectors not implemented yet
-  vec_bool[0] = true;
-  vec_bool[1] = false;
-  vec_bool[2] = true;
-  vec_bool[3] = true;
-  print("bool vec:");
-  print(subset(v, vec_bool));
-  print();
-}
-```
-</details>
-
-
-#### Subsetting matrix in detail
-<details>
-  <summary>Click to expand!</summary>
-In the program below you can see all the cases of subsetting a matrix.
-
-
-```Cpp
-#include "etr.hpp"
-using namespace etr;
-
-int main() {
-  sexp m = matrix(colon(1, 15), 5, 3);
-  print(m);
-  print();
-
-  print("bool");
-  print("true, true: ");
-  print(subset(m, true, true));
-  print("false, true: ");
-  print(subset(m, false, true));
-  print();
-
-  print("integer or double");
-  print(subset(m, 1, 1));
-  print(subset(m, 5.5, 2));
-  print();
-
-  print("nothing (nullptr):");
-  print(subset(m, nullptr, nullptr));
-  print();
-
-  sexp positions1 = coca(1, 5, 2, 3);
-  sexp positions2 = coca(1, 3, 2, 3);
-  print("other vecs:");
-  print(subset(m, positions1, positions2));
-  print();
-
-  VEC<bool> vec_bool1(3); // output e.g. of comparison of two vectors not implemented yet
-  vec_bool1[0] = true;
-  vec_bool1[1] = false;
-  vec_bool1[2] = true;
-
-  VEC<bool> vec_bool2(4); // output e.g. of comparison of two vectors not implemented yet
-  vec_bool2[0] = true;
-  vec_bool2[1] = true;
-  vec_bool2[2] = false;
-  vec_bool2[3] = true;
-  print("bool vec:");
-  print(subset(m, vec_bool1, vec_bool2));
-  print();
+  print(b);
 
 }
 ```
-</details>
 
-### Assign to a subset
-
-Currently you have to use the function **subassign** to extract only certain elements and assign new values to them (later usage of **&()** will be possible). The **subassign** function returns a reference to the input object. Indices starts counting from 1 (as usual in R). To subset a vector use one parameter either of type scalar, bool, nothing (use **nullptr**) or another sexp object. In case you want to subset a matrix you can use either one or two arguments which are from the types scalar, bool, nothing (use **nullptr**) or another sexp objects. 
-
-```Cpp
-#include "etr.hpp"
-using namespace etr;
-
-int main() {
-
-sexp v1 = colon(1, 5);
-sexp v2 = vector(3, 10);
-
-subassign(v2, colon(1, 5)) = v1 + subset(v2, colon(6, 10));
-print(v2);
-
-}
-```
 
 ### Helper functions
 
 In order to extract informations about variables. You can use the **length** function in order to determine number of stored objects in vector or matrix. In case the variable is a matrix the **dim** function returns a vector containg the number of rows in the first place followed by the number of columns. 
+There are some special print functions available: printType prints the type of an object, printTType prints the type of the type of an object, printAST prints the expression tree of the current object and printTAST prints the expression tree of a type of an object.
 
 ```Cpp
 #include "etr.hpp"
@@ -251,12 +148,18 @@ using namespace etr;
 
 int main() {
 
-sexp v = colon(1, 2);
-print(length(v));
+    sexp v = colon(1, 2);
+    print(length(v));
 
-sexp m = matrix(5, 2);
-print(length(m));
-print(dim(m));
+    sexp m = matrix(5, 2);
+    print(length(m));
+    print(dim(m));
+
+    printType(v);
+    printT<sexp>();
+    printAST(v + v*2.0);
+    printTAST<decltype(v - v*v)>();
+
 }
 ```
 
@@ -269,34 +172,29 @@ As usual in R you can use **==**, **!=**, **<=**, **>=**, **<** and **>**. If on
 using namespace etr;
 
 int main() {
+
   sexp a = coca(1, 2, 3);
   sexp b = coca(1, 2, 4);
 
   sexp c = a == b;
   print(c);
-  print("==");
   print(a == b);
-  print(">=");
   print(a >= b);
-  print("<=");
   print(a <= b);
-  print("<");
   print(a < b);
-  print(">");
   print(a > b);
-  print("!=");
   print(a != b);
 
   sexp d = coca(1, 2, 3, 4);
   sexp e = coca(1, 4);
 
-  print("==");
   print(d == e);
-  print(">=");
   print(e >= d);
 
-
-  if(a == b) {
+  auto a_is_b = a == b;
+  printAST(a_is_b);
+  print(a_is_b);
+  if(a(1)) {
     print(a==b);
     print(1);
     print(4.5);
@@ -304,6 +202,7 @@ int main() {
 
   print(d);
   print(coca(1,2,d));
+
 }
 ```
 
@@ -314,7 +213,10 @@ You can use range based for loops in order to loop over **sexp** objects.
 ```Cpp
 #include "etr.hpp"
 using namespace etr;
+Hallo Sid,
 
+danke dir.
+VG Konrad
 int main() {
 
   sexp v = colon(1, 10);
@@ -356,98 +258,44 @@ using namespace etr;
 
 int main() {
 
-sexp t = colon(1, 8);
-sexp p = coca(1, 2, 3, 4, 5, 6, 7, 8);
+    sexp t = colon(1, 8);
+    sexp p = coca(1, 2, 3, 4, 5, 6, 7, 8);
 
-sexp res = cmr(1, t, p);
-print(res);
+    sexp res = cmr(1, t, p);
+    print(res);
 
-res = cmr(1.5, t, p);
-print(res);
+    res = cmr(1.5, t, p);
+    print(res);
 
-res = cmr(2.5, t, p);
-print(res);
+    res = cmr(2.5, t, p);
+    print(res);
 
-res = cmr(4, t, p);
-print(res);
+    res = cmr(4, t, p);
+    print(res);
 
-res = cmr(5, t, p);
-print(res);
+    res = cmr(5, t, p);
+    print(res);
 
-res = cmr(5.5, t, p);
-print(res);
+    res = cmr(5.5, t, p);
+    print(res);
 
-res = cmr(7.5, t, p);
-print(res);
+    res = cmr(7.5, t, p);
+    print(res);
 
-res = cmr(7.99, t, p);
-print(res);
-print();
-res = cmr(8, t, p);
-print(res);
-
-print();
-res = cmr(9, t, p);
-print(res);
-
-print();
-res = cmr(-1, t, p);
-print(res);
-
-
-}
-
-```
-
-### Pointer Interface
-
-You can pass the information of data stored on heap to a **sexp** object. The constructor for vector accepts 3 arguments. The first is an int defining the size of the data. The second argument is the pointer to the data and the last argument is an int called **cob** (*copy, ownership, borrow*). \
-If **cob** is 0 then the data is copied. \
-Else if **cob** is 1 then the pointer itself is copied. Meaning that the ownership is transferred to the **sexp** object and the user should not call delete [] on the pointer. Be aware that only one **sexp** variable can take ownership of one vector otherwise the memory is double freed. \
-Else if **cob** is 2 then the ownership of the pointer is only borrowed. Meaning that the **sexp** object cannot be resized. The user is responsible for freeing the memory!
-
-
-```Cpp
-#include "etr.hpp"
-using namespace etr;
-
-int main() {
-    int size = 10;
-    
-    double* ptr1;
-    ptr1 = new double[size];
-    int cob = 0;
-    sexp a(size, ptr1, cob); // copy
-    delete [] ptr1;
-    a = vector(3.14, 5);
-    print(a);
-    
+    res = cmr(7.99, t, p);
+    print(res);
     print();
-    
-    double* ptr2;
-    ptr2 = new double[size];
-    cob = 1;
-    sexp b(size, ptr2, cob); // take ownership
-    b = vector(5, 3);
-    print(b);
-    
+    res = cmr(8, t, p);
+    print(res);
+
     print();
-    
-    double* ptr3;
-    ptr3 = new double[size];
-    cob = 2;
-    sexp c(size, ptr3, cob); // borrow ownership
-    //c = vector(5, 3); --> error calls resize
-    c = vector(4, 10);
-    print(c);
-    
+    res = cmr(9, t, p);
+    print(res);
+
     print();
-    sexp d(size, ptr3, cob);
-    d = d + 10;
-    print(d);
-    print();
-    
-    delete[] ptr3;
+    res = cmr(-1, t, p);
+    print(res);
+
 }
 
 ```

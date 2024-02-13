@@ -77,12 +77,12 @@ template <typename T, typename R, typename Trait> struct Vec {
     d.setMatrix(inp.mp);
   }
   template <typename U = R, typename T2>
-    requires std::is_same_v<U, Borrow<BaseType>>
+    requires std::is_same_v<U, Borrow<T>>
   explicit Vec(const Borrow<T2> &borrowed) : d(borrowed) {
     d.setMatrix(borrowed.mp);
   }
   template <typename U = R>
-    requires std::is_same_v<U, Borrow<BaseType>>
+    requires std::is_same_v<U, Borrow<T>>
   explicit Vec(T *ptr, size_t s) : d(ptr, s) {}
   template <typename L2, typename R2, binaryFct f, typename OperationTrait>
   explicit Vec(BinaryOperation<L2, R2, f, OperationTrait> &inp) : d(inp) {
@@ -97,7 +97,7 @@ template <typename T, typename R, typename Trait> struct Vec {
 
   // other constructors
   template <typename U = R>
-    requires std::is_same_v<U, BorrowSEXP<BaseType>>
+    requires std::is_same_v<U, BorrowSEXP<BaseType>> // issue: BaseType has to be replaced with T
 
   #ifdef STANDALONE
   #else
