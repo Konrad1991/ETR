@@ -2,7 +2,7 @@
 
 # Compiler and flags
 CC := gcc
-CFLAGS := -std=c99 -Wall -Wextra -pedantic
+CFLAGS := -std=c99 -Wall -Wextra -pedantic -DMATHLIB_STANDALONE
 INCLUDE := -I./include -I./src -I./src/R_ext
 
 # Source files

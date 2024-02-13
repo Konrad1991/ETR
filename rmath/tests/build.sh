@@ -4,4 +4,4 @@ gcc -std=c99 -Wall -Wextra -pedantic -I../include -I../src/R_ext -I../src -c -o 
 
 gcc -o demo demo.o -L.. -lrmath -lm -lR
 
-./demo
+./demo 1 1

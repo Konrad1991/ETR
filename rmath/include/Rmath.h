@@ -394,10 +394,10 @@ double R_pow_di(double, int);
 double	norm_rand(void);
 double	unif_rand(void);
 double	exp_rand(void);
-#ifdef MATHLIB_STANDALONE
+//#ifdef MATHLIB_STANDALONE
 void	set_seed(unsigned int, unsigned int);
 void	get_seed(unsigned int *, unsigned int *);
-#endif
+//#endif
 
 	/* Normal Distribution */
 
@@ -412,7 +412,7 @@ void	pnorm_both(double, double *, double *, int, int);/* both tails */
 double	dunif(double, double, double, int);
 double	punif(double, double, double, int, int);
 double	qunif(double, double, double, int, int);
-double	runif(double, double);
+double	runifOwn(double, double);
 
 	/* Gamma Distribution */
 

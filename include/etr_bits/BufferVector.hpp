@@ -98,20 +98,34 @@ template <typename T, typename R, typename Trait> struct Vec {
   // other constructors
   template <typename U = R>
     requires std::is_same_v<U, BorrowSEXP<BaseType>>
+
+  #ifdef STANDALONE
+  #else
   explicit Vec(SEXP &&inp) = delete;
+
   template <typename U = R>
     requires std::is_same_v<U, BorrowSEXP<BaseType>>
   explicit Vec(SEXP inp) : d(inp) {}
+  #endif
+
   explicit Vec(size_t sz) : d(sz) {}
   explicit Vec(int sz) : d(static_cast<size_t>(sz)) {}
+  explicit Vec(size_t sz) : d(sz) {}
 
   Vec(double sz) : d(1) {
     d[0] = sz;
   } // issue: could be removed if all functions could handle double
+
+  #ifdef STANDALONE
+  Vec(bool b) : d(1) {
+    d[0] = static_cast<BaseType>(b);
+  }
+  #else
   Vec(Rboolean b) : d(1) {
     d[0] = static_cast<BaseType>(b);
   } // issue: can i prevent this? Maybe with the same strategy of converting int
     // to i2d(int) in R.
+  #endif
 
   explicit Vec() : d() {}
   explicit Vec(size_t rows, size_t cols) : d(rows * cols) {
@@ -391,11 +405,14 @@ template <typename T, typename R, typename Trait> struct Vec {
     }
     return *this;
   }
-
+  
+  #ifdef STANDALONE
+  #else
   Vec &operator=(SEXP s) {
     d.initSEXP(s);
     return *this;
   }
+  #endif
 
   operator RetType() const {
     if constexpr (std::is_same_v<RetType, bool>) {
@@ -435,7 +452,9 @@ template <typename T, typename R, typename Trait> struct Vec {
     os << "]";
     return os;
   }
-
+  
+  #ifdef STANDALONE
+  #else
   Vec &operator=(Rcpp::NumericVector &otherVec) {
     d.resize(static_cast<size_t>(otherVec.size()));
     d.mp.setMatrix(false, 0, 0);
@@ -527,6 +546,8 @@ template <typename T, typename R, typename Trait> struct Vec {
     }
     return ret;
   }
+  #endif 
+
 };
 
 } // namespace etr

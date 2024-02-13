@@ -2,6 +2,7 @@
 #define HELPER_H
 
 #include "BufferVector.hpp"
+#include <ios>
 
 namespace etr {
 
@@ -171,6 +172,8 @@ template <typename... Args> inline Vec<BaseType> coca(Args &&...args) {
   return ret;
 }
 
+#ifdef STANDALONE
+#else
 inline SEXP cpp2R() { return R_NilValue; }
 
 inline SEXP cpp2R(int res) { return Rf_ScalarInteger(res); }
@@ -291,6 +294,15 @@ inline SEXP cpp2R(const Vec<L, R, Trait> &res) {
     return ret;
   }
 }
+#endif 
+
+#ifdef STANDALONE
+using GlobalIsNAINFFunction = bool (*)(double);
+GlobalIsNAINFFunction ISNA = &std::isnan;
+
+GlobalIsNAINFFunction R_FINITE = &std::isinf;
+
+#endif
 
 template <typename T, typename R> inline Vec<bool> isNA(Vec<T, R> &inp) {
   Vec<bool> res(inp.size());
@@ -395,26 +407,34 @@ inline Vec<BaseType> dim(const Vec<BaseType> &inp) {
   return ret;
 }
 
-inline void print() { Rcpp::Rcout << std::endl; }
+#ifdef STANDALONE
+  #define PRINT_STREAM std::cout
+#else
+  #define PRINT_STREAM PRINT_STREAM
+#endif
+
+inline void print() { 
+  PRINT_STREAM << std::endl;
+}
 
 template <typename T>
   requires isBID<T>
 inline void print(const T &inp) {
   if constexpr (std::is_same_v<T, bool>) {
-    Rcpp::Rcout << std::boolalpha << inp << " ";
+    PRINT_STREAM << std::boolalpha << inp << " ";
   } else {
-    Rcpp::Rcout << inp << std::endl;
+    PRINT_STREAM << inp << std::endl;
   }
-  Rcpp::Rcout << std::endl;
+  PRINT_STREAM << std::endl;
 }
 
 inline void print(const char *inp) {
   if constexpr (std::is_same_v<T, bool>) {
-    Rcpp::Rcout << inp << " ";
+    PRINT_STREAM << inp << " ";
   } else {
-    Rcpp::Rcout << inp << std::endl;
+    PRINT_STREAM << inp << std::endl;
   }
-  Rcpp::Rcout << std::endl;
+  PRINT_STREAM << std::endl;
 }
 
 template <typename L, typename R>
@@ -422,14 +442,14 @@ template <typename L, typename R>
 inline void print(const Vec<L, R> &inp) {
   if (!inp.im()) {
     for (size_t i = 0; i < inp.size(); i++)
-      Rcpp::Rcout << std::boolalpha << inp[i] << " ";
-    Rcpp::Rcout << std::endl;
+      PRINT_STREAM << std::boolalpha << inp[i] << " ";
+    PRINT_STREAM << std::endl;
   } else {
     for (size_t i = 0; i < inp.nr(); i++) {
       for (size_t j = 0; j < inp.nc(); j++) {
-        Rcpp::Rcout << inp[j * inp.nr() + i] << "\t";
+        PRINT_STREAM << inp[j * inp.nr() + i] << "\t";
       }
-      Rcpp::Rcout << std::endl;
+      PRINT_STREAM << std::endl;
     }
   }
 }
@@ -439,14 +459,14 @@ template <typename T, typename Op, typename Trait>
 inline void print(const etr::Vec<T, Op, Trait> &inp) {
   if (!inp.im()) {
     for (size_t i = 0; i < inp.size(); i++)
-      Rcpp::Rcout << std::boolalpha << inp[i] << " ";
-    Rcpp::Rcout << std::endl;
+      PRINT_STREAM << std::boolalpha << inp[i] << " ";
+    PRINT_STREAM << std::endl;
   } else {
     for (size_t i = 0; i < inp.nr(); i++) {
       for (size_t j = 0; j < inp.nc(); j++) {
-        Rcpp::Rcout << inp[j * inp.nr() + i] << "\t";
+        PRINT_STREAM << inp[j * inp.nr() + i] << "\t";
       }
-      Rcpp::Rcout << std::endl;
+      PRINT_STREAM << std::endl;
     }
   }
 }
@@ -457,14 +477,14 @@ inline void
 print(const T &inp) { // issue: just a quick fix for printing unary expression
   if (!inp.im()) {
     for (size_t i = 0; i < inp.size(); i++)
-      Rcpp::Rcout << std::boolalpha << inp[i] << " ";
-    Rcpp::Rcout << std::endl;
+      PRINT_STREAM << std::boolalpha << inp[i] << " ";
+    PRINT_STREAM << std::endl;
   } else {
     for (size_t i = 0; i < inp.nr(); i++) {
       for (size_t j = 0; j < inp.nc(); j++) {
-        Rcpp::Rcout << inp[j * inp.nr() + i] << "\t";
+        PRINT_STREAM << inp[j * inp.nr() + i] << "\t";
       }
-      Rcpp::Rcout << std::endl;
+      PRINT_STREAM << std::endl;
     }
   }
 }

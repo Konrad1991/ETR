@@ -23,8 +23,9 @@
  */
 #include "nmath.h"
 
-double runif(double a, double b)
+double runifOwn(double a, double b)
 {
+  printf("test\n");
     if (!R_FINITE(a) || !R_FINITE(b) || b < a)	ML_ERR_return_NAN;
 
     if (a == b)

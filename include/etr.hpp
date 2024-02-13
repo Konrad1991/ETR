@@ -22,14 +22,17 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 #ifndef A2A_H
 #define A2A_H
 
-
 #include "etr_bits/UtilsTraits.hpp"
 #include "etr_bits/unaryCalculations.hpp"
 #include "etr_bits/binaryCalculations.hpp"
 #include "etr_bits/subsetting.hpp"
 #include "etr_bits/interpolation.hpp"
 #include "etr_bits/helper.hpp"
+
+#ifdef STANDALONE
+#else
 #include "etr_bits/distri.hpp"
+#endif
 #include "etr_bits/Derivs.hpp"
 #include "etr_bits/BufferVector.hpp"
 

@@ -6,8 +6,13 @@
 #include <iostream>
 #include <type_traits>
 
+#ifdef STANDALONE
+#else
 // [[Rcpp::depends(RcppArmadillo)]]
 #include "RcppArmadillo.h"
+
+#endif
+
 #include <iostream>
 #include <iterator>
 #include <math.h>
@@ -382,8 +387,12 @@ concept IsSinus = requires(T t) {
 };
 
 inline void ass(bool inp, std::string message) {
+  #ifdef STANDALONE
+   if (!inp) throw std::runtime_error(message);
+  #else
   if (!inp)
     Rcpp::stop(message);
+  #endif
 }
 
 struct MatrixParameter {
@@ -593,6 +602,8 @@ template <typename T, typename BaseTrait> struct BaseStore {
     other.allocated = false;
     other.p = nullptr;
   }
+  #ifdef STANDALONE
+  #else
   BaseStore(SEXP s) {
     if (allocated) {
       ass(p != nullptr, "try to delete nullptr");
@@ -610,6 +621,7 @@ template <typename T, typename BaseTrait> struct BaseStore {
     }
     allocated = true;
   };
+  #endif
   BaseStore(size_t sz_) : sz(sz_), capacity(static_cast<size_t>(sz_ * 1.15)) {
     ass(sz_ > 0, "Size has to be larger than 0");
     p = new T[capacity];
@@ -664,6 +676,8 @@ template <typename T, typename BaseTrait> struct BaseStore {
     }
   }
 
+  #ifdef STANDALONE
+  #else
   void initSEXP(SEXP s) {
     if (allocated) {
       ass(p != nullptr, "try to delete nullptr");
@@ -681,6 +695,7 @@ template <typename T, typename BaseTrait> struct BaseStore {
     }
     allocated = true;
   }
+  #endif
 
   ~BaseStore() {
     if (p != nullptr) {
@@ -853,7 +868,10 @@ template <typename T, typename SubsetTrait> struct Subset {
   Subset(const Vec<T2, R2, TraitOther> &other) {
     this->p = &other.d;
   }
+  #ifdef STANDALONE
+  #else 
   Subset(SEXP) = delete;
+  #endif
   Subset(size_t i) = delete;
   Subset(int i) = delete;
   Subset() = delete;
@@ -915,7 +933,11 @@ template <typename T, typename BorrowTrait> struct Borrow {
     other.p = nullptr;
     mp.setMatrix(other.mp);
   }
+  #ifdef STANDALONE
+  #else
   Borrow(SEXP s) = delete;
+  #endif
+
   Borrow(size_t i){};
   Borrow(int i) = delete;
   Borrow(){};
@@ -999,6 +1021,8 @@ template <typename T, typename BorrowTrait> struct Borrow {
   }
 };
 
+#ifdef STANDALONE
+#else
 // Points to a SEXP and stores size
 template <typename T, typename BorrowSEXPSEXPTrait> struct BorrowSEXP {
   using RetType = BaseType;
@@ -1229,6 +1253,7 @@ template <typename T, typename BorrowSEXPSEXPTrait> struct BorrowSEXP {
     }
   }
 };
+#endif
 
 template <typename L, typename R>
 void defineMatrix(const L &l, const R &r, MatrixParameter &mp) {
