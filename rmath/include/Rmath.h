@@ -384,6 +384,8 @@ typedef enum { FALSE = 0, TRUE /*, MAYBE */ } Rboolean;
 #ifdef  __cplusplus
 extern "C" {
 #endif
+
+
 	/* R's versions with !R_FINITE checks */
 
 double R_pow(double x, double y);

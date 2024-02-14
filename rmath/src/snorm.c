@@ -61,7 +61,6 @@ extern DL_FUNC  User_norm_fun; /* declared and set in ../main/RNG.c */
  */
 double norm_rand(void)
 {
-
     const static double a[32] =
     {
 	0.0000000, 0.03917609, 0.07841241, 0.1177699,

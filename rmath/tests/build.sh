@@ -1,7 +1,14 @@
 #!/bin/bash
 
-gcc -std=c99 -Wall -Wextra -pedantic -I../include -I../src/R_ext -I../src -c -o demo.o demo.c
+#cd .. && find . -type f -name "*.o" | xargs rm && make && cd tests
 
-gcc -o demo demo.o -L.. -lrmath -lm -lR
+#g++ -std=c++20 -Wall -Wextra -pedantic \
+#  -I../include -I../src/R_ext -I../src -c -o demo.o demo.c
 
-./demo 1 1
+#g++ -o demo demo.o -L.. -lrmath -lm -lR
+
+g++ -std=c++20 -Wall -Wextra -pedantic -I. -c -o sunif.o sunif.cpp
+g++ -std=c++20 -Wall -Wextra -pedantic -I. -c -o demo.o demo.cpp
+g++ -o demo demo.o sunif.o
+
+./demo 
