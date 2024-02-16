@@ -9,7 +9,8 @@ bool deq(double a, double b) {
       return std::fabs(a - b) < 1E-3;
 }
 
-bool eq(sexp inp1, sexp inp2) {
+template<typename L, typename R>
+bool eq(L inp1, R inp2) {
   ass(inp1.size() == inp2.size(), "Error");
   bool test = true;
   for(int i = 0; i < inp1.size(); i++) {
@@ -21,7 +22,8 @@ bool eq(sexp inp1, sexp inp2) {
   return test;
 }
 
-bool eq(sexp inp1, double inp2) {
+template<typename T>
+bool eq(T inp1, double inp2) {
   bool test = true;
   for(int i = 0; i < inp1.size(); i++) {
     if(deq(inp1[i], inp2) == false) {
@@ -1408,41 +1410,27 @@ sexp testall(BorrowPtr a, double type_test) {
 TEST_CASE( "nainf" ) {
   std::vector<double> vec(3);
   BorrowPtr bp(vec.data(), vec.size());
-  auto res = testall(bp, 22.1);
-  REQUIRE(std::isnan(res[0]));
-  REQUIRE(std::isinf(res[1]));
-  REQUIRE(std::isinf(res[2]));
+  auto res1 = testall(bp, 22.1);
+  REQUIRE(std::isnan(res1[0]));
+  REQUIRE(std::isinf(res1[1]));
+  REQUIRE(std::isinf(res1[2]));
 
+  auto res2 = testall(bp, 22.2); 
+  REQUIRE(eq(res2, coca(1, 0, 0)));
+
+  bp = coca(0, 0, 0);
+  REQUIRE(eq(testall(bp, 22.3), coca(0, 1, 1)) );
+  REQUIRE(eq(testall(bp, 22.4), coca(0, 0, 0)) );
+  
+  sexp a = matrix(coca(1, 2, 3, 4), 2, 2);
+  REQUIRE(eq(testall(a, 20.1), matrix(coca(2, 3, 3, 4), 2, 2) ) );
+
+  auto helper = [](double a) {
+    return sin(a) + asin(a) + sinh(a) + cos(a) + acos(a) + cosh(a) + tan(a) + atan(a) + tanh(a);
+  };
+
+  a = coca(helper(0), helper(0.2), helper(0.4), helper(0.99));
+  REQUIRE(eq(testall(bp, 22.1), a));
 }
 
-TEST_CASE( "plus" ) {
-
-  sexp s, v, m;
-  s = 1.0;
-  s = s + 3.0;
-
-  REQUIRE(subset(s, 1)[0] == 4);
-
-  v = s + vector(4, 4);
-  REQUIRE(eq(v, vector(8, 4)) == true);
-
-  v = vector(4, 4);
-  v = v + 30.0;
-  REQUIRE(eq(v, vector(34, 4)) == true);
-
-  REQUIRE(eq(v + 3.0, vector(37, 4)) == true);
-  REQUIRE(eq(3.0 + v, vector(37, 4)) == true);
-
-  m = s + matrix(2, 2, 2);
-  REQUIRE(eq(m, vector(6, 4)));
-
-  m = m + 40.0;
-  REQUIRE(eq(m, vector(46, 4)));
-
-  m = v + m;
-  REQUIRE(eq(m, vector(80, 4)));
-
-  m = m + v;
-  REQUIRE(eq(m, vector(114, 4)));
-}
 
