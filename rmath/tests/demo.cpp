@@ -6,7 +6,7 @@
 int main() {
   std::cout << std::fixed << std::setprecision(6);
   RNG_R::MersenneTwister ms(1234);
-  for(int i = 1; i < 101; i++) {
+  for(int i = 1; i < 2; i++) {
     std::cout << ms() << ", \t";
     if(i % 10 == 0) std::cout << std::endl;
   }

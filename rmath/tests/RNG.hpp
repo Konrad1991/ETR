@@ -56,11 +56,20 @@ class MersenneTwister {
   
 public:
   MersenneTwister(int32_t seed) {
+    for(int j = 0; j < 50; j++) {
+	    seed = (69069 * seed + 1);
+	  }
+    std::cout << "seed after first mixing " << seed << std::endl;
     for(int j = 0; j < 625; j++) {
 	    seed = (69069 * seed + 1);
 	    dummy[j] = seed;
 	  }
+    std::cout << "seed after first mixing 2 " << seed << std::endl;
+
     MT_sgenrand(seed);
+    std::cout << "seed after first mixing 3 " << seed << std::endl;
+
+    dummy[0] = 624;
   }
 
   double operator()() { // MT_genrand
@@ -69,28 +78,33 @@ public:
     // mag01[x] = x * MATRIX_A  for x=0,1
 
     mti = dummy[0];
-
-    if (mti >= N) { // generate N words at one time
+    if (mti >= N) {
+      std::cout << "mti >= N" << std::endl;
+      // generate N words at one time
       int kk;
 
-      if (mti == N + 1)    // if sgenrand() has not been called,
+      if (mti == N + 1) {
+        std::cout << "mti == N +1" << std::endl;
         MT_sgenrand(4357); // a default initial seed is used
+      }   // if sgenrand() has not been called,
+
 
       for (kk = 0; kk < N - M; kk++) {
         y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
         mt[kk] = mt[kk + M] ^ (y >> 1) ^ mag01[y & 0x1];
       }
+      std::cout << "y = " << y << std::endl;
       for (; kk < N - 1; kk++) {
         y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
         mt[kk] = mt[kk + (M - N)] ^ (y >> 1) ^ mag01[y & 0x1];
       }
       y = (mt[N - 1] & UPPER_MASK) | (mt[0] & LOWER_MASK);
       mt[N - 1] = mt[M - 1] ^ (y >> 1) ^ mag01[y & 0x1];
-
       mti = 0;
     }
 
     y = mt[mti++];
+    std::cout << "y = " << y << std::endl;
     y ^= TEMPERING_SHIFT_U(y);
     y ^= TEMPERING_SHIFT_S(y) & TEMPERING_MASK_B;
     y ^= TEMPERING_SHIFT_T(y) & TEMPERING_MASK_C;
