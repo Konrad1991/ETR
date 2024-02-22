@@ -132,10 +132,7 @@ inline auto subset(const Vec<L, R, Trait> &vec,
                    const I &idx) {
   Indices ind;
   calcInd(vec, ind,
-          idx); // issue: everytime where const Vec<BaseType> & is used as
-                // argument. It needs ages. Because, a normal vector is
-                // converted into const Vec<BaseType> --> it is copied entirely.
-                // This has to be changed!!! Which type has to be used instead?
+          idx); 
   Vec<BaseType> ret(ind.size());
   for (size_t i = 0; i < ret.size(); i++)
     ret[i] = vec[ind[i]];
