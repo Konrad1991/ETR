@@ -2,19 +2,21 @@
 #define HELPER_H
 
 #include "BufferVector.hpp"
+#include "UtilsTraits.hpp"
 #include <ios>
+#include <type_traits>
 
 namespace etr {
 
-template <typename T> inline Vec<BaseType> vector(const T &inp) {
-  if constexpr (std::is_same_v<T, double>) {
-    return Vec<BaseType>(static_cast<size_t>(inp));
-  } else if constexpr (std::is_same_v<T, int> || std::is_same_v<T, bool>) {
-    return Vec<BaseType>(static_cast<size_t>(inp));
+template <typename T> inline auto vector(const T &inp) {
+  if constexpr (std::is_floating_point_v<T>) {
+    warn(isDoubleInt(inp), "The provided size is a floating-point number with non-zero decimal places. It has been floored to the nearest integer.");
+    return Vec<BaseType, Buffer<T, BufferTrait, RBufTrait>, RVecTrait>(static_cast<size_t>(inp));
+  } else if constexpr (std::is_integral_v<T>) {
+    return Vec<BaseType, Buffer<T, BufferTrait, RBufTrait>, RVecTrait>(static_cast<size_t>(inp));
   } else {
     ass(inp.size() == 1, "invalid length argument");
     return Vec<BaseType>(static_cast<size_t>(inp[0]));
-    ;
   }
 }
 

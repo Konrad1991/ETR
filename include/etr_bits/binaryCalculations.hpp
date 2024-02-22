@@ -98,7 +98,7 @@ struct BinaryOperation {
 
 template <typename L, typename R>
 auto operator+(const L &l, const R &r)
-    -> Vec<double,
+    -> Vec<CommonType<L, R>,
            BinaryOperation<decltype(convert(l).d), decltype(convert(r).d),
                            Addition, PlusTrait>> {
   constexpr bool isDoubleL = std::is_arithmetic_v<L>;
@@ -106,26 +106,26 @@ auto operator+(const L &l, const R &r)
   if constexpr (isDoubleL && isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
-    return Vec<double, BinaryOperation<L, R, Addition, PlusTrait>>(
+    return Vec<CommonType<L, R>, BinaryOperation<L, R, Addition, PlusTrait>>(
         BinaryOperation<L, R, Addition, PlusTrait>(l, r, mp));
   } else if constexpr (!isDoubleL && isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
-    return Vec<double,
+    return Vec<CommonType<L, R>,
                BinaryOperation<decltype(l.d), R, Addition, PlusTrait>>(
         BinaryOperation<decltype(l.d), R, Addition, PlusTrait>(l.d, r,
                                                                     mp));
   } else if constexpr (isDoubleL && !isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
-    return Vec<double,
+    return Vec<CommonType<L, R>,
                BinaryOperation<L, decltype(r.d), Addition, PlusTrait>>(
         BinaryOperation<L, decltype(r.d), Addition, PlusTrait>(l, r.d,
                                                                     mp));
   } else if constexpr (!isDoubleL && !isDoubleR) {
     MatrixParameter mp;
     defineMatrix(l, r, mp);
-    return Vec<double, BinaryOperation<decltype(l.d), decltype(r.d), Addition,
+    return Vec<CommonType<L, R>, BinaryOperation<decltype(l.d), decltype(r.d), Addition,
                                        PlusTrait>>(
         BinaryOperation<decltype(l.d), decltype(r.d), Addition, PlusTrait>(
             l.d, r.d, mp));

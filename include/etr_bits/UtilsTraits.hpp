@@ -50,6 +50,9 @@
 
 namespace etr {
 
+template <typename T, typename U>
+using CommonType = typename std::common_type<typename T::Type, typename U::Type>::type;
+
 inline std::string demangle(const char *mangledName) {
   int status;
   char *demangled = abi::__cxa_demangle(mangledName, nullptr, nullptr, &status);
@@ -122,6 +125,15 @@ template <typename T> inline void printTAST() {
   }
 }
 
+template<typename T>
+inline bool isDoubleInt(const T d) {
+    int i = d;
+    if( (d - i) > 0) {
+      return false;
+    }
+    return true;
+}
+
 typedef double BaseType;
 
 template <bool B> using BoolConstant = std::integral_constant<bool, B>;
@@ -166,6 +178,8 @@ struct VariableTrait {};
 struct SubsetTrait {};
 struct BorrowTrait {};
 struct BorrowSEXPTrait {};
+struct RVecTrait {};
+struct RBufTrait {};
 
 struct UnaryTrait {
   using RetType = BaseType;
@@ -340,7 +354,26 @@ concept NotOperation = !requires(T t) {
                UnaryTrait>::value ||
                std::is_same<
                    typename std::remove_reference<decltype(t)>::type::CaseTrait,
-                   BinaryTrait>::value;
+                   BinaryTrait>::value  ||
+              std::is_same<
+                   typename std::remove_reference<decltype(t)>::type::CaseTrait,
+                   RBufTrait>::value;
+};
+
+template <typename T>
+concept IsRVec = requires(T t) {
+  typename std::remove_reference<decltype(t)>::type::CaseTrait;
+  requires std::is_same<  
+        typename std::remove_reference<decltype(t)>::type::CaseTrait,
+        RVecTrait>::value;
+};
+
+template <typename T>
+concept IsRBuf = requires(T t) {
+  typename std::remove_reference<decltype(t)>::type::CaseTrait;
+  requires std::is_same<  
+        typename std::remove_reference<decltype(t)>::type::CaseTrait,
+        RBufTrait>::value;
 };
 
 template <typename T>
@@ -397,6 +430,15 @@ inline void ass(bool inp, std::string message) {
   #else
   if (!inp)
     Rcpp::stop(message);
+  #endif
+}
+
+inline void warn(bool inp, std::string message) {
+  #ifdef STANDALONE
+   if (!inp) std::cerr << "Warning: " + message << std::endl;
+  #else
+  if (!inp)
+    Rcpp::warning("Warning: " + message);
   #endif
 }
 

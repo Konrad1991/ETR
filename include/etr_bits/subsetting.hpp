@@ -87,8 +87,7 @@ inline void calcInd(T &vec, Indices &ind, const I &idx) {
 
 template <typename L, typename R, typename I>
   requires NotOperation<R>
-inline auto subset(Vec<L, R> &vec, const I &idx)
-    -> Vec<BaseType, Subset<decltype(convert(vec).d), SubsetTrait>> {
+inline auto subset(Vec<L, R> &vec, const I &idx) {
   Subset<decltype(convert(vec).d), SubsetTrait> sub(vec);
   calcInd(vec, sub.ind, idx); // issue: this need ages in run_sum why?
   sub.setMatrix(false, 0, 0);
@@ -96,9 +95,20 @@ inline auto subset(Vec<L, R> &vec, const I &idx)
 }
 
 template <typename L, typename R, typename I>
+  requires IsRBuf<R>
+inline auto subset(Vec<L, R> &vec, const I &idx) { // can this even happen?
+  Indices ind;
+  calcInd(vec, ind, idx);
+  Vec<BaseType> ret(ind.size());
+  for (size_t i = 0; i < ret.size(); i++)
+    ret[i] = vec[ind[i]];
+  return ret;
+}
+
+template <typename L, typename R, typename I>
   requires UnaryOrBinaryOperation<R>
 inline auto subset(const Vec<L, R> &vec,
-                   const I &idx) -> Vec<decltype(extractRetType(vec))> {
+                   const I &idx) {
   Indices ind;
   calcInd(vec, ind, idx);
   Vec<BaseType> ret(ind.size());
@@ -109,8 +119,7 @@ inline auto subset(const Vec<L, R> &vec,
 
 template <typename L, typename R, typename Trait, typename I>
   requires NotOperation<R>
-inline auto subset(Vec<L, R, Trait> &vec, const I &idx)
-    -> Vec<BaseType, Subset<decltype(convert(vec).d), SubsetTrait>> {
+inline auto subset(Vec<L, R, Trait> &vec, const I &idx) {
   Subset<decltype(convert(vec).d), SubsetTrait> sub(vec);
   calcInd(vec, sub.ind, idx);
   sub.setMatrix(false, 0, 0);
@@ -120,13 +129,26 @@ inline auto subset(Vec<L, R, Trait> &vec, const I &idx)
 template <typename L, typename R, typename Trait, typename I>
   requires UnaryOrBinaryOperation<R>
 inline auto subset(const Vec<L, R, Trait> &vec,
-                   const I &idx) -> Vec<decltype(extractRetType(vec))> {
+                   const I &idx) {
   Indices ind;
   calcInd(vec, ind,
           idx); // issue: everytime where const Vec<BaseType> & is used as
                 // argument. It needs ages. Because, a normal vector is
                 // converted into const Vec<BaseType> --> it is copied entirely.
                 // This has to be changed!!! Which type has to be used instead?
+  Vec<BaseType> ret(ind.size());
+  for (size_t i = 0; i < ret.size(); i++)
+    ret[i] = vec[ind[i]];
+  return ret;
+}
+
+template <typename L, typename R, typename Trait, typename I>
+  requires IsRBuf<R>
+inline auto subset(const Vec<L, R, Trait> &vec,
+                   const I &idx) {
+  Indices ind;
+  calcInd(vec, ind,
+          idx); 
   Vec<BaseType> ret(ind.size());
   for (size_t i = 0; i < ret.size(); i++)
     ret[i] = vec[ind[i]];
