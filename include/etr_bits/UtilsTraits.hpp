@@ -355,7 +355,21 @@ concept NotOperation = !requires(T t) {
                std::is_same<
                    typename std::remove_reference<decltype(t)>::type::CaseTrait,
                    BinaryTrait>::value  ||
-              std::is_same<
+               std::is_same<
+                   typename std::remove_reference<decltype(t)>::type::CaseTrait,
+                   RBufTrait>::value;
+};
+
+template <typename T>
+concept Operation = requires(T t) {
+  typename std::remove_reference<decltype(t)>::type::CaseTrait;
+  requires std::is_same<
+               typename std::remove_reference<decltype(t)>::type::CaseTrait,
+               UnaryTrait>::value ||
+               std::is_same<
+                   typename std::remove_reference<decltype(t)>::type::CaseTrait,
+                   BinaryTrait>::value  ||
+               std::is_same<
                    typename std::remove_reference<decltype(t)>::type::CaseTrait,
                    RBufTrait>::value;
 };
@@ -386,6 +400,15 @@ template <typename R>
 concept IsVec = requires {
   typename R::TypeTrait;
   requires std::is_same_v<typename R::TypeTrait, VectorTrait>;
+};
+
+template <typename R>
+concept IsVecLorRorCalc = requires {
+  typename R::TypeTrait;
+  requires std::is_same_v<typename R::TypeTrait, VectorTrait> ||
+           std::is_same_v<typename R::TypeTrait, RVecTrait> ||
+           std::is_same_v<typename R::TypeTrait, UnaryTrait> ||
+           std::is_same_v<typename R::TypeTrait, BinaryTrait>; 
 };
 
 template <typename T>
@@ -584,6 +607,17 @@ struct UnaryOperation;
 template <typename L, typename R, binaryFct f, typename Trait = BinaryTrait,
           typename CTrait = BinaryTrait>
 struct BinaryOperationDeriv;
+
+template <typename T> struct ExtractDataType;
+template <typename T, typename R, typename Trait>
+struct ExtractDataType<Vec<T, R, Trait>> {
+  using type = T;
+};
+template <typename T, typename R, typename Trait>
+struct ExtractDataType<const Vec<T, R, Trait>> {
+  using type = T const;
+};
+template <typename T> using ExtractedTypeData = typename ExtractDataType<T>::type;
 
 struct BaseCalc { // issue: is this used?
   bool ismatrix;

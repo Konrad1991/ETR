@@ -2,6 +2,7 @@
 
 ## Types
 
+- CommonType everywhere
 - all helper functions such as vector, colon etc. have to return a vector of type RBufTrait and RVecTrait
 - subsetting 
     * currently the index operators are all passed as const vars. All cases/combinations have to be implemented. 

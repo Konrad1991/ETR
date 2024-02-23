@@ -5,43 +5,190 @@
 #include "UtilsTraits.hpp"
 #include <ios>
 #include <type_traits>
+#include <utility>
 
 namespace etr {
 
+inline auto produceRVec(size_t s) {
+  ass(s > 0, "invalid length argument");
+  return Vec<BaseType, Buffer<BaseType, BufferTrait, RBufTrait>, RBufTrait>(s); 
+}
+
 template <typename T> inline auto vector(const T &inp) {
-  if constexpr (std::is_floating_point_v<T>) {
+  if constexpr (std::is_same_v<T, size_t>) {
+    return produceRVec(inp);
+  } else if constexpr (std::is_floating_point_v<T>) {
     warn(isDoubleInt(inp), "The provided size is a floating-point number with non-zero decimal places. It has been floored to the nearest integer.");
-    return Vec<BaseType, Buffer<T, BufferTrait, RBufTrait>, RVecTrait>(static_cast<size_t>(inp));
+    return  produceRVec(static_cast<size_t>(inp));
   } else if constexpr (std::is_integral_v<T>) {
-    return Vec<BaseType, Buffer<T, BufferTrait, RBufTrait>, RVecTrait>(static_cast<size_t>(inp));
-  } else {
+    return produceRVec(static_cast<size_t>(inp));
+  } else if constexpr(IsVecLorRorCalc<T>) {
     ass(inp.size() == 1, "invalid length argument");
-    return Vec<BaseType>(static_cast<size_t>(inp[0]));
+    return produceRVec(static_cast<size_t>(inp[0]));
+  } else {
+    static_assert(sizeof(T) == 0, "Unsupported type in vector"); 
   }
 }
 
-template <typename L, typename T>
-inline Vec<BaseType>
-vector(const T &inp, const L &s) { // issue: handle the case when inp is a Vec
-  size_t length = 0;
-  if constexpr (std::is_same_v<L, double> || std::is_same_v<L, int> ||
-                std::is_same_v<L, bool>) {
-    length = static_cast<size_t>(s);
+template <typename T> inline auto vector(T &inp) {
+  if constexpr (std::is_same_v<T, size_t>) {
+    return produceRVec(inp);
+  } else if constexpr (std::is_floating_point_v<T>) {
+    warn(isDoubleInt(inp), "The provided size is a floating-point number with non-zero decimal places. It has been floored to the nearest integer.");
+    return  produceRVec(static_cast<size_t>(inp));
+  } else if constexpr (std::is_integral_v<T>) {
+    return produceRVec(static_cast<size_t>(inp));
+  } else if constexpr(IsVecLorRorCalc<T>) {
+    ass(inp.size() == 1, "invalid length argument");
+    return produceRVec(static_cast<size_t>(inp[0]));
   } else {
-    ass(s.size() == 1, "invalid length argument");
-    length = s[0];
+    static_assert(sizeof(T) == 0, "Unsupported type in vector"); 
   }
-  Vec<BaseType> ret(length);
-  if constexpr (std::is_same_v<T, double>) {
-    ret.fill(inp);
-    return ret;
-  } else if constexpr (std::is_same_v<T, int> || std::is_same_v<T, bool>) {
-    ret.fill(static_cast<BaseType>(inp));
-    return ret;
+}
+
+template <typename T> inline size_t convertSize(const T& inp) {
+   if constexpr (std::is_same_v<T, size_t>) {
+    ass(inp >= 1, "invalid times argument");
+    return std::forward(inp);
+  } else if constexpr (std::is_floating_point_v<T>) {
+    warn(isDoubleInt(inp), "The provided size is a floating-point number with non-zero decimal places. It has been floored to the nearest integer.");
+    ass(inp >= 1.0, "invalid times argument");
+    return static_cast<size_t>(inp);
+  } else if constexpr (std::is_integral_v<T>) {
+    ass(inp >= 1, "invalid times argument");
+    return static_cast<size_t>(inp);
+  } else if constexpr(IsVecLorRorCalc<T>) {
+    ass(inp.size() == 1 && inp[0] >= 1, "invalid times argument");
+    return static_cast<size_t>(inp[0]);
   } else {
-    ret = inp;
-    return ret;
+    static_assert(sizeof(T) == 0, "Unsupported type in rep"); 
   }
+}
+
+/*
+        Var1       Var2
+1 arithmetic arithmetic  done
+2        Vec arithmetic  done
+3  Operation arithmetic  done
+4 arithmetic        Vec  done 
+5        Vec        Vec  done
+6  Operation        Vec  done
+7 arithmetic  Operation  done
+8        Vec  Operation
+9  Operation  Operation
+
+In Operation also Rvecs are included
+*/
+
+template<typename L, typename R>
+requires std::is_arithmetic_v<L> && std::is_arithmetic_v<R>
+inline Vec<BaseType> rep(const L inp, const R s) {
+  size_t length = convertSize(s);
+  Vec<L> ret(length);
+  ret.fill(inp);
+  return ret;
+}
+
+template<typename L, typename R>
+requires IsVec<L> && std::is_arithmetic_v<R>
+inline auto rep(L& inp, const R s) {
+  size_t length = convertSize(s) * inp.size();
+  using DataType = ExtractDataType<L>::type;
+  Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> ret(length);
+  size_t counter = 0;
+  for(size_t i = 0; i < ret.size(); i++) {
+    ret[i] = inp[counter]; counter++;
+    if(counter >= inp.size()) counter = 0;
+  }
+  return ret;
+}
+
+template<typename L, typename R>
+requires Operation<L> && std::is_arithmetic_v<R>
+inline auto rep(const L& inp, const R s) {
+  size_t length = convertSize(s) * inp.size();
+  using DataType = ExtractDataType<L>::type;
+  Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> ret(length);
+  size_t counter = 0;
+  for(size_t i = 0; i < ret.size(); i++) {
+    ret[i] = inp[counter]; counter++;
+    if(counter >= inp.size()) counter = 0;
+  }
+  return ret;
+}
+
+template<typename L, typename R>
+requires std::is_arithmetic_v<L> && IsVec<R>
+inline auto rep(const L inp, R& s) {
+  size_t length = convertSize(s);
+  Vec<L> ret(length);
+  ret.fill(inp);
+  return ret;
+}
+
+template<typename L, typename R>
+requires IsVec<L> && IsVec<R>
+inline auto rep(L& inp, R& s) {
+  size_t length = convertSize(s) * inp.size();
+  using DataType = ExtractDataType<L>::type;
+  Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> ret(length);
+  size_t counter = 0;
+  for(size_t i = 0; i < ret.size(); i++) {
+    ret[i] = inp[counter]; counter++;
+    if(counter >= inp.size()) counter = 0;
+  }
+  return ret;
+}
+
+template<typename L, typename R>
+requires Operation<L> && IsVec<R>
+inline auto rep(const L& inp, R& s) {
+  size_t length = convertSize(s) * inp.size();
+  using DataType = ExtractDataType<L>::type;
+  Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> ret(length);
+  size_t counter = 0;
+  for(size_t i = 0; i < ret.size(); i++) {
+    ret[i] = inp[counter]; counter++;
+    if(counter >= inp.size()) counter = 0;
+  }
+  return ret;
+}
+
+template<typename L, typename R>
+requires std::is_arithmetic_v<L> && Operation<R>
+inline auto rep(const L inp, const R& s) {
+  size_t length = convertSize(s);
+  Vec<L> ret(length);
+  ret.fill(inp);
+  return ret;
+}
+
+template<typename L, typename R>
+requires IsVec<L> && Operation<R>
+inline auto rep(L& inp, const R& s) {
+  size_t length = convertSize(s) * inp.size();
+  using DataType = ExtractDataType<L>::type;
+  Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> ret(length);
+  size_t counter = 0;
+  for(size_t i = 0; i < ret.size(); i++) {
+    ret[i] = inp[counter]; counter++;
+    if(counter >= inp.size()) counter = 0;
+  }
+  return ret;
+}
+
+template<typename L, typename R>
+requires Operation<L> && Operation<R>
+inline auto rep(const L& inp, const R& s) {
+  size_t length = convertSize(s) * inp.size();
+  using DataType = ExtractDataType<L>::type;
+  Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> ret(length);
+  size_t counter = 0;
+  for(size_t i = 0; i < ret.size(); i++) {
+    ret[i] = inp[counter]; counter++;
+    if(counter >= inp.size()) counter = 0;
+  }
+  return ret;
 }
 
 inline Vec<BaseType> matrix(int nrows, int ncols) {
