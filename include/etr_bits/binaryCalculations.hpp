@@ -96,6 +96,9 @@ struct BinaryOperation {
   }
 };
 
+// issue: does not work --> fix in same way as minus
+// test idea that one could use the same approach as for comparison for functions. and than use templated functions of from 
+// template<typename L, typename R> inline CommonType<L, R> fct(L l, R r) { return l + r; }
 template <typename L, typename R>
 auto operator+(const L &l, const R &r)
     -> Vec<CommonType<L, R>,

@@ -4,10 +4,11 @@ using namespace etr;
 #include <iomanip>
 
 int main() {
-  sexp a = vector(1.9);
-  subset(vector(3), 3);
-  Vec<double> v = vector(10);
-  print(v);
-  
+  Vec<double> a = coca(1, 2, 3);
+  Vec<int> b = coca(1, 2, 3);
+  print(a);
+  print(b);
+  print(a + 0.0);
+  print(b + 0.0);
 }
 
