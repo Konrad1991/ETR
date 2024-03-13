@@ -315,19 +315,58 @@ struct UnEqualTrait {
   }
 };
 
-struct SinusTrait {};
-struct ASinusTrait {};
-struct SinusHTrait {};
-struct CosinusTrait {};
-struct ACosinusTrait {};
-struct CosinusHTrait {};
-struct TangensTrait {};
-struct ATangensTrait {};
-struct TangensHTrait {};
-struct ExpTrait {};
-struct LogTrait {};
-struct SquareRootTrait {};
-struct MinusUnaryTrait {};
+struct SinusTrait {
+  template<typename L = BaseType>
+  static inline auto f(L a) { return sin(a); }
+};
+struct ASinusTrait {
+  template<typename L = BaseType>
+  static inline auto f(L a) { return asin(a); }
+};
+struct SinusHTrait {
+  template<typename L = BaseType>
+  static inline auto f(L a) { return sinh(a); }
+};
+struct CosinusTrait {
+  template<typename L = BaseType>
+  static inline auto f(L a) { return cos(a); }
+};
+struct ACosinusTrait {
+  template<typename L = BaseType>
+  static inline auto f(L a) { return acos(a); }
+};
+struct CosinusHTrait {
+  template<typename L = BaseType>
+  static inline auto f(L a) { return cosh(a); }
+};
+struct TangensTrait {
+  template<typename L = BaseType>
+  static inline auto f(L a) { return tan(a); }
+};
+struct ATangensTrait {
+  template<typename L = BaseType>
+  static inline auto f(L a) { return atan(a); }
+};
+struct TangensHTrait {
+  template<typename L = BaseType>
+  static inline auto f(L a) { return tanh(a); }
+};
+struct ExpTrait {
+  template<typename L = BaseType>
+  static inline auto f(L a) { return exp(a); }
+};
+struct LogTrait {
+  template<typename L = BaseType>
+  static inline auto f(L a) { return log(a); }
+};
+struct SquareRootTrait {
+  template<typename L = BaseType>
+  static inline auto f(L a) { return sqrt(a); }
+};
+struct MinusUnaryTrait {
+  template<typename L = BaseType>
+  static inline auto f(L a) { return -a; }
+};
 
 template <typename T>
 concept isBID = requires {
@@ -557,27 +596,6 @@ template <typename T> constexpr T convert(const T &obj) {
   // return std::forward(obj);
 }
 
-inline double Addition(double l, double r) { return l + r; }
-inline double Minus(double l, double r) { return l - r; }
-inline double Times(double l, double r) { return l * r; }
-inline double Divide(double l, double r) { return l / r; }
-inline double Pow(double l, double r) { return std::pow(l, r); }
-typedef double (*binaryFct)(double, double);
-
-inline double Sinus(double obj) { return sin(obj); }
-inline double SinusH(double obj) { return sinh(obj); }
-inline double ASinus(double obj) { return asin(obj); }
-inline double Cosinus(double obj) { return cos(obj); }
-inline double CosinusH(double obj) { return cosh(obj); }
-inline double ACosinus(double obj) { return acos(obj); }
-inline double Tangens(double obj) { return tan(obj); }
-inline double TangensH(double obj) { return tanh(obj); }
-inline double ATangens(double obj) { return atan(obj); }
-inline double Exp(double obj) { return exp(obj); }
-inline double Log(double obj) { return log(obj); }
-inline double SquareRoot(double obj) { return sqrt(obj); }
-inline double MinusUnary(double obj) { return -obj; }
-
 inline double Equal(double a, double b) {
   if (fabs(a - b) < 1E-3) {
     return 1.0;
@@ -636,11 +654,11 @@ struct Vec;
 template <typename L, typename R, typename Trait = BinaryTrait,
           typename CTrait = BinaryTrait>
 struct BinaryOperation;
-template <typename I, UnaryFct f, typename Trait = UnaryTrait,
+template <typename I, typename Trait = UnaryTrait,
           typename CTrait = UnaryTrait>
 struct UnaryOperation;
 
-template <typename L, typename R, binaryFct f, typename Trait = BinaryTrait,
+template <typename L, typename R, typename Trait = BinaryTrait,
           typename CTrait = BinaryTrait>
 struct BinaryOperationDeriv;
 

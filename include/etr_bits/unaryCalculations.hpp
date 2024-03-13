@@ -4,7 +4,7 @@
 #include "UtilsTraits.hpp"
 
 namespace etr {
-template <typename I, UnaryFct f, typename Trait, typename CTrait>
+template <typename I, typename Trait, typename CTrait>
 struct UnaryOperation {
   using RetType = typename CTrait::RetType;
   using TypeTrait = Trait;
@@ -19,15 +19,15 @@ struct UnaryOperation {
   UnaryOperation(const UnaryOperation &&other) : obj(other.obj), mp(other.mp) {}
   UnaryOperation(const I &obj_, const MatrixParameter &mp)
       : obj(obj_), mp(mp) {}
-  template <typename IType, UnaryFct fOther, typename TraitOther>
-  UnaryOperation(const UnaryOperation<IType, fOther, TraitOther> &other)
+  template <typename IType, typename TraitOther>
+  UnaryOperation(const UnaryOperation<IType, TraitOther> &other)
       : obj(other.obj), mp(other.mp) {}
   RetType operator[](size_t i) const {
     constexpr bool isDouble = std::is_same_v<I, double>;
     if constexpr (isDouble) {
-      return f(obj);
+      return Trait::f(obj);
     } else if constexpr (!isDouble) {
-      return f(obj[i % obj.size()]);
+      return Trait::f(obj[i % obj.size()]);
     }
   }
   size_t size() const {
@@ -60,38 +60,30 @@ struct UnaryOperation {
 };
 
 template <typename T>
-auto operator-(const T &obj)
-    -> Vec<
-        BaseType,
-        UnaryOperation<decltype(convert(obj).d), MinusUnary, MinusUnaryTrait>,
-        UnaryTrait> {
-  constexpr bool isDouble = std::is_same_v<T, BaseType>;
+auto operator-(const T &obj) {
+  constexpr bool isDouble = std::is_arithmetic_v<T>;
   if constexpr (!isDouble) {
-    return Vec<BaseType,
-               UnaryOperation<decltype(obj.d), MinusUnary, MinusUnaryTrait>,
-               UnaryTrait>(
-        UnaryOperation<decltype(obj.d), MinusUnary, MinusUnaryTrait>(obj.d,
-                                                                     obj.d.mp));
+    return Vec<T,
+               UnaryOperation<decltype(obj.d), 
+               MinusUnaryTrait>, UnaryTrait>(
+        UnaryOperation<decltype(obj.d), MinusUnaryTrait>(obj.d, obj.d.mp));
   } else if constexpr (isDouble) {
     static_assert(std::is_same_v<T, BaseType>, "This should never be called!");
-    return Vec<BaseType, UnaryOperation<BaseType, MinusUnary, MinusUnaryTrait>>(
-        UnaryOperation<BaseType, MinusUnary, MinusUnaryTrait>{obj});
+    return Vec<T, UnaryOperation<BaseType, MinusUnaryTrait>>(
+        UnaryOperation<BaseType, MinusUnaryTrait>{obj});
   }
 }
 
 template <typename T>
-auto sinus(const T &obj)
-    -> Vec<double, UnaryOperation<decltype(convert(obj).d), Sinus, SinusTrait>,
-           UnaryTrait> {
-  constexpr bool isDouble = std::is_same_v<T, double>;
+auto sinus(const T &obj) {
+  constexpr bool isDouble = std::is_arithmetic_v<T>;
   if constexpr (!isDouble) {
-    return Vec<double, UnaryOperation<decltype(obj.d), Sinus, SinusTrait>,
-               UnaryTrait>(
-        UnaryOperation<decltype(obj.d), Sinus, SinusTrait>(obj.d, obj.d.mp));
+    return Vec<T, UnaryOperation<decltype(obj.d), SinusTrait>, UnaryTrait>(
+        UnaryOperation<decltype(obj.d), SinusTrait>(obj.d, obj.d.mp));
   } else if constexpr (isDouble) {
     static_assert(std::is_same_v<T, BaseType>, "This should never be called!");
-    return Vec<double, UnaryOperation<double, Sinus, SinusTrait>>(
-        UnaryOperation<double, Sinus, SinusTrait>{obj});
+    return Vec<T, UnaryOperation<T, SinusTrait>>(
+        UnaryOperation<T, SinusTrait>{obj});
   }
 }
 template <typename T>
@@ -101,19 +93,16 @@ auto sinus(const T &obj) -> BaseType {
 }
 
 template <typename T>
-auto sinush(const T &obj)
-    -> Vec<double,
-           UnaryOperation<decltype(convert(obj).d), SinusH, SinusHTrait>,
-           UnaryTrait> {
-  constexpr bool isDouble = std::is_same_v<T, double>;
+auto sinush(const T &obj) {
+  constexpr bool isDouble = std::is_arithmetic_v<T>;
   if constexpr (!isDouble) {
-    return Vec<double, UnaryOperation<decltype(obj.d), SinusH, SinusHTrait>,
+    return Vec<T, UnaryOperation<decltype(obj.d), SinusHTrait>,
                UnaryTrait>(
-        UnaryOperation<decltype(obj.d), SinusH, SinusHTrait>(obj.d, obj.d.mp));
+        UnaryOperation<decltype(obj.d), SinusHTrait>(obj.d, obj.d.mp));
   } else if constexpr (isDouble) {
     static_assert(std::is_same_v<T, BaseType>, "This should never be called!");
-    return Vec<double, UnaryOperation<double, SinusH, SinusHTrait>>(
-        UnaryOperation<double, SinusH, SinusHTrait>{obj});
+    return Vec<T, UnaryOperation<T, SinusHTrait>>(
+        UnaryOperation<T, SinusHTrait>{obj});
   }
 }
 template <typename T>
@@ -123,19 +112,16 @@ auto sinush(const T &obj) -> BaseType {
 }
 
 template <typename T>
-auto asinus(const T &obj)
-    -> Vec<double,
-           UnaryOperation<decltype(convert(obj).d), ASinus, ASinusTrait>,
-           UnaryTrait> {
-  constexpr bool isDouble = std::is_same_v<T, double>;
+auto asinus(const T &obj) {
+  constexpr bool isDouble = std::is_arithmetic_v<T>;
   if constexpr (!isDouble) {
-    return Vec<double, UnaryOperation<decltype(obj.d), ASinus, ASinusTrait>,
+    return Vec<T, UnaryOperation<decltype(obj.d), ASinusTrait>,
                UnaryTrait>(
-        UnaryOperation<decltype(obj.d), ASinus, ASinusTrait>(obj.d, obj.d.mp));
+        UnaryOperation<decltype(obj.d), ASinusTrait>(obj.d, obj.d.mp));
   } else if constexpr (isDouble) {
     static_assert(std::is_same_v<T, BaseType>, "This should never be called!");
-    return Vec<double, UnaryOperation<double, ASinus, ASinusTrait>>(
-        UnaryOperation<double, ASinus, ASinusTrait>{obj});
+    return Vec<T, UnaryOperation<T, ASinusTrait>>(
+        UnaryOperation<T, ASinusTrait>{obj});
   }
 }
 template <typename T>
@@ -145,20 +131,17 @@ auto asinus(const T &obj) -> BaseType {
 }
 
 template <typename T>
-auto cosinus(const T &obj)
-    -> Vec<double,
-           UnaryOperation<decltype(convert(obj).d), Cosinus, CosinusTrait>,
-           UnaryTrait> {
-  constexpr bool isDouble = std::is_same_v<T, double>;
+auto cosinus(const T &obj) {
+  constexpr bool isDouble = std::is_arithmetic_v<T>;
   if constexpr (!isDouble) {
-    return Vec<double, UnaryOperation<decltype(obj.d), Cosinus, CosinusTrait>,
+    return Vec<T, UnaryOperation<decltype(obj.d), CosinusTrait>,
                UnaryTrait>(
-        UnaryOperation<decltype(obj.d), Cosinus, CosinusTrait>(obj.d,
+        UnaryOperation<decltype(obj.d), CosinusTrait>(obj.d,
                                                                obj.d.mp));
   } else if constexpr (isDouble) {
     static_assert(std::is_same_v<T, BaseType>, "This should never be called!");
-    return Vec<double, UnaryOperation<double, Cosinus, CosinusTrait>>(
-        UnaryOperation<double, Cosinus, CosinusTrait>{obj});
+    return Vec<T, UnaryOperation<T, CosinusTrait>>(
+        UnaryOperation<T, CosinusTrait>{obj});
   }
 }
 template <typename T>
@@ -168,20 +151,17 @@ auto cosinus(const T &obj) -> BaseType {
 }
 
 template <typename T>
-auto cosinush(const T &obj)
-    -> Vec<double,
-           UnaryOperation<decltype(convert(obj).d), CosinusH, CosinusHTrait>,
-           UnaryTrait> {
-  constexpr bool isDouble = std::is_same_v<T, double>;
+auto cosinush(const T &obj) {
+  constexpr bool isDouble = std::is_arithmetic_v<T>;
   if constexpr (!isDouble) {
-    return Vec<double, UnaryOperation<decltype(obj.d), CosinusH, CosinusHTrait>,
+    return Vec<T, UnaryOperation<decltype(obj.d), CosinusHTrait>,
                UnaryTrait>(
-        UnaryOperation<decltype(obj.d), CosinusH, CosinusHTrait>(obj.d,
+        UnaryOperation<decltype(obj.d), CosinusHTrait>(obj.d,
                                                                  obj.d.mp));
   } else if constexpr (isDouble) {
     static_assert(std::is_same_v<T, BaseType>, "This should never be called!");
-    return Vec<double, UnaryOperation<double, CosinusH, CosinusHTrait>>(
-        UnaryOperation<double, CosinusH, CosinusHTrait>{obj});
+    return Vec<T, UnaryOperation<T, CosinusHTrait>>(
+        UnaryOperation<T, CosinusHTrait>{obj});
   }
 }
 template <typename T>
@@ -191,20 +171,17 @@ auto cosinush(const T &obj) -> BaseType {
 }
 
 template <typename T>
-auto acosinus(const T &obj)
-    -> Vec<double,
-           UnaryOperation<decltype(convert(obj).d), ACosinus, ACosinusTrait>,
-           UnaryTrait> {
-  constexpr bool isDouble = std::is_same_v<T, double>;
+auto acosinus(const T &obj) {
+  constexpr bool isDouble = std::is_arithmetic_v<T>;
   if constexpr (!isDouble) {
-    return Vec<double, UnaryOperation<decltype(obj.d), ACosinus, ACosinusTrait>,
+    return Vec<T, UnaryOperation<decltype(obj.d), ACosinusTrait>,
                UnaryTrait>(
-        UnaryOperation<decltype(obj.d), ACosinus, ACosinusTrait>(obj.d,
+        UnaryOperation<decltype(obj.d), ACosinusTrait>(obj.d,
                                                                  obj.d.mp));
   } else if constexpr (isDouble) {
     static_assert(std::is_same_v<T, BaseType>, "This should never be called!");
-    return Vec<double, UnaryOperation<double, ACosinus, ACosinusTrait>>(
-        UnaryOperation<double, ACosinus, ACosinusTrait>{obj});
+    return Vec<T, UnaryOperation<T, ACosinusTrait>>(
+        UnaryOperation<T, ACosinusTrait>{obj});
   }
 }
 template <typename T>
@@ -214,20 +191,17 @@ auto acosinus(const T &obj) -> BaseType {
 }
 
 template <typename T>
-auto tangens(const T &obj)
-    -> Vec<double,
-           UnaryOperation<decltype(convert(obj).d), Tangens, TangensTrait>,
-           UnaryTrait> {
-  constexpr bool isDouble = std::is_same_v<T, double>;
+auto tangens(const T &obj) {
+  constexpr bool isDouble = std::is_arithmetic_v<T>;
   if constexpr (!isDouble) {
-    return Vec<double, UnaryOperation<decltype(obj.d), Tangens, TangensTrait>,
+    return Vec<T, UnaryOperation<decltype(obj.d), TangensTrait>,
                UnaryTrait>(
-        UnaryOperation<decltype(obj.d), Tangens, TangensTrait>(obj.d,
+        UnaryOperation<decltype(obj.d), TangensTrait>(obj.d,
                                                                obj.d.mp));
   } else if constexpr (isDouble) {
     static_assert(std::is_same_v<T, BaseType>, "This should never be called!");
-    return Vec<double, UnaryOperation<double, Tangens, TangensTrait>>(
-        UnaryOperation<double, Tangens, TangensTrait>{obj});
+    return Vec<T, UnaryOperation<T, TangensTrait>>(
+        UnaryOperation<T, TangensTrait>{obj});
   }
 }
 template <typename T>
@@ -237,20 +211,17 @@ auto tangens(const T &obj) -> BaseType {
 }
 
 template <typename T>
-auto tangensh(const T &obj)
-    -> Vec<double,
-           UnaryOperation<decltype(convert(obj).d), TangensH, TangensHTrait>,
-           UnaryTrait> {
-  constexpr bool isDouble = std::is_same_v<T, double>;
+auto tangensh(const T &obj) {
+  constexpr bool isDouble = std::is_arithmetic_v<T>;
   if constexpr (!isDouble) {
-    return Vec<double, UnaryOperation<decltype(obj.d), TangensH, TangensHTrait>,
+    return Vec<T, UnaryOperation<decltype(obj.d), TangensHTrait>,
                UnaryTrait>(
-        UnaryOperation<decltype(obj.d), TangensH, TangensHTrait>(obj.d,
+        UnaryOperation<decltype(obj.d), TangensHTrait>(obj.d,
                                                                  obj.d.mp));
   } else if constexpr (isDouble) {
     static_assert(std::is_same_v<T, BaseType>, "This should never be called!");
-    return Vec<double, UnaryOperation<double, TangensH, TangensHTrait>>(
-        UnaryOperation<double, TangensH, TangensHTrait>{obj});
+    return Vec<T, UnaryOperation<T, TangensHTrait>>(
+        UnaryOperation<T, TangensHTrait>{obj});
   }
 }
 template <typename T>
@@ -260,20 +231,17 @@ auto tangensh(const T &obj) -> BaseType {
 }
 
 template <typename T>
-auto atangens(const T &obj)
-    -> Vec<double,
-           UnaryOperation<decltype(convert(obj).d), ATangens, ATangensTrait>,
-           UnaryTrait> {
-  constexpr bool isDouble = std::is_same_v<T, double>;
+auto atangens(const T &obj) {
+  constexpr bool isDouble = std::is_arithmetic_v<T>;
   if constexpr (!isDouble) {
-    return Vec<double, UnaryOperation<decltype(obj.d), ATangens, ATangensTrait>,
+    return Vec<T, UnaryOperation<decltype(obj.d), ATangensTrait>,
                UnaryTrait>(
-        UnaryOperation<decltype(obj.d), ATangens, ATangensTrait>(obj.d,
+        UnaryOperation<decltype(obj.d), ATangensTrait>(obj.d,
                                                                  obj.d.mp));
   } else if constexpr (isDouble) {
     static_assert(std::is_same_v<T, BaseType>, "This should never be called!");
-    return Vec<double, UnaryOperation<double, ATangens, ATangensTrait>>(
-        UnaryOperation<double, ATangens, ATangensTrait>{obj});
+    return Vec<T, UnaryOperation<T, ATangensTrait>>(
+        UnaryOperation<T, ATangensTrait>{obj});
   }
 }
 template <typename T>
@@ -283,19 +251,17 @@ auto atangens(const T &obj) -> BaseType {
 }
 
 template <typename T>
-auto ln(const T &obj)
-    -> Vec<double, UnaryOperation<decltype(convert(obj).d), Log, LogTrait>,
-           UnaryTrait> {
-  constexpr bool isDouble = std::is_same_v<T, double>;
+auto ln(const T &obj) {
+  constexpr bool isDouble = std::is_arithmetic_v<T>;
   if constexpr (!isDouble) {
-    return Vec<double, UnaryOperation<decltype(obj.d), Log, LogTrait>,
+    return Vec<T, UnaryOperation<decltype(obj.d), LogTrait>,
                UnaryTrait>(
-        UnaryOperation<decltype(obj.d), Log, LogTrait>(obj.d, obj.d.mp));
+        UnaryOperation<decltype(obj.d), LogTrait>(obj.d, obj.d.mp));
   } else if constexpr (isDouble) { // issue: this should be never be used. Also
                                    // for binary operations true.
     static_assert(std::is_same_v<T, BaseType>, "This should never be called!");
-    return Vec<double, UnaryOperation<double, Log, LogTrait>>(
-        UnaryOperation<double, Log, LogTrait>{obj});
+    return Vec<T, UnaryOperation<T, LogTrait>>(
+        UnaryOperation<T, LogTrait>{obj});
   }
 }
 template <typename T>
@@ -305,22 +271,18 @@ auto ln(const T &obj) -> BaseType {
 }
 
 template <typename T>
-auto sqroot(const T &obj)
-    -> Vec<
-        double,
-        UnaryOperation<decltype(convert(obj).d), SquareRoot, SquareRootTrait>,
-        UnaryTrait> {
-  constexpr bool isDouble = std::is_same_v<T, double>;
+auto sqroot(const T &obj) {
+  constexpr bool isDouble = std::is_arithmetic_v<T>;
   if constexpr (!isDouble) {
-    return Vec<double,
-               UnaryOperation<decltype(obj.d), SquareRoot, SquareRootTrait>,
+    return Vec<T,
+               UnaryOperation<decltype(obj.d), SquareRootTrait>,
                UnaryTrait>(
-        UnaryOperation<decltype(obj.d), SquareRoot, SquareRootTrait>(obj.d,
+        UnaryOperation<decltype(obj.d), SquareRootTrait>(obj.d,
                                                                      obj.d.mp));
   } else if constexpr (isDouble) {
     static_assert(std::is_same_v<T, BaseType>, "This should never be called!");
-    return Vec<double, UnaryOperation<double, SquareRoot, SquareRootTrait>>(
-        UnaryOperation<double, SquareRoot, SquareRootTrait>{obj});
+    return Vec<T, UnaryOperation<T, SquareRootTrait>>(
+        UnaryOperation<T, SquareRootTrait>{obj});
   }
 }
 template <typename T>
@@ -330,18 +292,16 @@ auto sqroot(const T &obj) -> BaseType {
 }
 
 template <typename T>
-auto exp(const T &obj) // issue: document new function e^x --> exp
-    -> Vec<double, UnaryOperation<decltype(convert(obj).d), Exp, ExpTrait>,
-           UnaryTrait> {
-  constexpr bool isDouble = std::is_same_v<T, double>;
+auto exp(const T &obj) { // issue: updae this in the documentation
+  constexpr bool isDouble = std::is_arithmetic_v<T>;
   if constexpr (!isDouble) {
-    return Vec<double, UnaryOperation<decltype(obj.d), Exp, ExpTrait>,
+    return Vec<T, UnaryOperation<decltype(obj.d), ExpTrait>,
                UnaryTrait>(
-        UnaryOperation<decltype(obj.d), Exp, ExpTrait>(obj.d, obj.d.mp));
+        UnaryOperation<decltype(obj.d), ExpTrait>(obj.d, obj.d.mp));
   } else if constexpr (isDouble) {
     static_assert(std::is_same_v<T, BaseType>, "This should never be called!");
-    return Vec<double, UnaryOperation<double, Exp, ExpTrait>>(
-        UnaryOperation<double, Exp, ExpTrait>{obj});
+    return Vec<T, UnaryOperation<T, ExpTrait>>(
+        UnaryOperation<T, ExpTrait>{obj});
   }
 }
 template <typename T>
