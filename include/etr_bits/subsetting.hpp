@@ -107,8 +107,7 @@ inline auto subset(Vec<L, R> &vec, const I &idx) { // can this even happen?
 
 template <typename L, typename R, typename I>
   requires UnaryOrBinaryOperation<R>
-inline auto subset(const Vec<L, R> &vec,
-                   const I &idx) {
+inline auto subset(const Vec<L, R> &vec, const I &idx) {
   Indices ind;
   calcInd(vec, ind, idx);
   Vec<BaseType> ret(ind.size());
@@ -128,11 +127,9 @@ inline auto subset(Vec<L, R, Trait> &vec, const I &idx) {
 
 template <typename L, typename R, typename Trait, typename I>
   requires UnaryOrBinaryOperation<R>
-inline auto subset(const Vec<L, R, Trait> &vec,
-                   const I &idx) {
+inline auto subset(const Vec<L, R, Trait> &vec, const I &idx) {
   Indices ind;
-  calcInd(vec, ind,
-          idx); 
+  calcInd(vec, ind, idx);
   Vec<BaseType> ret(ind.size());
   for (size_t i = 0; i < ret.size(); i++)
     ret[i] = vec[ind[i]];
@@ -141,11 +138,9 @@ inline auto subset(const Vec<L, R, Trait> &vec,
 
 template <typename L, typename R, typename Trait, typename I>
   requires IsRBuf<R>
-inline auto subset(const Vec<L, R, Trait> &vec,
-                   const I &idx) {
+inline auto subset(const Vec<L, R, Trait> &vec, const I &idx) {
   Indices ind;
-  calcInd(vec, ind,
-          idx); 
+  calcInd(vec, ind, idx);
   Vec<BaseType> ret(ind.size());
   for (size_t i = 0; i < ret.size(); i++)
     ret[i] = vec[ind[i]];
@@ -308,10 +303,8 @@ template <typename L, typename R>
   requires(std::is_same_v<L, int> ||
            std::is_same_v<L, double>) // issue: replace all BaseStore<subset>
                                       // with BaseStore<size_t>
-                                      inline void
-                                      calcInd(const Vec<BaseType> &vec,
-                                              Indices &ind, MatrixParameter &mp,
-                                              const L &idxL, const R &idxR) {
+inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
+                    const L &idxL, const R &idxR) {
   ass(vec.im(), "incorrect number of dimensions");
   int indexRow = static_cast<size_t>(idxL);
   if constexpr (std::is_same_v<R, bool>) {

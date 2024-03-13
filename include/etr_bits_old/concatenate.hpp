@@ -26,14 +26,14 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 
 namespace etr {
 
-VEC<double> combine(VEC<double>&& a, VEC<double>&& b) {
-  //a.ismatrix = false;
-  //b.ismatrix = false;
+VEC<double> combine(VEC<double> &&a, VEC<double> &&b) {
+  // a.ismatrix = false;
+  // b.ismatrix = false;
   VEC<double> ret(a.size() + b.size());
-  for(int i = 0; i < ret.size(); i++) {
-    if(i < a.size()) {
-        ret[i] = a[i];
-    } else if(i >= a.size()) {
+  for (int i = 0; i < ret.size(); i++) {
+    if (i < a.size()) {
+      ret[i] = a[i];
+    } else if (i >= a.size()) {
       ret[i] = b[i - (a.size())];
     }
   }
@@ -41,14 +41,14 @@ VEC<double> combine(VEC<double>&& a, VEC<double>&& b) {
   return ret;
 }
 
-VEC<double> combine(VEC<double>& a, VEC<double>& b) {
-  //a.ismatrix = false;
-  //b.ismatrix = false;
+VEC<double> combine(VEC<double> &a, VEC<double> &b) {
+  // a.ismatrix = false;
+  // b.ismatrix = false;
   VEC<double> ret(a.size() + b.size());
-  for(int i = 0; i < ret.size(); i++) {
-    if(i < a.size()) {
-        ret[i] = a[i];
-    } else if(i >= a.size()) {
+  for (int i = 0; i < ret.size(); i++) {
+    if (i < a.size()) {
+      ret[i] = a[i];
+    } else if (i >= a.size()) {
       ret[i] = b[i - (a.size())];
     }
   }
@@ -56,13 +56,13 @@ VEC<double> combine(VEC<double>& a, VEC<double>& b) {
   return ret;
 }
 
-VEC<double> combine(VEC<double>& a, double b) {
+VEC<double> combine(VEC<double> &a, double b) {
   VEC<double> ret(a.size() + 1);
-  //a.ismatrix = false;
-  for(int i = 0; i < ret.size(); i++) {
-    if(i < a.size()) {
-        ret[i] = a[i];
-    } else if(i >= a.size()) {
+  // a.ismatrix = false;
+  for (int i = 0; i < ret.size(); i++) {
+    if (i < a.size()) {
+      ret[i] = a[i];
+    } else if (i >= a.size()) {
       ret[i] = b;
     }
   }
@@ -70,67 +70,60 @@ VEC<double> combine(VEC<double>& a, double b) {
   return ret;
 }
 
-VEC<double> combine(double a, VEC<double>& b) {
+VEC<double> combine(double a, VEC<double> &b) {
   VEC<double> ret(b.size() + 1);
-  //b.ismatrix = false;
-  for(int i = 0; i < ret.size(); i++) {
-    if(i == 0) {
-        ret[i] = a;
+  // b.ismatrix = false;
+  for (int i = 0; i < ret.size(); i++) {
+    if (i == 0) {
+      ret[i] = a;
     } else {
-      ret[i] = b[i -1];
+      ret[i] = b[i - 1];
     }
   }
   ret.ismatrix = false;
   return ret;
 }
 
+template <typename... Ts> VEC<double> coca(Ts &&...multi_inputs) {
+  VEC<double> ret;
+  ret.ismatrix = false;
+  int i = 0;
 
+  (
+      [&](auto &input) {
+        if (i == 0) {
+          ret = input;
+        } else {
+          ret = combine(ret, input);
+        }
 
+        i++;
+      }(multi_inputs),
+      ...);
 
-template <typename ... Ts>
-VEC<double> coca (Ts && ... multi_inputs) {
-    VEC<double> ret;
-    ret.ismatrix = false;
-    int i = 0;
-
-    ([&] (auto & input)
-    {
-      if(i == 0) {
-        ret = input;
-      } else {
-        ret = combine(ret, input);
-      }
-
-      i++;
-    } (multi_inputs), ...);
-
-    return ret;
+  return ret;
 }
 
+template <typename... Ts> VEC<double> coca(Ts &...multi_inputs) {
+  VEC<double> ret;
+  ret.ismatrix = false;
+  int i = 0;
 
+  (
+      [&](auto &input) {
+        if (i == 0) {
+          ret = input;
+        } else {
+          ret = combine(ret, input);
+        }
 
+        i++;
+      }(multi_inputs),
+      ...);
 
-template <typename ... Ts>
-VEC<double> coca (Ts & ... multi_inputs) {
-    VEC<double> ret;
-    ret.ismatrix = false;
-    int i = 0;
-
-    ([&] (auto & input)
-    {
-      if(i == 0) {
-        ret = input;
-      } else {
-        ret = combine(ret, input);
-      }
-
-      i++;
-    } (multi_inputs), ...);
-
-    return ret;
+  return ret;
 }
 
-
-}
+} // namespace etr
 
 #endif

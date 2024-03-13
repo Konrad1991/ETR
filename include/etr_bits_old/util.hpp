@@ -28,25 +28,25 @@ namespace etr {
 
 // error function --> stop program & show message
 void ass(bool inp, std::string message) {
-  if(inp == false) {
+  if (inp == false) {
     std::cerr << message << std::endl;
 
-    #ifdef R
-      Rcpp::stop("Error");
-    #else
-      exit (EXIT_FAILURE);
-    #endif
+#ifdef R
+    Rcpp::stop("Error");
+#else
+    exit(EXIT_FAILURE);
+#endif
   }
 }
 
 #ifdef R
 #else
-  namespace Rcpp {
-    void stop(std::string inp) {
-      std::cerr << inp << std::endl;
-      exit (EXIT_FAILURE);
-    }
-  }
+namespace Rcpp {
+void stop(std::string inp) {
+  std::cerr << inp << std::endl;
+  exit(EXIT_FAILURE);
+}
+} // namespace Rcpp
 #endif
 
 /*
@@ -59,6 +59,6 @@ std::vector<double> range(int start, int end) {
   return ret;
 }
 */
-}
+} // namespace etr
 
 #endif

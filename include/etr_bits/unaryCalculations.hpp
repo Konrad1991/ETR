@@ -54,12 +54,10 @@ struct UnaryOperation {
   }
 
   template <typename AV> static RetType getVal(AV &av, size_t VecIdx) {
-      using Ty = typename std::remove_reference<typeTraitObj>::type;
-      return f(Ty::template getVal<AV>(av, VecIdx % Ty::template getSize(av)) ); 
+    using Ty = typename std::remove_reference<typeTraitObj>::type;
+    return f(Ty::template getVal<AV>(av, VecIdx % Ty::template getSize(av)));
   }
-
 };
-
 
 template <typename T>
 auto operator-(const T &obj)

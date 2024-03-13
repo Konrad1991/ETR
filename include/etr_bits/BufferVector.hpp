@@ -16,6 +16,7 @@ struct Buffer : public BaseStore<T> {
 
 template <typename T, typename R, typename Trait> struct Vec {
   using Type = T;
+  // using RetType = T;
   using TypeTrait = Trait;
   using CaseTrait = Trait;
   R d;
@@ -45,16 +46,16 @@ template <typename T, typename R, typename Trait> struct Vec {
   explicit Vec(const Borrow<T2> &&borrowed) : d(borrowed) {
     d.setMatrix(borrowed.mp);
   }
-  template <typename L2, typename R2, binaryFct f, typename OperationTrait>
-  explicit Vec(const BinaryOperation<L2, R2, f, OperationTrait> &&inp)
+  template <typename L2, typename R2, typename OperationTrait>
+  explicit Vec(const BinaryOperation<L2, R2, OperationTrait> &&inp)
       : d(inp) {
     using TypeTrait = OperationTrait;
     d.setMatrix(inp.mp);
   }
-  template <typename L2, typename R2, binaryFct f, typename OperationTrait,
+  template <typename L2, typename R2, typename OperationTrait,
             typename DetailTrait> // only for comparison!
   explicit Vec(
-      const BinaryOperation<L2, R2, f, OperationTrait, DetailTrait> &&inp)
+      const BinaryOperation<L2, R2, OperationTrait, DetailTrait> &&inp)
       : d(inp) {
     using TypeTrait = OperationTrait;
     d.setMatrix(inp.mp);
@@ -84,8 +85,8 @@ template <typename T, typename R, typename Trait> struct Vec {
   template <typename U = R>
     requires std::is_same_v<U, Borrow<T>>
   explicit Vec(T *ptr, size_t s) : d(ptr, s) {}
-  template <typename L2, typename R2, binaryFct f, typename OperationTrait>
-  explicit Vec(BinaryOperation<L2, R2, f, OperationTrait> &inp) : d(inp) {
+  template <typename L2, typename R2, typename OperationTrait>
+  explicit Vec(BinaryOperation<L2, R2, OperationTrait> &inp) : d(inp) {
     using TypeTrait = OperationTrait;
     d.setMatrix(inp.mp);
   }
@@ -97,18 +98,26 @@ template <typename T, typename R, typename Trait> struct Vec {
 
   // other constructors
   template <typename U = R>
-    requires std::is_same_v<U, BorrowSEXP<BaseType>> // issue: BaseType has to be replaced with T
+    requires std::is_same_v<U, BorrowSEXP<BaseType>> // issue: BaseType has to
+                                                     // be replaced with T
 
-  #ifdef STANDALONE
-  #else
-  explicit Vec(SEXP &&inp) = delete;
+#ifdef STANDALONE_ETR
+#else
+                                                     explicit Vec(SEXP &&inp) =
+                                                         delete;
 
   template <typename U = R>
     requires std::is_same_v<U, BorrowSEXP<BaseType>>
   explicit Vec(SEXP inp) : d(inp) {}
-  #endif
+#endif
 
-  explicit Vec(size_t sz) : d(sz) {}
+                                                     explicit Vec(size_t sz)
+      : d(sz) {
+  }
+
+  // issue: these constructors are used when allocating memory. 
+  // If another method could be written for this --> than one could use constructors analgous
+  // to bool and double
   explicit Vec(int sz) : d(static_cast<size_t>(sz)) {}
   explicit Vec(size_t sz) : d(sz) {}
 
@@ -116,16 +125,14 @@ template <typename T, typename R, typename Trait> struct Vec {
     d[0] = sz;
   } // issue: could be removed if all functions could handle double
 
-  #ifdef STANDALONE
-  Vec(bool b) : d(1) {
-    d[0] = static_cast<BaseType>(b);
-  }
-  #else
+#ifdef STANDALONE_ETR
+  Vec(bool b) : d(1) { d[0] = static_cast<BaseType>(b); }
+#else
   Vec(Rboolean b) : d(1) {
     d[0] = static_cast<BaseType>(b);
   } // issue: can i prevent this? Maybe with the same strategy of converting int
     // to i2d(int) in R.
-  #endif
+#endif
 
   explicit Vec() : d() {}
   explicit Vec(size_t rows, size_t cols) : d(rows * cols) {
@@ -405,14 +412,14 @@ template <typename T, typename R, typename Trait> struct Vec {
     }
     return *this;
   }
-  
-  #ifdef STANDALONE
-  #else
+
+#ifdef STANDALONE_ETR
+#else
   Vec &operator=(SEXP s) {
     d.initSEXP(s);
     return *this;
   }
-  #endif
+#endif
 
   operator RetType() const {
     if constexpr (std::is_same_v<RetType, bool>) {
@@ -452,9 +459,9 @@ template <typename T, typename R, typename Trait> struct Vec {
     os << "]";
     return os;
   }
-  
-  #ifdef STANDALONE
-  #else
+
+#ifdef STANDALONE_ETR
+#else
   Vec &operator=(Rcpp::NumericVector &otherVec) {
     d.resize(static_cast<size_t>(otherVec.size()));
     d.mp.setMatrix(false, 0, 0);
@@ -546,21 +553,19 @@ template <typename T, typename R, typename Trait> struct Vec {
     }
     return ret;
   }
-  #endif 
+#endif
 
-  #ifdef STANDALONE
-    template<typename I>
-    auto operator()(const I& idx) {
-      return subset(*this, idx);
-    } 
+#ifdef STANDALONE_ETR
+  template <typename I> auto operator()(const I &idx) {
+    return subset(*this, idx);
+  }
 
-    template<typename IL, typename IR>
-    auto operator()(const IL& idxL, const IR& idxR) {
-      return subset(*this, idxL, idxR);
-    } 
+  template <typename IL, typename IR>
+  auto operator()(const IL &idxL, const IR &idxR) {
+    return subset(*this, idxL, idxR);
+  }
 
-  #endif
-
+#endif
 };
 
 } // namespace etr

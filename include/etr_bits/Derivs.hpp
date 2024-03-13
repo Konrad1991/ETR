@@ -227,7 +227,7 @@ concept IsVarPointer = requires {
   requires std::is_same_v<ExtractedTypeTrait<T>, VarPointerTrait>;
 };
 
-template<typename L>
+template <typename L>
 auto sinDeriv(const L &l) { // issue: check for scalar. And do what?
   if constexpr (!IsVec<L>) {
     auto lv = *l.get();
@@ -239,7 +239,6 @@ auto sinDeriv(const L &l) { // issue: check for scalar. And do what?
         UnaryOperation<decltype(l), Sinus, SinusTrait>(l, lv.d.mp));
   }
 }
-
 
 template <typename L, typename R>
 auto add(const L &l, const R &r) { // issue: check for scalar. And do what?
@@ -361,8 +360,9 @@ struct BinaryType {
   }
 
   template <typename AV> static auto getVal(AV &av, size_t idx) {
-    return Op::f(LDeriv::getVal(av, idx), RDeriv::getVal(av, idx)); 
-    // LDeriv::getVal(av, idx) + RDeriv::getVal(av, idx); // issue: this has to be done in a complete other way!
+    return Op::f(LDeriv::getVal(av, idx), RDeriv::getVal(av, idx));
+    // LDeriv::getVal(av, idx) + RDeriv::getVal(av, idx); // issue: this has to
+    // be done in a complete other way!
   }
 
   template <typename AV> static auto getDeriv(AV &av, size_t idx) {
@@ -375,15 +375,13 @@ produceBinaryType() {
   return BinaryType<LDeriv, RDeriv, Trait, OpTrait>();
 }
 
-
-
-template <typename Deriv, typename Trait, typename OpTrait>
-struct UnaryType {
+template <typename Deriv, typename Trait, typename OpTrait> struct UnaryType {
   using typeTraitObj = Deriv;
   using TypeTrait = Trait;
 
   template <typename AV> static size_t getSize(AV &av) {
-    return Deriv::getSize(av);  }
+    return Deriv::getSize(av);
+  }
 
   template <typename AV> static auto getVal(AV &av, size_t idx) {
     return sin(Deriv::getVal(av, idx)); // issue: wrong wrong wrongcorrect?
@@ -413,10 +411,12 @@ template <typename T> struct VariableType {
 
   template <typename AV> static auto getVal(AV &av, size_t VecIdx) {
     using Ty = typename std::remove_reference<Type>::type;
-    if constexpr(IsBinary<Ty>) {
-      return Ty::template getVal<AV>(av, VecIdx);  // issue: does this always work. Reuqired that all variables are replaced by VecPointer
+    if constexpr (IsBinary<Ty>) {
+      return Ty::template getVal<AV>(
+          av, VecIdx); // issue: does this always work. Reuqired that all
+                       // variables are replaced by VecPointer
     } else {
-      return Ty::template getVal<AV>(av, VecIdx);  
+      return Ty::template getVal<AV>(av, VecIdx);
     }
   }
 
@@ -494,13 +494,14 @@ inline constexpr auto walkT() {
                            PlusDerivTrait>();
 }
 
-
 template <typename T>
   requires IsSinus<T>
 inline constexpr auto walkT() {
   constexpr auto obj = walkT<typename T::typeTraitObj>();
   return produceUnaryType<decltype(obj), UnaryTrait,
-                           SinusDerivTrait>(); // issue: has to be a binary type. Change behaviour of binary type by using Traits
+                          SinusDerivTrait>(); // issue: has to be a binary type.
+                                              // Change behaviour of binary type
+                                              // by using Traits
 }
 
 template <typename T>
@@ -519,9 +520,9 @@ inline void eval(AV &av) {
   constexpr auto res = walkT<tD>();
   std::cout << "final result " << std::endl;
   printTAST<decltype(res)>();
-  for(size_t i = 0; i < res.getSize(av); i++) {
-    std::cout << "val = " << res.getVal(av, i) << " deriv = " <<
-    res.getDeriv(av, i) << std::endl;
+  for (size_t i = 0; i < res.getSize(av); i++) {
+    std::cout << "val = " << res.getVal(av, i)
+              << " deriv = " << res.getDeriv(av, i) << std::endl;
   }
 }
 

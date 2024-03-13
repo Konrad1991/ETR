@@ -22,27 +22,23 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 #ifndef LOOPING
 #define LOOPING
 
-
-#include <functional>
 #include "vec.hpp"
+#include <functional>
 
 namespace etr {
 
-  template<typename T, typename F>
-  void for_(VEC<T>&& inp, F&&f) {
-    for(auto& i: inp) {
-      f(i);
-    }
+template <typename T, typename F> void for_(VEC<T> &&inp, F &&f) {
+  for (auto &i : inp) {
+    f(i);
   }
-
-  template<typename T, typename F>
-  void for_(VEC<T>& inp, F&&f) {
-    for(auto& i: inp) {
-      f(i);
-    }
-  }
-
-
 }
+
+template <typename T, typename F> void for_(VEC<T> &inp, F &&f) {
+  for (auto &i : inp) {
+    f(i);
+  }
+}
+
+} // namespace etr
 
 #endif

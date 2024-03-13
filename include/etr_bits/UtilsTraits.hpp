@@ -6,7 +6,7 @@
 #include <iostream>
 #include <type_traits>
 
-#ifdef STANDALONE
+#ifdef STANDALONE_ETR
 #else
 // [[Rcpp::depends(RcppArmadillo)]]
 #include "RcppArmadillo.h"
@@ -50,8 +50,10 @@
 
 namespace etr {
 
-template <typename T, typename U>
-using CommonType = typename std::common_type<typename T::Type, typename U::Type>::type;
+template <typename T1, typename T2>
+typename std::common_type<T1, T2>::type CommonType(T1 arg1, T2 arg2) {
+  return arg1 + arg2; // Fake function just for getting the common type
+}
 
 inline std::string demangle(const char *mangledName) {
   int status;
@@ -125,13 +127,12 @@ template <typename T> inline void printTAST() {
   }
 }
 
-template<typename T>
-inline bool isDoubleInt(const T d) {
-    int i = d;
-    if( (d - i) > 0) {
-      return false;
-    }
-    return true;
+template <typename T> inline bool isDoubleInt(const T d) {
+  int i = d;
+  if ((d - i) > 0) {
+    return false;
+  }
+  return true;
 }
 
 typedef double BaseType;
@@ -142,7 +143,7 @@ using T = BoolConstant<true>;
 using FALSE = BoolConstant<false>;
 using F = BoolConstant<false>;
 
-#ifdef STANDALONE
+#ifdef STANDALONE_ETR
 const double NA_REAL = std::numeric_limits<double>::quiet_NaN();
 const double R_PosInf = std::numeric_limits<double>::infinity();
 #endif
@@ -199,9 +200,9 @@ inline double PlusDeriv(double lDeriv, double rDeriv) {
   return lDeriv + rDeriv;
 }
 
-struct PlusDerivTrait {
-  using RetType = BaseType;
-  static RetType f(double a, double b) { return a + b; }
+template <typename L, typename R> struct PlusDerivTrait {
+  using RetType = decltype(CommonType<L, R>);
+  static inline decltype(CommonType<L, R>()) f(L l, R r) { return l + r; }
 };
 
 struct TimesDerivTrait {
@@ -212,24 +213,50 @@ struct SinusDerivTrait {
 };
 
 struct PlusTrait {
-  using RetType = BaseType;
+  template <typename L = BaseType, typename R = BaseType>
+  static inline std::common_type<L, R>::type f(L l, R r) {
+    return l + r;
+  }
 };
+
 struct MinusTrait {
-  using RetType = BaseType;
+  template <typename L = BaseType, typename R = BaseType>
+  static inline std::common_type<L, R>::type f(L l, R r) {
+    return l - r;
+  }
 };
 struct TimesTrait {
-  using RetType = BaseType;
+  template <typename L = BaseType, typename R = BaseType>
+  static inline std::common_type<L, R>::type f(L l, R r) {
+    return l * r;
+  }
 };
 struct DivideTrait {
-  using RetType = BaseType;
+  template <typename L = BaseType, typename R = BaseType>
+  static inline auto f(L l, R r) {
+    if constexpr(std::is_integral_v<L> && std::is_integral_v<R>) {
+      return static_cast<BaseType>(static_cast<BaseType>(l) / static_cast<BaseType>(r));
+    } else if constexpr(std::is_integral_v<L> && !std::is_integral_v<R>) {
+      return static_cast<BaseType>(l) / r;   
+    } else if constexpr(!std::is_integral_v<L> && std::is_integral_v<R>) {
+      return l / static_cast<BaseType>(r);    
+    } else {
+      static_assert(std::is_arithmetic_v<L> && std::is_arithmetic_v<R>, "Type not supported by operation /");
+      return l / r;
+    }
+  }
 };
 struct PowTrait {
-  using RetType = BaseType;
+  template <typename L = BaseType, typename R = BaseType>
+  static inline std::common_type<L, R>::type f(L l, R r) {
+    return std::pow(l, r);
+  }
 };
 struct EqualTrait {
+  template <typename L = BaseType, typename R = BaseType>
   static bool
-  f(double a,
-    double b) { // issue: add this to documentationion for package authors
+  f(L a,
+    R b) { // issue: add this to documentationion for package authors
     if (fabs(a - b) < 1E-3) {
       return true;
     } else {
@@ -238,7 +265,8 @@ struct EqualTrait {
   }
 };
 struct SmallerTrait {
-  static bool f(double a, double b) {
+  template <typename L = BaseType, typename R = BaseType>
+  static bool f(L a, R b) {
     if (a < b) {
       return true;
     } else {
@@ -247,7 +275,8 @@ struct SmallerTrait {
   }
 };
 struct SmallerEqualTrait {
-  static bool f(double a, double b) {
+  template <typename L = BaseType, typename R = BaseType>
+  static bool f(L a, R b) {
     if (a <= b) {
       return true;
     } else {
@@ -256,7 +285,8 @@ struct SmallerEqualTrait {
   }
 };
 struct LargerTrait {
-  static bool f(double a, double b) {
+  template <typename L = BaseType, typename R = BaseType>
+  static bool f(L a, R b) {
     if (a > b) {
       return true;
     } else {
@@ -265,7 +295,8 @@ struct LargerTrait {
   }
 };
 struct LargerEqualTrait {
-  static bool f(double a, double b) {
+  template <typename L = BaseType, typename R = BaseType>
+  static bool f(L a, R b) {
     if (a >= b) {
       return true;
     } else {
@@ -274,7 +305,8 @@ struct LargerEqualTrait {
   }
 };
 struct UnEqualTrait {
-  static bool f(double a, double b) {
+  template <typename L = BaseType, typename R = BaseType>
+  static bool f(L a, R b) {
     if (fabs(a - b) > 1E-3) {
       return true;
     } else {
@@ -354,7 +386,7 @@ concept NotOperation = !requires(T t) {
                UnaryTrait>::value ||
                std::is_same<
                    typename std::remove_reference<decltype(t)>::type::CaseTrait,
-                   BinaryTrait>::value  ||
+                   BinaryTrait>::value ||
                std::is_same<
                    typename std::remove_reference<decltype(t)>::type::CaseTrait,
                    RBufTrait>::value;
@@ -368,7 +400,7 @@ concept Operation = requires(T t) {
                UnaryTrait>::value ||
                std::is_same<
                    typename std::remove_reference<decltype(t)>::type::CaseTrait,
-                   BinaryTrait>::value  ||
+                   BinaryTrait>::value ||
                std::is_same<
                    typename std::remove_reference<decltype(t)>::type::CaseTrait,
                    RBufTrait>::value;
@@ -377,17 +409,17 @@ concept Operation = requires(T t) {
 template <typename T>
 concept IsRVec = requires(T t) {
   typename std::remove_reference<decltype(t)>::type::CaseTrait;
-  requires std::is_same<  
-        typename std::remove_reference<decltype(t)>::type::CaseTrait,
-        RVecTrait>::value;
+  requires std::is_same<
+      typename std::remove_reference<decltype(t)>::type::CaseTrait,
+      RVecTrait>::value;
 };
 
 template <typename T>
 concept IsRBuf = requires(T t) {
   typename std::remove_reference<decltype(t)>::type::CaseTrait;
-  requires std::is_same<  
-        typename std::remove_reference<decltype(t)>::type::CaseTrait,
-        RBufTrait>::value;
+  requires std::is_same<
+      typename std::remove_reference<decltype(t)>::type::CaseTrait,
+      RBufTrait>::value;
 };
 
 template <typename T>
@@ -406,9 +438,9 @@ template <typename R>
 concept IsVecLorRorCalc = requires {
   typename R::TypeTrait;
   requires std::is_same_v<typename R::TypeTrait, VectorTrait> ||
-           std::is_same_v<typename R::TypeTrait, RVecTrait> ||
-           std::is_same_v<typename R::TypeTrait, UnaryTrait> ||
-           std::is_same_v<typename R::TypeTrait, BinaryTrait>; 
+               std::is_same_v<typename R::TypeTrait, RVecTrait> ||
+               std::is_same_v<typename R::TypeTrait, UnaryTrait> ||
+               std::is_same_v<typename R::TypeTrait, BinaryTrait>;
 };
 
 template <typename T>
@@ -423,6 +455,7 @@ concept IsMultiplication = requires(T t) {
       TimesTrait>::value;
 };
 
+/*
 template <typename T>
 concept IsAddition = requires(T t) {
   typename std::remove_reference<decltype(t)>::type::CaseTrait;
@@ -434,6 +467,7 @@ concept IsAddition = requires(T t) {
       typename std::remove_reference<decltype(t)>::type::TypeTrait,
       PlusTrait>::value;
 };
+*/
 
 template <typename T>
 concept IsSinus = requires(T t) {
@@ -448,21 +482,23 @@ concept IsSinus = requires(T t) {
 };
 
 inline void ass(bool inp, std::string message) {
-  #ifdef STANDALONE
-   if (!inp) throw std::runtime_error(message);
-  #else
+#ifdef STANDALONE_ETR
+  if (!inp)
+    throw std::runtime_error(message);
+#else
   if (!inp)
     Rcpp::stop(message);
-  #endif
+#endif
 }
 
 inline void warn(bool inp, std::string message) {
-  #ifdef STANDALONE
-   if (!inp) std::cerr << "Warning: " + message << std::endl;
-  #else
+#ifdef STANDALONE_ETR
+  if (!inp)
+    std::cerr << "Warning: " + message << std::endl;
+#else
   if (!inp)
     Rcpp::warning("Warning: " + message);
-  #endif
+#endif
 }
 
 struct MatrixParameter {
@@ -597,7 +633,7 @@ template <typename T, typename Trait = BufferTrait,
 struct Buffer;
 template <typename T, typename R = Buffer<T>, typename Trait = VectorTrait>
 struct Vec;
-template <typename L, typename R, binaryFct f, typename Trait = BinaryTrait,
+template <typename L, typename R, typename Trait = BinaryTrait,
           typename CTrait = BinaryTrait>
 struct BinaryOperation;
 template <typename I, UnaryFct f, typename Trait = UnaryTrait,
@@ -611,13 +647,32 @@ struct BinaryOperationDeriv;
 template <typename T> struct ExtractDataType;
 template <typename T, typename R, typename Trait>
 struct ExtractDataType<Vec<T, R, Trait>> {
-  using type = T;
+  using RetType = T;
 };
 template <typename T, typename R, typename Trait>
 struct ExtractDataType<const Vec<T, R, Trait>> {
-  using type = T const;
+  using RetType = T const;
 };
-template <typename T> using ExtractedTypeData = typename ExtractDataType<T>::type;
+template <typename T>
+using ExtractedTypeData = typename ExtractDataType<T>::RetType;
+
+template <typename T> struct ExtractDataType;
+template <typename T, typename R, typename Trait>
+struct ExtractDataType<Buffer<T, R, Trait>> {
+  using RetType = T;
+};
+template <typename T, typename R, typename Trait>
+struct ExtractDataType<const Buffer<T, R, Trait>> {
+  using RetType = T const;
+};
+/*
+issue:
+Extract type for Buffer, Borrow, BorrowSEXP, BinaryOp, UnaryOp
+For all the different types.
+Use ExtractDataType for all of these cases.
+Use RetType everywhere. Check that it is declared as using RetType = ...
+everywhere
+*/
 
 struct BaseCalc { // issue: is this used?
   bool ismatrix;
@@ -683,8 +738,8 @@ template <typename T, typename BaseTrait> struct BaseStore {
     other.allocated = false;
     other.p = nullptr;
   }
-  #ifdef STANDALONE
-  #else
+#ifdef STANDALONE_ETR
+#else
   BaseStore(SEXP s) {
     if (allocated) {
       ass(p != nullptr, "try to delete nullptr");
@@ -702,7 +757,7 @@ template <typename T, typename BaseTrait> struct BaseStore {
     }
     allocated = true;
   };
-  #endif
+#endif
   BaseStore(size_t sz_) : sz(sz_), capacity(static_cast<size_t>(sz_ * 1.15)) {
     ass(sz_ > 0, "Size has to be larger than 0");
     p = new T[capacity];
@@ -757,8 +812,8 @@ template <typename T, typename BaseTrait> struct BaseStore {
     }
   }
 
-  #ifdef STANDALONE
-  #else
+#ifdef STANDALONE_ETR
+#else
   void initSEXP(SEXP s) {
     if (allocated) {
       ass(p != nullptr, "try to delete nullptr");
@@ -776,7 +831,7 @@ template <typename T, typename BaseTrait> struct BaseStore {
     }
     allocated = true;
   }
-  #endif
+#endif
 
   ~BaseStore() {
     if (p != nullptr) {
@@ -949,10 +1004,10 @@ template <typename T, typename SubsetTrait> struct Subset {
   Subset(const Vec<T2, R2, TraitOther> &other) {
     this->p = &other.d;
   }
-  #ifdef STANDALONE
-  #else 
+#ifdef STANDALONE_ETR
+#else
   Subset(SEXP) = delete;
-  #endif
+#endif
   Subset(size_t i) = delete;
   Subset(int i) = delete;
   Subset() = delete;
@@ -1014,10 +1069,10 @@ template <typename T, typename BorrowTrait> struct Borrow {
     other.p = nullptr;
     mp.setMatrix(other.mp);
   }
-  #ifdef STANDALONE
-  #else
+#ifdef STANDALONE_ETR
+#else
   Borrow(SEXP s) = delete;
-  #endif
+#endif
 
   Borrow(size_t i){};
   Borrow(int i) = delete;
@@ -1102,7 +1157,7 @@ template <typename T, typename BorrowTrait> struct Borrow {
   }
 };
 
-#ifdef STANDALONE
+#ifdef STANDALONE_ETR
 #else
 // Points to a SEXP and stores size
 template <typename T, typename BorrowSEXPSEXPTrait> struct BorrowSEXP {

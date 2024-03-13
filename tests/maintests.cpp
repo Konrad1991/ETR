@@ -1,6 +1,6 @@
-#define STANDALONE
+#define STANDALONE_ETR
 #include "../include/etr.hpp"
-using namespace etr;
+//using namespace etr;
 
 #define CATCH_CONFIG_MAIN
 #include "./catch/catch.hpp"
@@ -11,7 +11,7 @@ bool deq(double a, double b) {
 
 template<typename L, typename R>
 bool eq(L inp1, R inp2) {
-  ass(inp1.size() == inp2.size(), "Error");
+  etr::ass(inp1.size() == inp2.size(), "Error");
   bool test = true;
   for(int i = 0; i < inp1.size(); i++) {
     if(deq(inp1[i], inp2[i]) == false) {
@@ -35,8 +35,8 @@ bool eq(T inp1, double inp2) {
   return test;
 }
 
-bool eqb(Vec<bool> inp1, Vec<bool> inp2) {
-  ass(inp1.size() == inp2.size(), "Error");
+bool eqb(etr::Vec<bool> inp1, etr::Vec<bool> inp2) {
+  etr::ass(inp1.size() == inp2.size(), "Error");
   bool test = true;
   for(int i = 0; i < inp1.size(); i++) {
     if(inp1[i] != inp2[i]) {
@@ -46,7 +46,6 @@ bool eqb(Vec<bool> inp1, Vec<bool> inp2) {
   }
   return test;
 }
-
 
 sexp testall(BorrowPtr a, double type_test) {
 	 sexp size;
@@ -98,7 +97,7 @@ sexp testall(BorrowPtr a, double type_test) {
 	     a = a + etr::i2d(3);	 
 	     return(a);	 
 	 } else if (type_test == 3.2) {;	 
-	     a = a + etr::vector(3.14, etr::i2d(4));	 
+	     a = a + etr::rep(3.14, etr::i2d(4));	 
 	     return(a);	 
 	 } else if (type_test == 3.3) {;	 
 	     a = a + etr::matrix(etr::i2d(3), etr::i2d(2), etr::i2d(2));	 
@@ -109,7 +108,7 @@ sexp testall(BorrowPtr a, double type_test) {
 	     return(a);	 
 	 } else if (type_test == 3.5) {;	 
 	     a = etr::i2d(1);
-	     a = a + etr::vector(etr::i2d(3), etr::i2d(4));	 
+	     a = a + etr::rep(etr::i2d(3), etr::i2d(4));	 
 	     return(a);	 
 	 } else if (type_test == 3.6) {;	 
 	     b = etr::vector(etr::i2d(2));	 
@@ -132,7 +131,7 @@ sexp testall(BorrowPtr a, double type_test) {
 	     return(a);	 
 	 } else if (type_test == 3.8) {;	 
 	     a = etr::i2d(1);	 
-	     a = etr::vector(etr::i2d(3), etr::i2d(4)) + a;	 
+	     a = etr::rep(etr::i2d(3), etr::i2d(4)) + a;	 
 	     return(a);	 
 	 } else if (type_test == 3.9) {;	 
 	     a = etr::i2d(1);	 
@@ -148,7 +147,7 @@ sexp testall(BorrowPtr a, double type_test) {
 	     a = etr::i2d(4) + a;	 
 	     return(a);	 
 	 } else if (type_test == 3.13) {;	 
-	     b = etr::vector(etr::i2d(3), etr::i2d(2));	 
+	     b = etr::rep(etr::i2d(3), etr::i2d(2));	 
 	     a = a + b;	 
 	     return(a);	 
 	 };	 
@@ -156,7 +155,7 @@ sexp testall(BorrowPtr a, double type_test) {
 	     a = a - etr::i2d(3);	 
 	     return(a);	 
 	 } else if (type_test == 4.2) {;	 
-	     a = a - etr::vector(3.14, etr::i2d(4));	 
+	     a = a - etr::rep(3.14, etr::i2d(4));	 
 	     return(a);	 
 	 } else if (type_test == 4.3) {;	 
 	     a = a - etr::matrix(etr::i2d(3), etr::i2d(2), etr::i2d(2));	 
@@ -167,7 +166,7 @@ sexp testall(BorrowPtr a, double type_test) {
 	     return(a);	 
 	 } else if (type_test == 4.5) {;	 
 	     a = etr::i2d(1);	 
-	     a = a - etr::vector(etr::i2d(3), etr::i2d(4));	 
+	     a = a - etr::rep(etr::i2d(3), etr::i2d(4));	 
 	     return(a);	 
 	 } else if (type_test == 4.6) {;	 
 	     b = etr::vector(etr::i2d(2));	 
@@ -190,7 +189,7 @@ sexp testall(BorrowPtr a, double type_test) {
 	     return(a);	 
 	 } else if (type_test == 4.8) {;	 
 	     a = etr::i2d(1);	 
-	     a = etr::vector(etr::i2d(3), etr::i2d(4)) - a;	 
+	     a = etr::rep(etr::i2d(3), etr::i2d(4)) - a;	 
 	     return(a);	 
 	 } else if (type_test == 4.9) {;	 
 	     a = etr::i2d(1);	 
@@ -206,14 +205,14 @@ sexp testall(BorrowPtr a, double type_test) {
 	     a = etr::i2d(4) - a;	 
 	     return(a);	 
 	 } else if (type_test == 4.13) {;	 
-	     b = etr::vector(etr::i2d(3), etr::i2d(2));	 
+	     b = etr::rep(etr::i2d(3), etr::i2d(2));	 
 	     a = a - b;	 
 	     return(a);	 
 	 } else if (type_test == 5.1) {;	 
 	     a = a/etr::i2d(3);	 
 	     return(a);	 
 	 } else if (type_test == 5.2) {;	 
-	     a = a/etr::vector(3.14, etr::i2d(4));	 
+	     a = a/etr::rep(3.14, etr::i2d(4));	 
 	     return(a);	 
 	 } else if (type_test == 5.3) {;	 
 	     a = a/etr::matrix(etr::i2d(3), etr::i2d(2), etr::i2d(2));	 
@@ -224,7 +223,7 @@ sexp testall(BorrowPtr a, double type_test) {
 	     return(a);	 
 	 } else if (type_test == 5.5) {;	 
 	     a = etr::i2d(1);	 
-	     a = a/etr::vector(etr::i2d(3), etr::i2d(4));	 
+	     a = a/etr::rep(etr::i2d(3), etr::i2d(4));	 
 	     return(a);	 
 	 } else if (type_test == 5.6) {;	 
 	     b = etr::vector(etr::i2d(2));	 
@@ -247,7 +246,7 @@ sexp testall(BorrowPtr a, double type_test) {
 	     return(a);	 
 	 } else if (type_test == 5.8) {;	 
 	     a = etr::i2d(1);	 
-	     a = etr::vector(etr::i2d(3), etr::i2d(4))/a;	 
+	     a = etr::rep(etr::i2d(3), etr::i2d(4))/a;	 
 	     return(a);	 
 	 } else if (type_test == 5.9) {;	 
 	     a = etr::i2d(1);	 
@@ -263,14 +262,14 @@ sexp testall(BorrowPtr a, double type_test) {
 	     a = etr::i2d(4)/a;	 
 	     return(a);	 
 	 } else if (type_test == 5.13) {;	 
-	     b = etr::vector(etr::i2d(3), etr::i2d(2));	 
+	     b = etr::rep(etr::i2d(3), etr::i2d(2));	 
 	     a = a/b;	 
 	     return(a);	 
 	 } else if (type_test == 6.1) {;	 
 	     a = a * etr::i2d(3);	 
 	     return(a);	 
 	 } else if (type_test == 6.2) {;	 
-	     a = a * etr::vector(3.14, etr::i2d(4));	 
+	     a = a * etr::rep(3.14, etr::i2d(4));	 
 	     return(a);	 
 	 } else if (type_test == 6.3) {;	 
 	     a = a * etr::matrix(etr::i2d(3), etr::i2d(2), etr::i2d(2));	 
@@ -281,7 +280,7 @@ sexp testall(BorrowPtr a, double type_test) {
 	     return(a);	 
 	 } else if (type_test == 6.5) {;	 
 	     a = etr::i2d(1);	 
-	     a = a * etr::vector(etr::i2d(3), etr::i2d(4));	 
+	     a = a * etr::rep(etr::i2d(3), etr::i2d(4));	 
 	     return(a);	 
 	 } else if (type_test == 6.6) {;	 
 	     b = etr::vector(etr::i2d(2));	 
@@ -304,7 +303,7 @@ sexp testall(BorrowPtr a, double type_test) {
 	     return(a);	 
 	 } else if (type_test == 6.8) {;	 
 	     a = etr::i2d(1);	 
-	     a = etr::vector(etr::i2d(3), etr::i2d(4)) * a;	 
+	     a = etr::rep(etr::i2d(3), etr::i2d(4)) * a;	 
 	     return(a);	 
 	 } else if (type_test == 6.9) {;	 
 	     a = etr::i2d(1);	 
@@ -320,7 +319,7 @@ sexp testall(BorrowPtr a, double type_test) {
 	     a = etr::i2d(4) * a;	 
 	     return(a);	 
 	 } else if (type_test == 6.13) {;	 
-	     b = etr::vector(etr::i2d(3), etr::i2d(2));	 
+	     b = etr::rep(etr::i2d(3), etr::i2d(2));	 
 	     a = a * b;	 
 	     return(a);	 
 	 };	 
@@ -328,7 +327,7 @@ sexp testall(BorrowPtr a, double type_test) {
 	     a = etr::coca(etr::i2d(1), etr::i2d(2), etr::i2d(3));	 
 	     b = etr::coca(etr::i2d(5), etr::i2d(6), etr::i2d(7));	 
 	     c = etr::coca(-etr::i2d(100), a, b, etr::i2d(100));	 
-	     d = etr::vector(etr::i2d(1), etr::i2d(2));	 
+	     d = etr::rep(etr::i2d(1), etr::i2d(2));	 
 	     e = etr::matrix(-etr::i2d(1), etr::i2d(2), etr::i2d(2));	 
 	     f = etr::coca(c, d, e, etr::i2d(2));	 
 	     return(f);	 
@@ -1379,22 +1378,22 @@ sexp testall(BorrowPtr a, double type_test) {
 	     return(b);	 
 	 } else if (type_test == 22.1) {;	 
 	     a = etr::colon(etr::i2d(1), etr::i2d(3));	 
-	     etr::subset(a, 1) = NA_REAL;	 
-	     etr::subset(a, 2) = R_PosInf;	 
-	     etr::subset(a, 3) = -R_PosInf;	 
+	     etr::subset(a, 1) = etr::NA_REAL;	 
+	     etr::subset(a, 2) = etr::R_PosInf;	 
+	     etr::subset(a, 3) = -etr::R_PosInf;	 
 	     return(a);	 
 	 } else if (type_test == 22.2) {;	 
 	     a = etr::colon(etr::i2d(1), etr::i2d(3));	 
-	     etr::subset(a, 1) = NA_REAL;	 
-	     etr::subset(a, 2) = R_PosInf;	 
-	     etr::subset(a, 3) = -R_PosInf;	 
+	     etr::subset(a, 1) = etr::NA_REAL;	 
+	     etr::subset(a, 2) = etr::R_PosInf;	 
+	     etr::subset(a, 3) = -etr::R_PosInf;	 
 	     b = etr::isNA(a);	 
 	     return(b);	 
 	 } else if (type_test == 22.3) {;	 
 	     a = etr::colon(etr::i2d(1), etr::i2d(3));	 
-	     etr::subset(a, 1) = NA_REAL;	 
-	     etr::subset(a, 2) = R_PosInf;	 
-	     etr::subset(a, 3) = -R_PosInf;	 
+	     etr::subset(a, 1) = etr::NA_REAL;	 
+	     etr::subset(a, 2) = etr::R_PosInf;	 
+	     etr::subset(a, 3) = -etr::R_PosInf;	 
 	     b = etr::isInfinite(a);	 
 	     return(b);	 
 	 } else if (type_test == 22.4) {;	 
@@ -1408,29 +1407,32 @@ sexp testall(BorrowPtr a, double type_test) {
 }
 
 TEST_CASE( "nainf" ) {
-  std::vector<double> vec(3);
-  BorrowPtr bp(vec.data(), vec.size());
-  auto res1 = testall(bp, 22.1);
+  std::vector<double> vec1(3);
+  BorrowPtr bp1(vec1.data(), vec1.size());
+  auto res1 = testall(bp1, 22.1);
   REQUIRE(std::isnan(res1[0]));
   REQUIRE(std::isinf(res1[1]));
   REQUIRE(std::isinf(res1[2]));
 
-  auto res2 = testall(bp, 22.2); 
-  REQUIRE(eq(res2, coca(1, 0, 0)));
+  auto res2 = testall(bp1, 22.2); 
+  REQUIRE(eq(res2, etr::coca(1, 0, 0)));
 
-  bp = coca(0, 0, 0);
-  REQUIRE(eq(testall(bp, 22.3), coca(0, 1, 1)) );
-  REQUIRE(eq(testall(bp, 22.4), coca(0, 0, 0)) );
-  
-  sexp a = matrix(coca(1, 2, 3, 4), 2, 2);
-  REQUIRE(eq(testall(a, 20.1), matrix(coca(2, 3, 3, 4), 2, 2) ) );
+  bp1 = etr::coca(0, 0, 0);
+  REQUIRE(eq(testall(bp1, 22.3), etr::coca(0, 1, 1)) );
+  REQUIRE(eq(testall(bp1, 22.4), etr::coca(0, 0, 0)) );
+	
+  std::vector<double> vec2(4);
+  BorrowPtr bp2(vec2.data(), vec2.size());
+  bp2 = etr::matrix(etr::coca(1, 2, 3, 4), 2, 2);
+  sexp res3 = etr::matrix(etr::coca(2, 3, 3, 4), 2, 2);
+  REQUIRE(eq(testall(bp2, 20.1), res3));
 
   auto helper = [](double a) {
     return sin(a) + asin(a) + sinh(a) + cos(a) + acos(a) + cosh(a) + tan(a) + atan(a) + tanh(a);
   };
 
-  a = coca(helper(0), helper(0.2), helper(0.4), helper(0.99));
-  REQUIRE(eq(testall(bp, 22.1), a));
+  sexp a = etr::coca(helper(0), helper(0.2), helper(0.4), helper(0.99));
+  REQUIRE(eq(testall(bp2, 21.1), a));
 }
 
 
