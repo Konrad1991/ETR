@@ -1,7 +1,7 @@
 #ifndef BINARYOPERATION
 #define BINARYOPERATION
 
-#include "UtilsTraits.hpp"
+#include "Core.hpp"
 
 // issue: what is needed in order that for loops work with Operations
 /*
@@ -36,21 +36,22 @@ struct BinaryOperation {
       : l(std::move(other.l)), r(std::move(other.r)), mp(std::move(other.mp)) {}
   BinaryOperation(const L &l_, const R &r_, const MatrixParameter &mp_)
       : l(l_), r(r_), mp(mp_) {}
-  template <typename LType, typename RType, 
-            typename TraitOther>
+  template <typename LType, typename RType, typename TraitOther>
   BinaryOperation(const BinaryOperation<LType, RType, TraitOther>
                       &other) // issue: needs move constructor
       : l(other.l), r(other.r), mp(other.mp) {}
-  
-  auto operator[](size_t i) const { // RetType is not suitable as int / int -_> should return a double. How to handle this in detection of RetType?
+
+  auto operator[](size_t i)
+      const { // RetType is not suitable as int / int -_> should return a
+              // double. How to handle this in detection of RetType?
     constexpr bool isDoubleL = std::is_arithmetic_v<L>;
     constexpr bool isDoubleR = std::is_arithmetic_v<R>;
     if constexpr (!isDoubleL && isDoubleR) {
-        return Trait::f(l[i % l.size()], r);
+      return Trait::f(l[i % l.size()], r);
     } else if constexpr (isDoubleL && !isDoubleR) {
-        return Trait::f(l, r[i % r.size()]);
+      return Trait::f(l, r[i % r.size()]);
     } else if constexpr (!isDoubleL && !isDoubleR) {
-        return Trait::f(l[i % l.size()], r[i % r.size()]);
+      return Trait::f(l[i % l.size()], r[i % r.size()]);
     }
   }
   size_t size() const {

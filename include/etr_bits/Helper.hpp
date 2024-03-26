@@ -2,10 +2,7 @@
 #define HELPER_H
 
 #include "BufferVector.hpp"
-#include "UtilsTraits.hpp"
-#include <ios>
-#include <type_traits>
-#include <utility>
+#include "Core.hpp"
 
 namespace etr {
 
@@ -471,15 +468,9 @@ inline SEXP cpp2R(const Vec<L, R, Trait> &res) {
 
 #ifdef STANDALONE_ETR
 
-template<typename T>
-bool ISNA(T inp) {
-  return std::isnan(inp);
-}
+template <typename T> bool ISNA(T inp) { return std::isnan(inp); }
 
-template<typename T>
-bool R_FINITE(T inp) {
-  return !std::isinf(inp);
-}
+template <typename T> bool R_FINITE(T inp) { return !std::isinf(inp); }
 
 #endif
 
@@ -520,7 +511,7 @@ inline Vec<bool> isNA(const Vec<T, R, Trait> &&inp) {
 inline Vec<BaseType> isInfinite(const Vec<BaseType> &inp) {
   Vec<BaseType> res(inp.size());
   for (size_t i = 0; i < res.size(); i++) {
-    res[i] = (!R_FINITE(inp[i]) && !ISNA(inp[i])); 
+    res[i] = (!R_FINITE(inp[i]) && !ISNA(inp[i]));
   }
   return res;
 }

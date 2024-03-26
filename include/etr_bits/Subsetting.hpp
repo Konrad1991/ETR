@@ -1,10 +1,10 @@
 #ifndef SUBSETTING
 #define SUBSETTING
 
+#include "BinaryCalculations.hpp"
 #include "BufferVector.hpp"
-#include "UtilsTraits.hpp"
-#include "binaryCalculations.hpp"
-#include "unaryCalculations.hpp"
+#include "Core.hpp"
+#include "UnaryCalculations.hpp"
 
 namespace etr {
 

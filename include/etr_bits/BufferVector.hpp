@@ -1,18 +1,11 @@
 #ifndef BUFFER_VECTOR_H
 #define BUFFER_VECTOR_H
 
-#include "UtilsTraits.hpp"
-#include "binaryCalculations.hpp"
-#include "unaryCalculations.hpp"
+#include "BinaryCalculations.hpp"
+#include "Core.hpp"
+#include "UnaryCalculations.hpp"
 
 namespace etr {
-
-template <typename T, typename Trait, typename CTrait>
-struct Buffer : public BaseStore<T> {
-  using RetType = T; // BaseType;
-  using TypeTrait = Trait;
-  using CaseTrait = CTrait;
-};
 
 template <typename T, typename R, typename Trait> struct Vec {
   using Type = T;
@@ -47,15 +40,13 @@ template <typename T, typename R, typename Trait> struct Vec {
     d.setMatrix(borrowed.mp);
   }
   template <typename L2, typename R2, typename OperationTrait>
-  explicit Vec(const BinaryOperation<L2, R2, OperationTrait> &&inp)
-      : d(inp) {
+  explicit Vec(const BinaryOperation<L2, R2, OperationTrait> &&inp) : d(inp) {
     using TypeTrait = OperationTrait;
     d.setMatrix(inp.mp);
   }
   template <typename L2, typename R2, typename OperationTrait,
             typename DetailTrait> // only for comparison!
-  explicit Vec(
-      const BinaryOperation<L2, R2, OperationTrait, DetailTrait> &&inp)
+  explicit Vec(const BinaryOperation<L2, R2, OperationTrait, DetailTrait> &&inp)
       : d(inp) {
     using TypeTrait = OperationTrait;
     d.setMatrix(inp.mp);
@@ -103,21 +94,19 @@ template <typename T, typename R, typename Trait> struct Vec {
 
 #ifdef STANDALONE_ETR
 #else
-                                                     explicit Vec(SEXP &&inp) =
-                                                         delete;
+  explicit Vec(SEXP &&inp) = delete;
 
   template <typename U = R>
     requires std::is_same_v<U, BorrowSEXP<BaseType>>
   explicit Vec(SEXP inp) : d(inp) {}
 #endif
 
-                                                     explicit Vec(size_t sz)
-      : d(sz) {
+  explicit Vec(size_t sz) : d(sz) {
   }
 
-  // issue: these constructors are used when allocating memory. 
-  // If another method could be written for this --> than one could use constructors analgous
-  // to bool and double
+  // issue: these constructors are used when allocating memory.
+  // If another method could be written for this --> than one could use
+  // constructors analgous to bool and double
   explicit Vec(int sz) : d(static_cast<size_t>(sz)) {}
   explicit Vec(size_t sz) : d(sz) {}
 
