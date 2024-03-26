@@ -6,6 +6,7 @@ using namespace etr;
 int main() {
     
     Vec<double> vec0 = vector(100);
+    print(vec0);
 
 }
 
