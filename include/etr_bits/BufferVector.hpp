@@ -1,8 +1,8 @@
 #ifndef BUFFER_VECTOR_H
 #define BUFFER_VECTOR_H
 
-#include "Core.hpp"
 #include "BinaryCalculations.hpp"
+#include "Core.hpp"
 #include "UnaryCalculations.hpp"
 
 namespace etr {
@@ -28,8 +28,8 @@ template <typename T, typename R, typename Trait> struct Vec {
 
   template <typename T2> Vec(T2 n) = delete;
   // internally used
-  explicit Vec(SI& sz) : d(sz.sz) {}
-  explicit Vec(SI&& sz) : d(sz.sz) {}
+  explicit Vec(SI &sz) : d(sz.sz) {}
+  explicit Vec(SI &&sz) : d(sz.sz) {}
 
   // move constructors
   template <typename L2> explicit Vec(const Subset<L2> &&inp) : d(inp) {
@@ -94,7 +94,7 @@ template <typename T, typename R, typename Trait> struct Vec {
   // other constructors
   template <typename U = R>
     requires std::is_same_v<U, BorrowSEXP<T>> // issue: BaseType has to
-                                                     // be replaced with T
+                                              // be replaced with T
 
 #ifdef STANDALONE_ETR
 #else
@@ -105,18 +105,16 @@ template <typename T, typename R, typename Trait> struct Vec {
   explicit Vec(SEXP inp) : d(inp) {}
 #endif
 
-  explicit Vec(int sz) : d(1) {d[0] = static_cast<T>(sz);}
-  explicit Vec(size_t sz) : d(1) {d[0] = sz;}
-  Vec(double sz) : d(1) {
-    d[0] = sz;
-  } 
+  explicit Vec(int sz) : d(1) {
+    d[0] = static_cast<T>(sz);
+  }
+  explicit Vec(size_t sz) : d(1) { d[0] = sz; }
+  Vec(double sz) : d(1) { d[0] = sz; }
 
 #ifdef STANDALONE_ETR
   Vec(bool b) : d(1) { d[0] = static_cast<T>(b); }
 #else
-  Vec(Rboolean b) : d(1) {
-    d[0] = static_cast<T>(b);
-  } 
+  Vec(Rboolean b) : d(1) { d[0] = static_cast<T>(b); }
 #endif
 
   explicit Vec() : d() {}
