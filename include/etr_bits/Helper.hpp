@@ -316,7 +316,7 @@ template <typename... Args> inline Vec<BaseType> coca(Args &&...args) {
       },
       args...);
 
-  Vec<BaseType> ret(size);
+  Vec<BaseType> ret(SI{size});
   size_t index = 0;
 
   forEachArg(
@@ -571,7 +571,7 @@ inline Vec<BaseType> dim(const Vec<BaseType> &inp) {
   using isVec = std::is_same<typeTraitInp, VectorTrait>;
   static_assert(isVec::value, "dim can only be called with matrix");
   ass(inp.im(), "dim can only be called with matrix");
-  Vec<BaseType> ret(2);
+  Vec<BaseType> ret(SI(2));
   ret[0] = inp.nr();
   ret[1] = inp.nc();
   return ret;

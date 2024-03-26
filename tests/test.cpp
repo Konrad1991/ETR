@@ -30,10 +30,10 @@ int main() {
     test = test / 20;
     print(test);
 
-    Vec<int> v1(3);
+    Vec<int> v1(SI{3});
     v1[0] = 1; v1[1] = 2; v1[2] = 3;
 
-    Vec<int> v2(3);
+    Vec<int> v2(SI{3});
     v2[0] = 10; v2[1] = 20; v2[2] = 30;
 
     v1 / v2;
@@ -42,7 +42,7 @@ int main() {
     print(res);
 
 
-    sexp bla(3);
+    sexp bla(SI{3});
     sexp bla2 = bla - 1.0;
     print(bla2);
 

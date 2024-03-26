@@ -68,6 +68,12 @@ inline void warn(bool inp, std::string message) {
 #endif
 }
 
+struct SI {
+  size_t sz = 0;
+  SI(const size_t sz) : sz(sz) {}
+  SI(const int sz) : sz(static_cast<size_t>(sz)) {}
+};
+
 } // namespace etr
 
 #endif

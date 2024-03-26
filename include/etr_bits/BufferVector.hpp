@@ -1,8 +1,8 @@
 #ifndef BUFFER_VECTOR_H
 #define BUFFER_VECTOR_H
 
-#include "BinaryCalculations.hpp"
 #include "Core.hpp"
+#include "BinaryCalculations.hpp"
 #include "UnaryCalculations.hpp"
 
 namespace etr {
@@ -27,6 +27,10 @@ template <typename T, typename R, typename Trait> struct Vec {
   RetType getRetType() const { return RetType{}; }
 
   template <typename T2> Vec(T2 n) = delete;
+  // internally used
+  explicit Vec(SI& sz) : d(sz.sz) {}
+  explicit Vec(SI&& sz) : d(sz.sz) {}
+
   // move constructors
   template <typename L2> explicit Vec(const Subset<L2> &&inp) : d(inp) {
     d.setMatrix(inp.mp);
@@ -89,7 +93,7 @@ template <typename T, typename R, typename Trait> struct Vec {
 
   // other constructors
   template <typename U = R>
-    requires std::is_same_v<U, BorrowSEXP<BaseType>> // issue: BaseType has to
+    requires std::is_same_v<U, BorrowSEXP<T>> // issue: BaseType has to
                                                      // be replaced with T
 
 #ifdef STANDALONE_ETR
@@ -97,30 +101,22 @@ template <typename T, typename R, typename Trait> struct Vec {
   explicit Vec(SEXP &&inp) = delete;
 
   template <typename U = R>
-    requires std::is_same_v<U, BorrowSEXP<BaseType>>
+    requires std::is_same_v<U, BorrowSEXP<T>>
   explicit Vec(SEXP inp) : d(inp) {}
 #endif
 
-  explicit Vec(size_t sz) : d(sz) {
-  }
-
-  // issue: these constructors are used when allocating memory.
-  // If another method could be written for this --> than one could use
-  // constructors analgous to bool and double
-  explicit Vec(int sz) : d(static_cast<size_t>(sz)) {}
-  explicit Vec(size_t sz) : d(sz) {}
-
+  explicit Vec(int sz) : d(1) {d[0] = static_cast<T>(sz);}
+  explicit Vec(size_t sz) : d(1) {d[0] = sz;}
   Vec(double sz) : d(1) {
     d[0] = sz;
-  } // issue: could be removed if all functions could handle double
+  } 
 
 #ifdef STANDALONE_ETR
-  Vec(bool b) : d(1) { d[0] = static_cast<BaseType>(b); }
+  Vec(bool b) : d(1) { d[0] = static_cast<T>(b); }
 #else
   Vec(Rboolean b) : d(1) {
-    d[0] = static_cast<BaseType>(b);
-  } // issue: can i prevent this? Maybe with the same strategy of converting int
-    // to i2d(int) in R.
+    d[0] = static_cast<T>(b);
+  } 
 #endif
 
   explicit Vec() : d() {}
