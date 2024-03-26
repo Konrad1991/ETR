@@ -4,6 +4,9 @@
 #include "BinaryCalculations.hpp"
 #include "Core.hpp"
 #include "UnaryCalculations.hpp"
+#include "Allocation.hpp"
+#include "SEXPConversions.hpp"
+
 
 namespace etr {
 
@@ -150,11 +153,13 @@ template <typename T, typename R, typename Trait> struct Vec {
   }
 
   template <typename T2, typename R2, typename Trait2>
+  requires IsVec<const Vec<T2, R2, Trait2>>
   Vec(const Vec<T2, R2, Trait2>
           &&other_vec) { // issue: improve. Use move her : d()
     using TypeTrait = Trait2;
     using CaseTrait = Trait2;
     if constexpr (isBorrow::value) { // issue: is this safe???
+      ass(d.sz <= other_vec.size(), "Sizes do not match");
       d.sz = other_vec.size();
       for (size_t i = 0; i < d.size(); i++) {
         d[i] = other_vec[i];
@@ -163,10 +168,72 @@ template <typename T, typename R, typename Trait> struct Vec {
         d.setMatrix(true, other_vec.nr(), other_vec.nc());
       }
     } else {
-      this->d.resize(other_vec.size());
+      if(d.sz < other_vec.size()) {
+        this->d.resize(other_vec.size());
+      } else {
+        d.sz = other_vec.size();
+      }
       for (size_t i = 0; i < d.size(); i++) {
         d[i] = other_vec[i];
       }
+      if (other_vec.d.im()) {
+        d.setMatrix(true, other_vec.nr(), other_vec.nc());
+      }
+    }
+  }
+
+  template <typename T2, typename R2, typename Trait2>
+  requires (IsRVec<const Vec<T2, R2, Trait2>> && !std::is_same_v<T, T2>)
+  Vec(const Vec<T2, R2, Trait2>
+          &&other_vec) { 
+    using TypeTrait = Trait2;
+    using CaseTrait = Trait2;
+    if constexpr (isBorrow::value) { 
+      ass(d.sz <= other_vec.size(), "Sizes do not match");
+      d.sz = other_vec.size();
+      for (size_t i = 0; i < d.size(); i++) {
+        d[i] = other_vec[i];
+      }
+      if (other_vec.d.im()) {
+        d.setMatrix(true, other_vec.nr(), other_vec.nc());
+      }
+    } else {
+      if(d.sz < other_vec.size()) {
+        this->d.resize(other_vec.size());
+      } else {
+        d.sz = other_vec.size();
+      }
+      for (size_t i = 0; i < d.size(); i++) {
+        d[i] = other_vec[i];
+      }
+      if (other_vec.d.im()) {
+        d.setMatrix(true, other_vec.nr(), other_vec.nc());
+      }
+    }
+  }
+
+  template <typename T2, typename R2, typename Trait2>
+  requires (IsRVec<const Vec<T2, R2, Trait2>> && std::is_same_v<T, T2>)
+  Vec(Vec<T2, R2, Trait2>
+          &&other_vec) { 
+    using TypeTrait = Trait2;
+    using CaseTrait = Trait2;
+    if constexpr (isBorrow::value) { 
+      ass(d.sz <= other_vec.size(), "Sizes do not match");
+      d.sz = other_vec.size();
+      for (size_t i = 0; i < d.size(); i++) {
+        d[i] = other_vec[i];
+      }
+      if (other_vec.d.im()) {
+        d.setMatrix(true, other_vec.nr(), other_vec.nc());
+      }
+    } else {
+      size_t temp = other_vec.size();
+      other_vec.d.sz = this -> size();
+      d.sz = temp;
+      T* tempP = other_vec.d.p;
+      other_vec.d.p = d.p;
+      d.p = tempP;
       if (other_vec.d.im()) {
         d.setMatrix(true, other_vec.nr(), other_vec.nc());
       }

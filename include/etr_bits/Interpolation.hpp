@@ -170,7 +170,9 @@ inline double cmrInternal(const A &tInp, const B &timeVec, const C &parVec) {
 template <typename A, typename B, typename C>
 inline double cmr(const A &tInp, const B &timeVec, const C &parVec) {
   if constexpr (std::is_arithmetic_v<A>) {
-    return cmrInternal(Vec<BaseType>(tInp), timeVec, parVec);
+    return cmrInternal(
+        Vec<BaseType>(tInp), timeVec,
+        parVec); // issue: check why Vec<BaseType>(tInp) and not tInp[0]
   } else {
     return cmrInternal(tInp, timeVec, parVec);
   }

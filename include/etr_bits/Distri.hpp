@@ -52,7 +52,7 @@ inline Vec<BaseType> runif_etr(const Vec<BaseType> &x,
   std::mutex m;
 
   if ((x.size() == 1) && (min_.size() == 1) && (max_.size() == 1)) {
-    Vec<BaseType> res(static_cast<int>(x[0]));
+    Vec<BaseType> res(SI{static_cast<int>(x[0])});
     size_t size = static_cast<size_t>(x[0]);
     for (size_t i = 0; i < size; i++) {
       m.lock();

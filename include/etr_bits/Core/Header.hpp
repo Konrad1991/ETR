@@ -1,8 +1,8 @@
 #ifndef HEADER_ETR_H
 #define HEADER_ETR_H
 
-#include <cstddef>  
 #include <cmath>
+#include <cstddef>
 #include <cxxabi.h>
 #include <iostream>
 #include <type_traits>
