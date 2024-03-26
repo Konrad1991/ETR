@@ -8,7 +8,7 @@ namespace etr {
 
 inline auto produceRVec(size_t s) {
   ass(s > 0, "invalid length argument");
-  return Vec<BaseType, Buffer<BaseType, BufferTrait, RBufTrait>, RVecTrait>(s);
+  return Vec<BaseType, Buffer<BaseType, BufferTrait, RBufTrait>, RVecTrait>(SI{s});
 }
 
 template <typename T> inline auto vector(const T &inp) {

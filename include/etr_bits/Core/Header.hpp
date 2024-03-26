@@ -1,6 +1,7 @@
 #ifndef HEADER_ETR_H
 #define HEADER_ETR_H
 
+#include <cstddef>  
 #include <cmath>
 #include <cxxabi.h>
 #include <iostream>
