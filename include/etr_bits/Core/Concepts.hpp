@@ -118,6 +118,16 @@ concept IsVecLorRorCalc = requires {
                std::is_same_v<typename R::TypeTrait, BinaryTrait>;
 };
 
+
+// Concepts for Derivs
+template <typename T>
+concept IsVariableTypeTrait = requires(T t) {
+  typename std::remove_reference<decltype(t)>::type::CaseTrait;
+  requires std::is_same<
+      typename std::remove_reference<decltype(t)>::type::CaseTrait,
+      VariableTypeTrait>::value;
+};
+
 template <typename T>
 concept IsMultiplication = requires(T t) {
   typename std::remove_reference<decltype(t)>::type::CaseTrait;
@@ -130,7 +140,6 @@ concept IsMultiplication = requires(T t) {
       TimesTrait>::value;
 };
 
-/*
 template <typename T>
 concept IsAddition = requires(T t) {
   typename std::remove_reference<decltype(t)>::type::CaseTrait;
@@ -142,7 +151,6 @@ concept IsAddition = requires(T t) {
       typename std::remove_reference<decltype(t)>::type::TypeTrait,
       PlusTrait>::value;
 };
-*/
 
 template <typename T>
 concept IsSinus = requires(T t) {
@@ -172,6 +180,59 @@ auto extractRetType(const T &instance) ->
   using ret = typename T::RetType;
   return instance.getRetType();
 }
+
+
+
+template <typename T> struct ExtractTypeD;
+template <typename T, typename R, typename Trait>
+struct ExtractTypeD<Vec<T, R, Trait>> {
+  using type = R;
+};
+template <typename T, typename R, typename Trait>
+struct ExtractTypeD<const Vec<T, R, Trait>> {
+  using type = R const;
+};
+template <typename T> using ExtractedTypeD = typename ExtractTypeD<T>::type;
+
+template <typename T> constexpr T getL() { return T(); }
+
+template <typename T> constexpr T getR() { return T(); }
+
+
+
+
+template <typename T> struct ExtractTypeTrait {
+  using type = std::false_type;
+};
+
+template <typename T, int Idx, typename TypeTrait>
+struct ExtractTypeTrait<VarPointer<T, Idx, TypeTrait>> {
+  using type = TypeTrait;
+};
+template <typename T, int Idx, typename TypeTrait>
+struct ExtractTypeTrait<const VarPointer<T, Idx, TypeTrait> &> {
+  using type = TypeTrait;
+};
+template <typename T>
+using ExtractedTypeTrait = typename ExtractTypeTrait<T>::type;
+
+
+template <typename T>
+concept IsVarPointer = requires {
+  typename ExtractedTypeTrait<T>;
+  requires std::is_same_v<ExtractedTypeTrait<T>, VarPointerTrait>;
+};
+
+template <typename T> struct ExtractDType;
+
+template <typename T, typename R, typename Trait>
+struct ExtractDType<Vec<T, R, Trait>> {
+  using type = R;
+};
+
+template <typename T> using ExtractedDType = typename ExtractDType<T>::type;
+
+
 
 } // namespace etr
 

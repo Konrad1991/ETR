@@ -39,16 +39,25 @@ inline double PlusDeriv(double lDeriv, double rDeriv) {
   return lDeriv + rDeriv;
 }
 
-template <typename L, typename R> struct PlusDerivTrait {
-  using RetType = decltype(CommonType<L, R>);
-  static inline decltype(CommonType<L, R>()) f(L l, R r) { return l + r; }
+struct PlusDerivTrait {
+  template <typename L, typename R> 
+  static inline std::common_type<L, R>::type f(L l, R r) { return l + r; }
+
+  template <typename L, typename R> 
+  static inline std::common_type<L, R>::type fDeriv(L l, R r) { return l + r; }
 };
 
 struct TimesDerivTrait {
-  using RetType = BaseType;
+  template <typename L, typename R> 
+  static inline std::common_type<L, R>::type f(L l, R r) { return l * r; }
+
+  template <typename L, typename R, typename LDeriv, typename RDeriv> 
+  static inline std::common_type<L, R>::type fDeriv(L l, R r, LDeriv ld, RDeriv rd) { return ld * r + rd * l; }
 };
+
 struct SinusDerivTrait {
-  using RetType = BaseType;
+  template <typename L> 
+  static inline L f(L l) { return sin(l); }
 };
 
 struct PlusTrait {
@@ -195,6 +204,11 @@ struct SquareRootTrait {
 struct MinusUnaryTrait {
   template <typename L = BaseType> static inline auto f(L a) { return -a; }
 };
+
+
+
+struct VarPointerTrait {};
+struct VariableTypeTrait {};
 
 } // namespace etr
 

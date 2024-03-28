@@ -75,6 +75,23 @@ template <typename T> constexpr T convert(const T &obj) {
   // return std::forward(obj);
 }
 
+
+template <typename L, typename R, typename LDeriv, typename RDeriv,
+          typename Trait, typename OpTrait>
+struct QuarternyType;
+
+template <typename LDeriv, typename RDeriv, typename Trait, typename OpTrait>
+struct BinaryType;
+
+template <typename Deriv, typename Trait, typename OpTrait> struct UnaryType;
+
+template <typename T, typename Trait = VariableTypeTrait> struct VariableType;
+
+template <typename T, int Idx, typename Trait = VarPointerTrait>
+struct VarPointer;
+
+template <int NBuffer_, int NBorrow_, int NBorrowSEXP_> struct AllVars;
+
 } // namespace etr
 
 #endif

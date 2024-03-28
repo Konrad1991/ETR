@@ -1,11 +1,11 @@
 #ifndef BUFFER_VECTOR_H
 #define BUFFER_VECTOR_H
 
+#include "../Allocation.hpp"
 #include "../BinaryCalculations.hpp"
 #include "../Core.hpp"
-#include "../UnaryCalculations.hpp"
-#include "../Allocation.hpp"
 #include "../SEXPConversions.hpp"
+#include "../UnaryCalculations.hpp"
 
 namespace etr {
 
@@ -28,8 +28,8 @@ template <typename T, typename R, typename Trait> struct Vec {
 
   RetType getRetType() const { return RetType{}; }
 
-  #include "Constructors.hpp"
-  #include "AssignmentOperator.hpp"
+#include "AssignmentOperator.hpp"
+#include "Constructors.hpp"
 
   RetType &operator[](size_t idx) { return d[idx]; }
   RetType operator[](size_t idx) const { return d[idx]; }

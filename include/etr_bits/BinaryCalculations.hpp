@@ -27,23 +27,69 @@ struct BinaryOperation {
   using typeTraitL = L;
   using typeTraitR = R;
   MatrixParameter mp;
-  bool im() const { return mp.im(); }
-  size_t nc() const { return mp.nc(); }
-  size_t nr() const { return mp.nr(); }
+  bool mpCalculated = false;
+  bool im() const { 
+    if constexpr (std::is_arithmetic_v<L>) {
+      return r.im();
+    } else if constexpr(std::is_arithmetic_v<R>) {
+      return l.im();
+    } else if constexpr(std::is_arithmetic_v<L> && std::is_arithmetic_v<R>) {
+      return false;
+    } else {
+      return l.im() || r.im();
+    }
+  }
+  size_t nc() const { 
+    if constexpr (std::is_arithmetic_v<L>) {
+      return r.nc();
+    } else if constexpr(std::is_arithmetic_v<R>) {
+      return l.nc();
+    } else if constexpr(std::is_arithmetic_v<L> && std::is_arithmetic_v<R>) {
+      return 0;
+    } else {
+      if (l.im() && r.im()) {
+        return (l.nc() > r.nc()) ? l.nc() : r.nc();
+      } else if (!l.im() && r.im()) {
+        return r.nc();
+      } else if (l.im() && !r.im()) {
+        return l.nc();
+      } else {
+        ass(false, "Matrix calculation failed!");
+      }
+    }
+  }
+  size_t nr() const {
+    if constexpr (std::is_arithmetic_v<L>) {
+      return r.nr();
+    } else if constexpr(std::is_arithmetic_v<R>) {
+      return l.nr();
+    } else if constexpr(std::is_arithmetic_v<L> && std::is_arithmetic_v<R>) {
+      return 0;
+    } else {
+      if (l.im() && r.im()) {
+        return (l.nr() > r.nr()) ? l.nr() : r.nr();
+      } else if (!l.im() && r.im()) {
+        return r.nr();
+      } else if (l.im() && !r.im()) {
+        return l.nr();
+      } else {
+        ass(false, "Matrix calculation failed!");
+      }
+    }
+  }
   BinaryOperation(const BinaryOperation &other)
-      : l(other.l), r(other.r), mp(other.mp) {}
+      : l(other.l), r(other.r) {}
   BinaryOperation(const BinaryOperation &&other)
-      : l(std::move(other.l)), r(std::move(other.r)), mp(std::move(other.mp)) {}
-  BinaryOperation(const L &l_, const R &r_, const MatrixParameter &mp_)
-      : l(l_), r(r_), mp(mp_) {}
+      : l(std::move(other.l)), r(std::move(other.r)) {}
+  BinaryOperation(const L &l_, const R &r_)
+      : l(l_), r(r_) {}
   template <typename LType, typename RType, typename TraitOther>
   BinaryOperation(const BinaryOperation<LType, RType, TraitOther>
                       &other) // issue: needs move constructor
-      : l(other.l), r(other.r), mp(other.mp) {}
+      : l(other.l), r(other.r) {}
 
   auto operator[](size_t i)
-      const { // RetType is not suitable as int / int -_> should return a
-              // double. How to handle this in detection of RetType?
+      const { 
     constexpr bool isDoubleL = std::is_arithmetic_v<L>;
     constexpr bool isDoubleR = std::is_arithmetic_v<R>;
     if constexpr (!isDoubleL && isDoubleR) {
@@ -67,6 +113,8 @@ struct BinaryOperation {
       return l.size() > r.size() ? l.size() : r.size();
     }
   }
+
+
   void setMatrix(bool i, size_t nrow, size_t ncol) {
     mp.setMatrix(i, nrow, ncol);
   }
@@ -98,27 +146,21 @@ template <typename L, typename R> auto operator+(const L &l, const R &r) {
   constexpr bool isDoubleL = std::is_arithmetic_v<L>;
   constexpr bool isDoubleR = std::is_arithmetic_v<R>;
   if constexpr (!isDoubleL && isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<typename std::common_type<typename ExtractDataType<L>::RetType,
                                          R>::type,
                BinaryOperation<decltype(l.d), R, PlusTrait>>(
-        BinaryOperation<decltype(l.d), R, PlusTrait>(l.d, r, mp));
+        BinaryOperation<decltype(l.d), R, PlusTrait>(l.d, r));
   } else if constexpr (isDoubleL && !isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<typename std::common_type<
                    L, typename ExtractDataType<R>::RetType>::type,
                BinaryOperation<L, decltype(r.d), PlusTrait>>(
-        BinaryOperation<L, decltype(r.d), PlusTrait>(l, r.d, mp));
+        BinaryOperation<L, decltype(r.d), PlusTrait>(l, r.d));
   } else if constexpr (!isDoubleL && !isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
-    return Vec<
-        typename std::common_type<typename ExtractDataType<L>::RetType,
-                                  typename ExtractDataType<R>::RetType>::type,
-        BinaryOperation<decltype(l.d), decltype(r.d), PlusTrait>>(
-        BinaryOperation<decltype(l.d), decltype(r.d), PlusTrait>(l.d, r.d, mp));
+      return Vec<
+      typename std::common_type<typename ExtractDataType<L>::RetType,
+                                typename ExtractDataType<R>::RetType>::type,
+      BinaryOperation<decltype(l.d), decltype(r.d), PlusTrait>>(
+      BinaryOperation<decltype(l.d), decltype(r.d), PlusTrait>(l.d, r.d));  
   } else {
     ass(false, "This case should not be reached. Contact author");
   }
@@ -159,28 +201,21 @@ template <typename L, typename R> auto operator*(const L &l, const R &r) {
   constexpr bool isDoubleL = std::is_arithmetic_v<L>;
   constexpr bool isDoubleR = std::is_arithmetic_v<R>;
   if constexpr (!isDoubleL && isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<typename std::common_type<typename ExtractDataType<L>::RetType,
                                          R>::type,
                BinaryOperation<decltype(l.d), R, TimesTrait>>(
-        BinaryOperation<decltype(l.d), R, TimesTrait>(l.d, r, mp));
+        BinaryOperation<decltype(l.d), R, TimesTrait>(l.d, r));
   } else if constexpr (isDoubleL && !isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<typename std::common_type<
                    L, typename ExtractDataType<R>::RetType>::type,
                BinaryOperation<L, decltype(r.d), TimesTrait>>(
-        BinaryOperation<L, decltype(r.d), TimesTrait>(l, r.d, mp));
+        BinaryOperation<L, decltype(r.d), TimesTrait>(l, r.d));
   } else if constexpr (!isDoubleL && !isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<
         typename std::common_type<typename ExtractDataType<L>::RetType,
                                   typename ExtractDataType<R>::RetType>::type,
         BinaryOperation<decltype(l.d), decltype(r.d), TimesTrait>>(
-        BinaryOperation<decltype(l.d), decltype(r.d), TimesTrait>(l.d, r.d,
-                                                                  mp));
+        BinaryOperation<decltype(l.d), decltype(r.d), TimesTrait>(l.d, r.d));
   } else {
     ass(false, "This case should not be reached. Contact author");
   }

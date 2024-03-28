@@ -15,9 +15,9 @@
 
 In Operation also Rvecs are included
 */
-#include "availableHeapSize.hpp"
 #include "../BufferVector.hpp"
 #include "../Core.hpp"
+#include "availableHeapSize.hpp"
 
 namespace etr {
 
@@ -42,19 +42,21 @@ template <typename T> inline size_t convertSize(const T &inp) {
   }
 }
 
-template<typename T> inline auto createLVec(T s) {
+template <typename T> inline auto createLVec(T s) {
   size_t size = convertSize(s);
   // issue: check which version is better
-  // ass(size > 0 && size < ((getTotalSystemMemory()/sizeof(BaseType)) / 3), "invalid length argument");
+  // ass(size > 0 && size < ((getTotalSystemMemory()/sizeof(BaseType)) / 3),
+  // "invalid length argument");
   ass(size > 0, "invalid length argument");
   return Vec<BaseType, Buffer<BaseType, BufferTrait, RBufTrait>, RVecTrait>(
       SI{size});
 }
 
-template<typename T> inline auto createRVec(T s) {
+template <typename T> inline auto createRVec(T s) {
   size_t size = convertSize(s);
   // issue: check which version is better
-  // ass(size > 0 && size < ((getTotalSystemMemory()/sizeof(BaseType)) / 3), "invalid length argument");
+  // ass(size > 0 && size < ((getTotalSystemMemory()/sizeof(BaseType)) / 3),
+  // "invalid length argument");
   ass(size > 0, "invalid length argument");
   return Vec<BaseType, Buffer<BaseType, BufferTrait, RBufTrait>, RVecTrait>(
       SI{size});
