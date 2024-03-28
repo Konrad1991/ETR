@@ -1,0 +1,173 @@
+---
+title: "Derivatives"
+author: "Konrad Krämer"
+date: "28/03/2024"
+format: 
+  html:
+    fig-width: 8
+    fig-height: 4
+---
+
+# Calculation of derivatives 
+
+The aim is to automatically calculate all derivatives with respect to a specified variable. 
+The idea is to do most of the work at compile time. Therefore, the tree structure which is
+created by each expression is used to calculate a new type. The new type reflects the derivative
+with respect to the specified variable. At runtime the new type is evaluated and the resulting derivatives 
+are stored. 
+
+## The ETR library
+
+In order to calculate the derivatives several requirements have to be met. Pivotal, the *Expression template
+library R* is lazy. This means that an expression tree is only evaluated when the result is required.
+For example, in the code below the expression *v1 + v2\*v1* is not evaluated. Instead, the resulting
+expression tree is assigned to the variable *tree*. The printed expression tree (printTAST<decltype(tree)>();) is also depicted below. To really evaluate the expression it is necessary to assign it to a variable. This is shown here: *Vec<double> result = v1 + v2\*v1;*. Furthermore, the tree information is lost after the assignment the type of variable *result* is also shown below. 
+
+
+```cpp
+#define STANDALONE_ETR
+#include "../include/etr.hpp"
+using namespace etr;
+
+int main() {
+  Vec<double, Buffer<double> > v1 = coca(1, 2, 3, 4); // [1, 2, 3, 4]
+  Vec<double, Buffer<double> > v2 = colon(2, 5); // [2, 3, 4, 5]
+  auto tree = v1 + v2*v1;
+  printTAST<decltype(tree)>();
+
+  Vec<double> result = v1 + v2*v1;
+  print(result); // [3, 8, 15, 24]
+  printTAST<decltype(result)>();
+}
+```
+
+#### Result of printTAST<decltype(tree)>();
+```cpp
+etr::Vec<                                                                                                      
+  double,
+  etr::BinaryOperation<         
+    etr::Buffer<double,
+                etr::BufferTrait,
+                etr::VariableTrait>,
+    etr::BinaryOperation<                                                                        
+                etr::Buffer< double,
+                             etr::BufferTrait,
+                             etr::VariableTrait>,
+                etr::Buffer< double,
+                             etr::BufferTrait,
+                             etr::VariableTrait>,
+                etr::TimesTrait,
+                etr::BinaryTrait>,
+  etr::PlusTrait,
+  etr::BinaryTrait>,
+etr::VectorTrait>   
+```
+
+#### Result of printTAST<decltype(result)>();
+```cpp
+etr::Vec<double,
+         etr::Buffer<double,
+                     etr::BufferTrait,
+                     etr::VariableTrait>,
+         etr::VectorTrait>  
+```
+
+## Calculating derivatives
+
+In order to calculate derivatives the expression tree of each term is used. Notably, the expression tree itself is a type. Thus, the type can be used to calculate a new type at compile time. The new type reflects the derivative of the original type with respect to the independent variable. However, the tree above contains only the information of the operation and which kind of variables are involved. Unfortunately, the information which specific variables are involved is not included. To make it more clear, in the code above there are several variables listed as *Buffer<...>* but whether it is *v1* or *v2* is not known. 
+
+To address this problem pointers to all variables are stored in an instance of the class *AllVars*. Currently, the class excepts three template parameter all of type int (presumbly later more template parameters are required). The first integer, defines the number of *Vec<Buffer>* the second template parameter defines the number of *Vec<Borrow>*. Eventually, the third int parameter defines the number of
+*Vec<BorrowSEXP>*. However, the *BorrowSEXP* type is only relevant when working with variables from R.
+Moreover, an integer is passed to the constructor which specifies the identifier of the independent variable.
+Additionally, the variables are replaced by a new type called *Vec<double, VarPointer<decltype(av), Number>*. Here the number is a unique identifier for each variable. 
+
+Afterwards, the new type is calculated. For the simple term *v1\*v2* the derivative using the chain rule is *v1'\*v2 + v1\*v2'*. Therefore, a new type is defined which holds four variables (namly v1, v2, v1' and v2'). The actual functions which are used to calculate are defined in the traits. For instance, the *TimesDerivTrait*contains the function: *f(x, y) = x\* y* and *fDeriv(x, y, x', y') = x'\*y + x\*y'*. 
+
+Moreover, it is notably, that the original VarPointer are wrapped in a new type called VariableType. This class handles getter methods for size, value and deriv by accessing the correct variable which is stored in the instance of class *AllVars*. 
+
+
+```cpp
+#define STANDALONE_ETR
+#include "../include/etr.hpp"
+using namespace etr;
+
+int main() {
+  Vec<double, Buffer<double> > v1;
+  Vec<double, Buffer<double> > v2;
+
+  AllVars<2, 0, 0> av(0);
+  av.initBuffer(&v1, &v2);
+  Vec<double, VarPointer<decltype(av), 0>, VariableTypeTrait> vp1(av);
+  Vec<double, VarPointer<decltype(av), 1>, VariableTypeTrait> vp2(av);
+
+  v1 = coca(1, 2, 3, 4); // [1, 2, 3, 4]
+  v2 = colon(2, 5); // [2, 3, 4, 5]
+
+  eval<decltype(vp1 * vp2)>(av);
+}
+```
+
+#### The result of eval
+
+```cpp
+val = 2 deriv = 2                                                                                   
+val = 6 deriv = 3                                                                                  
+val = 12 deriv = 4                                                                                   
+val = 20 deriv = 5   
+```
+
+#### The input type
+
+```cpp
+etr::Vec<double,
+  etr::BinaryOperation<
+    etr::VarPointer<
+      etr::AllVars<2, 0, 0>,
+      0,
+      etr::VarPointerTrait>,
+    etr::VarPointer<                          
+      etr::AllVars<2, 0, 0>,
+      1,
+      etr::VarPointerTrait>,
+    etr::TimesTrait,
+    etr::BinaryTrait>,
+etr::VectorTrait>         
+```
+
+#### The resulting derivative type
+
+```cpp
+etr::QuarternyType<
+  etr::VariableType<
+    etr::VarPointer<
+      etr::AllVars<2,0,0>,
+      0,
+      etr::VarPointerTrait>,
+    etr::VariableTypeTrait> const,
+  etr::VariableType<
+    etr::VarPointer<
+      etr::AllVars<2,0,0>,
+      1,
+      etr::VarPointerTrait>,
+    etr::VariableTypeTrait> const,
+  etr::VariableType<
+    etr::VarPointer<etr::AllVars<2,0,0>,
+    0,
+    etr::VarPointerTrait>,
+    etr::VariableTypeTrait> const,
+  etr::VariableType<
+    etr::VarPointer<
+    etr::AllVars<2,0,0>,
+    1,
+    etr::VarPointerTrait>,
+    etr::VariableTypeTrait> const,
+etr::QuarternaryTrait,
+etr::TimesDerivTrait>
+```
+
+
+## Problems
+
+- How to handle arithmetic variables?
+- How to handle constants. For instance in expressions like: *a + 3.14*
+- How to handle temporary objects which are created by functions like *coca*. For example in this term: *a / coca(1, 2, 3)*

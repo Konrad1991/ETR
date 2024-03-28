@@ -18,16 +18,30 @@ int main() {
     eval<decltype(vp1 + vp2)>(av); // f = a + b; df/db = 1 = 1, 1, 1
     eval<decltype(vp1 + vp2*vp1)>(av); // f = a + b*a; df/db = a'*b + b'*a = b'*a = 1*a = 1, 2, 3
     eval<decltype(vp1 + vp2*vp1*vp2)>(av); // f = a + b^2*a; df/db = a'*b + b'*a = b'*a = 2*b*a = 8, 20, 36
-
+    
     // f = 3.14*b
-    //eval<decltype(vp1 * b)>(av);
-
-    // how to handle: arithmetic vars, r vectors and constants?
+    //eval<decltype(vp1 * b)>(av);    
 }
 
 /*
-Plan:
-remove defineMatrix function
-calc defineMatrix one time if it is needed in the BinaryOperation itself!
+how to handle: arithmetic vars, r vectors and constants?
+
+arithmetic variables have to be stored in 
+
+template<typename T>
+struct ArithmeticVar {
+    T val;
+    T Deriv = 0;
+    ...
+}
+
+r vectors have to be handled in the same way as normal vectors.
+But they are not of type Vec<VarPointer> but rather Vec<Buffer>.
+
+- define own helper function. For example instead of vector(size), vector(size, AllVars&)
+    * Than the new vector function defines a own variable in a std::vector where it can points to
+
+- Can i define several AllVars instances independently. Crucial for parallel functions
+
 */
 

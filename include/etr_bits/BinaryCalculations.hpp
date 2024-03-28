@@ -35,9 +35,8 @@ struct BinaryOperation {
       return l.im();
     } else if constexpr(std::is_arithmetic_v<L> && std::is_arithmetic_v<R>) {
       return false;
-    } else {
-      return l.im() || r.im();
-    }
+    } 
+    return l.im() || r.im();
   }
   size_t nc() const { 
     if constexpr (std::is_arithmetic_v<L>) {
@@ -57,6 +56,8 @@ struct BinaryOperation {
         ass(false, "Matrix calculation failed!");
       }
     }
+    ass(false, "Matrix calculation failed!");
+    return(0);
   }
   size_t nr() const {
     if constexpr (std::is_arithmetic_v<L>) {
@@ -76,6 +77,8 @@ struct BinaryOperation {
         ass(false, "Matrix calculation failed!");
       }
     }
+    ass(false, "Matrix calculation failed!");
+    return(0);
   }
   BinaryOperation(const BinaryOperation &other)
       : l(other.l), r(other.r) {}

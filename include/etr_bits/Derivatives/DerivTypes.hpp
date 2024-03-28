@@ -88,8 +88,6 @@ inline constexpr UnaryType<I, Trait, OpTrait> produceUnaryType() {
   return UnaryType<I, Trait, OpTrait>(); // issue: wrong wrong wrong
 }
 
-
-
 template <typename T, typename Trait> struct VariableType {
   using Type = T;
   using RetType = T;
@@ -125,7 +123,6 @@ template <typename TRaw> inline constexpr auto produceVariableType() {
     return VariableType<TRaw>();
   }
 }
-
 
 }
 

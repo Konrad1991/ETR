@@ -22,22 +22,6 @@ template <typename T>
   requires IsAddition<T>
 inline constexpr auto walkT();
 
-
-template <typename T> inline constexpr auto walkT() {
-  using cleanType = std::remove_const_t<std::remove_reference_t<T>>;
-  using tD = ExtractedDType<cleanType>;
-  constexpr auto res = walkT<tD>();
-  static_assert(!IsVec<decltype(res)>,
-                "Cannot create derivative expression tree");
-  return VariableType<decltype(res)>();
-}
-
-template<typename T>
-  requires std::is_arithmetic_v<T>
-inline constexpr auto walkT() {
-  
-}
-
 template <typename T>
   requires IsVarPointer<T>
 inline constexpr auto walkT() -> VariableType<T> {
@@ -72,9 +56,7 @@ template <typename T>
 inline constexpr auto walkT() {
   constexpr auto obj = walkT<typename T::typeTraitObj>();
   return produceUnaryType<decltype(obj), UnaryTrait,
-                          SinusDerivTrait>(); // issue: has to be a binary type.
-                                              // Change behaviour of binary type
-                                              // by using Traits
+                          SinusDerivTrait>(); 
 }
 
 template <typename T>
@@ -89,11 +71,7 @@ template <typename T, typename AV>
   requires(IsVec<T> && !IsVariable<T>)
 inline void eval(AV &av) {
   using tD = ExtractedTypeD<T>;
-  //printTAST<tD>();
   constexpr auto res = walkT<tD>();
-  //std::cout << "final result " << std::endl;
-  //printTAST<decltype(res)>();
-
   for (size_t i = 0; i < res.getSize(av); i++) {
     std::cout << "val = " << res.getVal(av, i)
               << " deriv = " << res.getDeriv(av, i) << std::endl;
