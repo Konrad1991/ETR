@@ -169,5 +169,43 @@ etr::TimesDerivTrait>
 ## Problems
 
 - How to handle arithmetic variables?
+
+ ```cpp
+template<typename T>
+struct ArithmeticVar {
+    T val;
+    T Deriv = 0;
+    ...
+}
+```  
 - How to handle constants. For instance in expressions like: *a + 3.14*
-- How to handle temporary objects which are created by functions like *coca*. For example in this term: *a / coca(1, 2, 3)*
+  * if all arithmetic values are represented as of type ArithmeticVar it can be assumed that all arithmetic   values which are found are constants.
+
+- How to handle temporary objects which are created by functions like *coca*. 
+  * For example in this term: *a / coca(1, 2, 3)*
+  * Define a variable std::vector<Vec<double>> rVecs in *AllVars*
+  * Now the function coca(1, 2, 3) has to be replaced by coca(1, 2, 3, AllVarsInstance)
+  * coca(1, 2, 3, AllVarsInstance) returns a VariableType<VarPointer> which is pointing to the entry in std::vector
+
+```cpp
+#include <vector>
+
+template <int NBuffer_, int NBorrow_, int NBorrowSEXP_>
+struct AllVars {
+    std::vector<Vec<BaseType>> rVecs;
+    ...
+};
+#include <vector>
+
+template <typename AV, typename... Args>
+VariableType<VarPointer> coca(AllVars<AV>& allVars, Args&&... args) {
+    Vec<BaseType> tempResult = createCocaResult(std::forward<Args>(args)...); 
+    allVars.rVecs.push_back(tempResult); 
+    return VariableType<VarPointer>(VarPointer(allVars, allVars.rVecs.size() - 1)); 
+}
+int main() {
+    AllVars<2, 0, 0> allVars(0);
+    VariableType<VarPointer> result = coca(allVars, 1, 2, 3); 
+}
+
+```
