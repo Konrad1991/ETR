@@ -26,6 +26,7 @@ template <typename T> inline size_t convertSize(const T &inp) {
     ass(inp >= 1, "invalid times argument");
     return std::forward(inp);
   } else if constexpr (std::is_floating_point_v<T>) {
+    #warning "Floating point found as size argument. The value will possibly be rounded to next integer"
     warn(isDoubleInt(inp),
          "The provided size is a floating-point number with non-zero decimal "
          "places. It has been floored to the nearest integer.");

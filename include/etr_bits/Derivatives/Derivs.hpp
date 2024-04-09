@@ -56,7 +56,7 @@ template <typename T>
 inline constexpr auto walkT() {
   constexpr auto obj = walkT<typename T::typeTraitObj>();
   return produceUnaryType<decltype(obj), UnaryTrait,
-                          SinusDerivTrait>(); 
+                          SinusDerivTrait>();
 }
 
 template <typename T>
@@ -73,8 +73,8 @@ inline void eval(AV &av) {
   using tD = ExtractedTypeD<T>;
   constexpr auto res = walkT<tD>();
   for (size_t i = 0; i < res.getSize(av); i++) {
-    std::cout << "val = " << res.getVal(av, i)
-              << " deriv = " << res.getDeriv(av, i) << std::endl;
+    // std::cout << "val = " << res.getVal(av, i) << std::endl; 
+    std::cout << " deriv = " << res.getDeriv(av, i) << std::endl;
   }
 }
 

@@ -14,6 +14,7 @@ struct VarPointer {
   using Type = T;
   using RetType = T;
   static constexpr int I = Idx;
+  
   T &AllVarsRef;
   VarPointer(T &AllVars_) : AllVarsRef(AllVars_) {}
 

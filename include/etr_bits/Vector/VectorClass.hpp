@@ -47,6 +47,7 @@ template <typename T, typename R, typename Trait> struct Vec {
   bool im() const { return d.im(); }
   size_t nc() const { return d.nc(); }
   size_t nr() const { return d.nr(); }
+  
   auto begin() const {
     if constexpr (isSubset::value) {
       return It<T>{d.p->p};

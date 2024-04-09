@@ -3,12 +3,27 @@
 
 #include "AllocationUtils.hpp"
 
+/*
+        Var1       Var2
+1 arithmetic arithmetic done
+2        Vec arithmetic done
+3  const Vec arithmetic done
+4 arithmetic        Vec done
+5        Vec        Vec done
+6  const Vec        Vec done
+7 arithmetic  const Vec done
+8        Vec  const Vec done
+9  const Vec  const Vec done
+
+const Vec is an Operation
+*/
+
 namespace etr {
 template <typename L, typename R>
   requires std::is_arithmetic_v<L> && std::is_arithmetic_v<R>
 inline Vec<L, Buffer<L, BufferTrait, RBufTrait>, RVecTrait> rep(L inp, R s) {
   size_t length = convertSize(s);
-  Vec<L> ret(length);
+  Vec<L> ret(SI{length});
   ret.fill(inp);
   return ret;
 }
@@ -17,9 +32,9 @@ template <typename L, typename R>
   requires IsVec<L> && std::is_arithmetic_v<R>
 inline auto rep(L &inp, R s) {
   size_t length = convertSize(s) * inp.size();
-  using DataType = ExtractDataType<L>::type;
+  using DataType = ExtractDataType<L>::RetType;
   Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> ret(
-      length);
+      SI{length});
   size_t counter = 0;
   for (size_t i = 0; i < ret.size(); i++) {
     ret[i] = inp[counter];
@@ -31,12 +46,12 @@ inline auto rep(L &inp, R s) {
 }
 
 template <typename L, typename R>
-  requires Operation<L> && std::is_arithmetic_v<R>
+  requires IsVec<L> && std::is_arithmetic_v<R>
 inline auto rep(const L &inp, R s) {
   size_t length = convertSize(s) * inp.size();
-  using DataType = ExtractDataType<L>::type;
+  using DataType = ExtractDataType<L>::RetType;
   Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> ret(
-      length);
+      SI{length});
   size_t counter = 0;
   for (size_t i = 0; i < ret.size(); i++) {
     ret[i] = inp[counter];
@@ -51,7 +66,7 @@ template <typename L, typename R>
   requires std::is_arithmetic_v<L> && IsVec<R>
 inline auto rep(L inp, R &s) {
   size_t length = convertSize(s);
-  Vec<L> ret(length);
+  Vec<L> ret(SI{length});
   ret.fill(inp);
   return ret;
 }
@@ -60,9 +75,9 @@ template <typename L, typename R>
   requires IsVec<L> && IsVec<R>
 inline auto rep(L &inp, R &s) {
   size_t length = convertSize(s) * inp.size();
-  using DataType = ExtractDataType<L>::type;
+  using DataType = ExtractDataType<L>::RetType;
   Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> ret(
-      length);
+      SI{length});
   size_t counter = 0;
   for (size_t i = 0; i < ret.size(); i++) {
     ret[i] = inp[counter];
@@ -74,12 +89,12 @@ inline auto rep(L &inp, R &s) {
 }
 
 template <typename L, typename R>
-  requires Operation<L> && IsVec<R>
+  requires IsVec<L> && IsVec<R>
 inline auto rep(const L &inp, R &s) {
   size_t length = convertSize(s) * inp.size();
-  using DataType = ExtractDataType<L>::type;
+  using DataType = ExtractDataType<L>::RetType;
   Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> ret(
-      length);
+      SI{length});
   size_t counter = 0;
   for (size_t i = 0; i < ret.size(); i++) {
     ret[i] = inp[counter];
@@ -91,21 +106,21 @@ inline auto rep(const L &inp, R &s) {
 }
 
 template <typename L, typename R>
-  requires std::is_arithmetic_v<L> && Operation<R>
+  requires std::is_arithmetic_v<L> && IsVec<R>
 inline auto rep(L inp, const R &s) {
   size_t length = convertSize(s);
-  Vec<L> ret(length);
+  Vec<L> ret(SI{length});
   ret.fill(inp);
   return ret;
 }
 
 template <typename L, typename R>
-  requires IsVec<L> && Operation<R>
+  requires IsVec<L> && IsVec<R>
 inline auto rep(L &inp, const R &s) {
   size_t length = convertSize(s) * inp.size();
-  using DataType = ExtractDataType<L>::type;
+  using DataType = ExtractDataType<L>::RetType;
   Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> ret(
-      length);
+      SI{length});
   size_t counter = 0;
   for (size_t i = 0; i < ret.size(); i++) {
     ret[i] = inp[counter];
@@ -117,12 +132,12 @@ inline auto rep(L &inp, const R &s) {
 }
 
 template <typename L, typename R>
-  requires Operation<L> && Operation<R>
+  requires IsVec<L> && IsVec<R>
 inline auto rep(const L &inp, const R &s) {
   size_t length = convertSize(s) * inp.size();
-  using DataType = ExtractDataType<L>::type;
+  using DataType = ExtractDataType<L>::RetType;
   Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> ret(
-      length);
+      SI{length});
   size_t counter = 0;
   for (size_t i = 0; i < ret.size(); i++) {
     ret[i] = inp[counter];
