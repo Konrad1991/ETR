@@ -5,9 +5,89 @@
 
 namespace etr {
 
-inline Vec<BaseType> matrix(int nrows, int ncols) {
-  return Vec<BaseType>(nrows, ncols);
+/*
+arithmetic
+Vec
+const Vec
+*/
+
+template<typename T>
+  requires std::is_arithmetic_v<L>
+inline auto matrix(T val) {
+  auto vec = createRVec(1);
+  vec.d.mp.setMatrix(true, 1, 1); 
+  vec[0] = val;
+  return vec;
 }
+
+template<typename T>
+  requires IsVec<L>
+inline auto matrix(T& val) {
+  auto vec = createRVec(val.size());
+  vec.d.mp.setMatrix(true, val.size(), 1); 
+  vec.fill(val);
+  return vec;
+}
+
+template<typename T>
+  requires IsVec<L>
+inline auto matrix(const T& val) {
+  auto vec = createRVec(val.size());
+  vec.d.mp.setMatrix(true, val.size(), 1); 
+  vec.fill(val);
+  return vec;
+}
+/*
+        Var1       Var2
+1 arithmetic arithmetic done
+2        Vec arithmetic
+3  const Vec arithmetic
+4 arithmetic        Vec
+5        Vec        Vec
+6  const Vec        Vec
+7 arithmetic  const Vec
+8        Vec  const Vec
+9  const Vec  const Vec
+
+const Vec is an Operation
+*/
+
+template<typename T, typename R>
+  requires std::is_arithmetic_v<L> && std::is_arithmetic_v<R>
+inline auto matrix(T nrows, R ncols) {
+  return createRVec(nrows * ncols);
+}
+
+/*
+       Var1     Var2     Var3
+1       vec      vec      vec
+2     arith      vec      vec
+3  constVec      vec      vec
+4       vec    arith      vec
+5     arith    arith      vec
+6  constVec    arith      vec
+7       vec constVec      vec
+8     arith constVec      vec
+9  constVec constVec      vec
+10      vec      vec    arith
+11    arith      vec    arith
+12 constVec      vec    arith
+13      vec    arith    arith
+14    arith    arith    arith
+15 constVec    arith    arith
+16      vec constVec    arith
+17    arith constVec    arith
+18 constVec constVec    arith
+19      vec      vec constVec
+20    arith      vec constVec
+21 constVec      vec constVec
+22      vec    arith constVec
+23    arith    arith constVec
+24 constVec    arith constVec
+25      vec constVec constVec
+26    arith constVec constVec
+27 constVec constVec constVec
+*/
 
 template <typename V, typename R, typename C>
 inline Vec<BaseType> matrix(const V &inp, const R &nrows, const C &ncols) {
