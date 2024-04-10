@@ -28,22 +28,24 @@ struct BinaryOperation {
   using typeTraitR = R;
   MatrixParameter mp;
   bool mpCalculated = false;
-  bool im() const { 
+  bool im() const {
     if constexpr (std::is_arithmetic_v<L>) {
       return r.im();
-    } else if constexpr(std::is_arithmetic_v<R>) {
+    } else if constexpr (std::is_arithmetic_v<R>) {
       return l.im();
-    } else if constexpr(std::is_arithmetic_v<L> && std::is_arithmetic_v<R>) {
+    } else if constexpr (std::is_arithmetic_v<L> && std::is_arithmetic_v<R>) {
       return false;
-    } 
-    return l.im() || r.im();
+    } else {
+      return l.im() || r.im();
+    }
+    return false; // issue: correct?
   }
-  size_t nc() const { 
+  size_t nc() const {
     if constexpr (std::is_arithmetic_v<L>) {
       return r.nc();
-    } else if constexpr(std::is_arithmetic_v<R>) {
+    } else if constexpr (std::is_arithmetic_v<R>) {
       return l.nc();
-    } else if constexpr(std::is_arithmetic_v<L> && std::is_arithmetic_v<R>) {
+    } else if constexpr (std::is_arithmetic_v<L> && std::is_arithmetic_v<R>) {
       return 0;
     } else {
       if (l.im() && r.im()) {
@@ -57,14 +59,14 @@ struct BinaryOperation {
       }
     }
     ass(false, "Matrix calculation failed!");
-    return(0);
+    return (0);
   }
   size_t nr() const {
     if constexpr (std::is_arithmetic_v<L>) {
       return r.nr();
-    } else if constexpr(std::is_arithmetic_v<R>) {
+    } else if constexpr (std::is_arithmetic_v<R>) {
       return l.nr();
-    } else if constexpr(std::is_arithmetic_v<L> && std::is_arithmetic_v<R>) {
+    } else if constexpr (std::is_arithmetic_v<L> && std::is_arithmetic_v<R>) {
       return 0;
     } else {
       if (l.im() && r.im()) {
@@ -78,21 +80,18 @@ struct BinaryOperation {
       }
     }
     ass(false, "Matrix calculation failed!");
-    return(0);
+    return (0);
   }
-  BinaryOperation(const BinaryOperation &other)
-      : l(other.l), r(other.r) {}
+  BinaryOperation(const BinaryOperation &other) : l(other.l), r(other.r) {}
   BinaryOperation(const BinaryOperation &&other)
       : l(std::move(other.l)), r(std::move(other.r)) {}
-  BinaryOperation(const L &l_, const R &r_)
-      : l(l_), r(r_) {}
+  BinaryOperation(const L &l_, const R &r_) : l(l_), r(r_) {}
   template <typename LType, typename RType, typename TraitOther>
   BinaryOperation(const BinaryOperation<LType, RType, TraitOther>
                       &other) // issue: needs move constructor
       : l(other.l), r(other.r) {}
 
-  auto operator[](size_t i)
-      const { 
+  auto operator[](size_t i) const {
     constexpr bool isDoubleL = std::is_arithmetic_v<L>;
     constexpr bool isDoubleR = std::is_arithmetic_v<R>;
     if constexpr (!isDoubleL && isDoubleR) {
@@ -116,7 +115,6 @@ struct BinaryOperation {
       return l.size() > r.size() ? l.size() : r.size();
     }
   }
-
 
   void setMatrix(bool i, size_t nrow, size_t ncol) {
     mp.setMatrix(i, nrow, ncol);
@@ -159,11 +157,11 @@ template <typename L, typename R> auto operator+(const L &l, const R &r) {
                BinaryOperation<L, decltype(r.d), PlusTrait>>(
         BinaryOperation<L, decltype(r.d), PlusTrait>(l, r.d));
   } else if constexpr (!isDoubleL && !isDoubleR) {
-      return Vec<
-      typename std::common_type<typename ExtractDataType<L>::RetType,
-                                typename ExtractDataType<R>::RetType>::type,
-      BinaryOperation<decltype(l.d), decltype(r.d), PlusTrait>>(
-      BinaryOperation<decltype(l.d), decltype(r.d), PlusTrait>(l.d, r.d));  
+    return Vec<
+        typename std::common_type<typename ExtractDataType<L>::RetType,
+                                  typename ExtractDataType<R>::RetType>::type,
+        BinaryOperation<decltype(l.d), decltype(r.d), PlusTrait>>(
+        BinaryOperation<decltype(l.d), decltype(r.d), PlusTrait>(l.d, r.d));
   } else {
     ass(false, "This case should not be reached. Contact author");
   }

@@ -3,18 +3,17 @@
 
 /*
         Var1       Var2
-1 arithmetic arithmetic
-2        Vec arithmetic
-3  const Vec arithmetic
-4 arithmetic        Vec
-5        Vec        Vec
-6  const Vec        Vec
-7 arithmetic  const Vec
-8        Vec  const Vec
-9  const Vec  const Vec
+1 arithmetic arithmetic done
+2        Vec arithmetic done
+3  const Vec arithmetic done
+4 arithmetic        Vec done
+5        Vec        Vec done
+6  const Vec        Vec done
+7 arithmetic  const Vec done
+8        Vec  const Vec done
+9  const Vec  const Vec done
 
 const Vec is an Operation
-issue: long double change to BaseType?
 */
 
 #include "AllocationUtils.hpp"
@@ -22,29 +21,10 @@ issue: long double change to BaseType?
 
 namespace etr {
 
-inline auto colonInt(long long start, long long end) {
+template <typename T> inline auto colonInternal(T start, T end) {
   if (start < end) {
     size_t length = convertSize(end - start + 1);
-    Vec<double, Buffer<double, RBufTrait>, RVecTrait> ret(SI{length});
-    for (size_t i = 0; i < ret.size(); i++) {
-      ret[i] = start;
-      start++;
-    }
-    return ret;
-  }
-  size_t length = convertSize(start - end + 1);
-  Vec<double, Buffer<double, RBufTrait>, RVecTrait> ret(SI{length});
-  for (size_t i = 0; i < ret.size(); i++) {
-    ret[i] = start;
-    start--;
-  }
-  return ret;
-}
-
-inline auto colonFloat(long double start, long double end) {
-  if (start < end) {
-    size_t length = convertSize(end - start + 1);
-    Vec<double, Buffer<double, RBufTrait>, RVecTrait> ret(SI{length});
+    Vec<T, Buffer<T, RBufTrait>, RVecTrait> ret(SI{length});
     size_t counter = 0;
     while (start <= end) {
       ret[counter] = start;
@@ -54,7 +34,7 @@ inline auto colonFloat(long double start, long double end) {
     return ret;
   }
   size_t length = convertSize(start - end + 1);
-  Vec<double, Buffer<double, RBufTrait>, RVecTrait> ret(SI{length});
+  Vec<T, Buffer<T, RBufTrait>, RVecTrait> ret(SI{length});
   size_t counter = 0;
   while (end <= start) {
     ret[counter] = start;
@@ -67,58 +47,181 @@ inline auto colonFloat(long double start, long double end) {
 template <typename A, typename O>
   requires std::is_arithmetic_v<A> && std::is_arithmetic_v<O>
 inline auto colon(A start, O end) {
-  if constexpr (std::is_integral_v<A> && std::is_integral_v<O>) {
-    return colonInt(start, end);
-  } else if constexpr (std::is_floating_point_v<A> &&
-                       std::is_floating_point_v<O>) {
-    return colonFloat(start, end);
-  } else if constexpr (std::is_integral_v<A> && std::is_floating_point_v<O>) {
-    return colonFloat(static_cast<long double>(start), end);
-  } else if constexpr (std::is_floating_point_v<A> && std::is_integral_v<O>) {
-    return colonFloat(start, static_cast<long double>(end));
+  using DataType = std::common_type<A, O>::type;
+  if constexpr (std::is_same_v<A, DataType> && std::is_same_v<O, DataType>) {
+    return colonInternal(start, end);
+  } else if constexpr (!std::is_same_v<A, DataType> &&
+                       std::is_same_v<O, DataType>) {
+    return colonInternal(static_cast<DataType>(start), end);
+  } else if constexpr (std::is_same_v<A, DataType> &&
+                       !std::is_same_v<O, DataType>) {
+    return colonInternal(start, static_cast<DataType>(end));
   }
 }
 
-/*
+template <typename A, typename O>
+  requires IsVec<A> && std::is_arithmetic_v<O>
+inline auto colon(A &start, O end) {
+  warn(start.size() == 1,
+       "expression has more than one element only the first is used");
+  using DataTypeA = ExtractDataType<A>::RetType;
+  using DataType = std::common_type<DataTypeA, O>::type;
+  if constexpr (std::is_same_v<DataTypeA, DataType> &&
+                std::is_same_v<O, DataType>) {
+    return colonInternal(start[0], end);
+  } else if constexpr (!std::is_same_v<DataTypeA, DataType> &&
+                       std::is_same_v<O, DataType>) {
+    return colonInternal(static_cast<DataType>(start[0]), end);
+  } else if constexpr (std::is_same_v<DataTypeA, DataType> &&
+                       !std::is_same_v<O, DataType>) {
+    return colonInternal(start[0], static_cast<DataType>(end));
+  }
+}
+
+template <typename A, typename O>
+  requires IsVec<A> && std::is_arithmetic_v<O>
+inline auto colon(const A &start, O end) {
+  warn(start.size() == 1,
+       "expression has more than one element only the first is used");
+  using DataTypeA = ExtractDataType<A>::RetType;
+  using DataType = std::common_type<DataTypeA, O>::type;
+  if constexpr (std::is_same_v<DataTypeA, DataType> &&
+                std::is_same_v<O, DataType>) {
+    return colonInternal(start[0], end);
+  } else if constexpr (!std::is_same_v<DataTypeA, DataType> &&
+                       std::is_same_v<O, DataType>) {
+    return colonInternal(static_cast<DataType>(start[0]), end);
+  } else if constexpr (std::is_same_v<DataTypeA, DataType> &&
+                       !std::is_same_v<O, DataType>) {
+    return colonInternal(start[0], static_cast<DataType>(end));
+  }
+}
+
+template <typename A, typename O>
+  requires std::is_arithmetic_v<A> && IsVec<O>
+inline auto colon(A start, O& end) {
+  warn(end.size() == 1,
+       "expression has more than one element only the first is used");
+  using DataTypeO = ExtractDataType<O>::RetType;
+  using DataType = std::common_type<A, DataTypeO>::type;
+  if constexpr (std::is_same_v<A, DataType> &&
+                std::is_same_v<DataTypeO, DataType>) {
+    return colonInternal(start, end[0]);
+  } else if constexpr (!std::is_same_v<A, DataType> &&
+                       std::is_same_v<DataTypeO, DataType>) {
+    return colonInternal(static_cast<DataType>(start), end[0]);
+  } else if constexpr (std::is_same_v<A, DataType> &&
+                       !std::is_same_v<DataTypeO, DataType>) {
+    return colonInternal(start, static_cast<DataType>(end[0]));
+  }
+}
+
+template <typename A, typename O>
+  requires std::is_arithmetic_v<A> && IsVec<O>
+inline auto colon(A start, const O& end) {
+  warn(end.size() == 1,
+       "expression has more than one element only the first is used");
+  using DataTypeO = ExtractDataType<O>::RetType;
+  using DataType = std::common_type<A, DataTypeO>::type;
+  if constexpr (std::is_same_v<A, DataType> &&
+                std::is_same_v<DataTypeO, DataType>) {
+    return colonInternal(start, end[0]);
+  } else if constexpr (!std::is_same_v<A, DataType> &&
+                       std::is_same_v<DataTypeO, DataType>) {
+    return colonInternal(static_cast<DataType>(start), end[0]);
+  } else if constexpr (std::is_same_v<A, DataType> &&
+                       !std::is_same_v<DataTypeO, DataType>) {
+    return colonInternal(start, static_cast<DataType>(end[0]));
+  }
+}
+
 template <typename A, typename O>
   requires IsVec<A> && IsVec<O>
-inline auto colon(const A &start, const O &end) {
-  using typeTraitA =
-      std::remove_reference<decltype(convert(start))>::type::TypeTrait;
-  using typeTraitO =
-      std::remove_reference<decltype(convert(end))>::type::TypeTrait;
-  using isVecA = std::is_same<typeTraitA, VectorTrait>;
-  using isVecO = std::is_same<typeTraitO, VectorTrait>;
-  double s = 0.0;
-  double e = 0.0;
-  if constexpr (isVecA::value && isVecO::value) {
-    ass(start.size() == 1,
-        "Element 'from' passed to colon has more than one argument");
-    ass(end.size() == 1,
-        "Element 'to' passed to colon has more than one argument");
-    s = start[0];
-    e = end[0];
-  } else if constexpr (!isVecA::value && isVecO::value) {
-    ass(end.size() == 1,
-        "Element 'to' passed to colon has more than one argument");
-    s = static_cast<BaseType>(start);
-    e = end[0];
-  } else if constexpr (isVecA::value && !isVecO::value) {
-    ass(start.size() == 1,
-        "Element 'from' passed to colon has more than one argument");
-    s = start[0];
-    e = static_cast<BaseType>(end);
-  } else {
-    s = static_cast<BaseType>(start);
-    e = static_cast<BaseType>(end);
+inline auto colon(A& start, O& end) {
+  warn(end.size() == 1,
+       "expression has more than one element only the first is used");
+  warn(start.size() == 1,
+       "expression has more than one element only the first is used");
+  using DataTypeA = ExtractDataType<A>::RetType;
+  using DataTypeO = ExtractDataType<O>::RetType;
+  using DataType = std::common_type<DataTypeA, DataTypeO>::type;
+  if constexpr (std::is_same_v<DataTypeA, DataType> &&
+                std::is_same_v<DataTypeO, DataType>) {
+    return colonInternal(start[0], end[0]);
+  } else if constexpr (!std::is_same_v<DataTypeA, DataType> &&
+                       std::is_same_v<DataTypeO, DataType>) {
+    return colonInternal(static_cast<DataType>(start[0]), end[0]);
+  } else if constexpr (std::is_same_v<DataTypeA, DataType> &&
+                       !std::is_same_v<DataTypeO, DataType>) {
+    return colonInternal(start[0], static_cast<DataType>(end[0]));
   }
-  Vec<BaseType> ret(SI{static_cast<size_t>(e - s + 1)});
-  for (size_t i = 0; i < ret.size(); i++) {
-    ret[i] = s + static_cast<BaseType>(i);
-  }
-  return ret;
 }
-*/
+
+template <typename A, typename O>
+  requires IsVec<A> && IsVec<O>
+inline auto colon(const A& start, O& end) {
+  warn(end.size() == 1,
+       "expression has more than one element only the first is used");
+  warn(start.size() == 1,
+       "expression has more than one element only the first is used");
+  using DataTypeA = ExtractDataType<A>::RetType;
+  using DataTypeO = ExtractDataType<O>::RetType;
+  using DataType = std::common_type<DataTypeA, DataTypeO>::type;
+  if constexpr (std::is_same_v<DataTypeA, DataType> &&
+                std::is_same_v<DataTypeO, DataType>) {
+    return colonInternal(start[0], end[0]);
+  } else if constexpr (!std::is_same_v<DataTypeA, DataType> &&
+                       std::is_same_v<DataTypeO, DataType>) {
+    return colonInternal(static_cast<DataType>(start[0]), end[0]);
+  } else if constexpr (std::is_same_v<DataTypeA, DataType> &&
+                       !std::is_same_v<DataTypeO, DataType>) {
+    return colonInternal(start[0], static_cast<DataType>(end[0]));
+  }
+}
+
+template <typename A, typename O>
+  requires IsVec<A> && IsVec<O>
+inline auto colon(A& start, const O& end) {
+  warn(end.size() == 1,
+       "expression has more than one element only the first is used");
+  warn(start.size() == 1,
+       "expression has more than one element only the first is used");
+  using DataTypeA = ExtractDataType<A>::RetType;
+  using DataTypeO = ExtractDataType<O>::RetType;
+  using DataType = std::common_type<DataTypeA, DataTypeO>::type;
+  if constexpr (std::is_same_v<DataTypeA, DataType> &&
+                std::is_same_v<DataTypeO, DataType>) {
+    return colonInternal(start[0], end[0]);
+  } else if constexpr (!std::is_same_v<DataTypeA, DataType> &&
+                       std::is_same_v<DataTypeO, DataType>) {
+    return colonInternal(static_cast<DataType>(start[0]), end[0]);
+  } else if constexpr (std::is_same_v<DataTypeA, DataType> &&
+                       !std::is_same_v<DataTypeO, DataType>) {
+    return colonInternal(start[0], static_cast<DataType>(end[0]));
+  }
+}
+
+template <typename A, typename O>
+  requires IsVec<A> && IsVec<O>
+inline auto colon(const A& start, const O& end) {
+  warn(end.size() == 1,
+       "expression has more than one element only the first is used");
+  warn(start.size() == 1,
+       "expression has more than one element only the first is used");
+  using DataTypeA = ExtractDataType<A>::RetType;
+  using DataTypeO = ExtractDataType<O>::RetType;
+  using DataType = std::common_type<DataTypeA, DataTypeO>::type;
+  if constexpr (std::is_same_v<DataTypeA, DataType> &&
+                std::is_same_v<DataTypeO, DataType>) {
+    return colonInternal(start[0], end[0]);
+  } else if constexpr (!std::is_same_v<DataTypeA, DataType> &&
+                       std::is_same_v<DataTypeO, DataType>) {
+    return colonInternal(static_cast<DataType>(start[0]), end[0]);
+  } else if constexpr (std::is_same_v<DataTypeA, DataType> &&
+                       !std::is_same_v<DataTypeO, DataType>) {
+    return colonInternal(start[0], static_cast<DataType>(end[0]));
+  }
+}
 
 } // namespace etr
 
