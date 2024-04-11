@@ -124,32 +124,6 @@ template <typename TRaw> inline constexpr auto produceVariableType() {
   }
 }
 
-template <typename T, typename Trait> struct ConstantType {
-  using Type = T;
-  using RetType = T;
-  using TypeTrait = Trait;
-
-  template <typename AV> static size_t getSize(AV &av) {
-    using Ty = typename std::remove_reference<Type>::type;
-    return Ty::template getSize<AV>(av);
-  }
-
-  template <typename AV> static auto getVal(AV &av, size_t VecIdx) {
-    using Ty = typename std::remove_reference<Type>::type;
-    if constexpr (IsBinary<Ty>) {
-      return Ty::template getVal<AV>(
-          av, VecIdx); 
-    } else {
-      return Ty::template getVal<AV>(av, VecIdx);
-    }
-  }
-
-  template <typename AV> static auto getDeriv(AV &av, size_t VecIdx) {
-    return 0;
-  }
-};
-
-
 }
 
 #endif

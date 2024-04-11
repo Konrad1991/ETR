@@ -7,93 +7,118 @@
 
 namespace etr {
 
-template <typename T, int Idx, typename Trait>
+template <typename T, int Idx, int TypeIdx, typename Trait>
 struct VarPointer {
   using TypeTrait = Trait;
   using CaseTrait = Trait;
   using Type = T;
   using RetType = T;
   static constexpr int I = Idx;
+  static constexpr int TIdx = TypeIdx;
   
   T &AllVarsRef;
   VarPointer(T &AllVars_) : AllVarsRef(AllVars_) {}
 
-  size_t size() const { return AllVarsRef.size(Idx); }
+  size_t size() const { return AllVarsRef.size(Idx, TypeIdx); }
 
-  bool im() const { return AllVarsRef.im(Idx); }
+  bool im() const { return AllVarsRef.im(Idx, TypeIdx); }
 
-  size_t nr() const { return AllVarsRef.nr(Idx); }
+  size_t nr() const { return AllVarsRef.nr(Idx, TypeIdx); }
 
-  size_t nc() const { return AllVarsRef.nc(Idx); }
+  size_t nc() const { return AllVarsRef.nc(Idx, TypeIdx); }
+
+  void resize(size_t newSize) {
+    AllVarsRef.resize(Idx, TIdx, newSize);
+  }
 
   template <typename AV> static size_t getSize(AV &av) {
-    if constexpr (Idx < av.NBuffer) {
-      return av.varBuffer[Idx]->size();
-    } else if constexpr (Idx >= av.NBuffer && Idx < (av.NBuffer + av.NBorrow)) {
-      return av.varBorrow[Idx - av.NBuffer]->size();
-    } else if constexpr (Idx >= (av.NBuffer + av.NBorrow) &&
-                         Idx < (av.NBuffer + av.NBorrow + av.NBorrowSEXP)) {
-      return av.varBorrowSEXP[Idx - av.NBuffer - av.NBorrowSEXP]->size();
+    if constexpr (TypeIdx == 0) {
+      return av.varBuffer[Idx] -> size();
+    } else if constexpr(TypeIdx == 1) {
+      return av.varBorrow[Idx] -> size();
+    } else if constexpr(TypeIdx == 2) {
+      return av.varBorrowSEXP[Idx] -> size();
     } else {
       ass(false, "Unknown variable index found");
     }
   }
 
   auto get() const {
-    if constexpr (Idx < AllVarsRef.NBuffer) {
+    if constexpr (TypeIdx == 0) {
       return AllVarsRef.varBuffer[Idx];
-    } else if constexpr (Idx >= AllVarsRef.NBuffer &&
-                         Idx < (AllVarsRef.NBuffer + AllVarsRef.NBorrow)) {
-      return AllVarsRef.varBorrow[Idx - AllVarsRef.NBuffer];
-    } else if constexpr (Idx >= (AllVarsRef.NBuffer + AllVarsRef.NBorrow) &&
-                         Idx < (AllVarsRef.NBuffer + AllVarsRef.NBorrow +
-                                AllVarsRef.NBorrowSEXP)) {
-      return AllVarsRef
-          .varBorrowSEXP[Idx - AllVarsRef.NBuffer - AllVarsRef.NBorrowSEXP];
+    } else if constexpr(TypeIdx == 1) {
+      return AllVarsRef.varBorrow[Idx];
+    } else if constexpr(TypeIdx == 2) {
+      return AllVarsRef.varBorrowSEXP[Idx];
     } else {
       ass(false, "Unknown variable index found");
     }
   }
 
   template <typename AV> static auto getVal(AV &av, size_t VecIdx) {
-    if constexpr (Idx < av.NBuffer) {
-      return (av.varBuffer[Idx]->operator[](VecIdx));
-    } else if constexpr (Idx >= av.NBuffer && Idx < (av.NBuffer + av.NBorrow)) {
-      return av.varBorrow[Idx - av.NBuffer]->operator[](VecIdx);
-    } else if constexpr (Idx >= (av.NBuffer + av.NBorrow) &&
-                         Idx < (av.NBuffer + av.NBorrow + av.NBorrowSEXP)) {
-      return av.varBorrowSEXP[Idx - av.NBuffer - av.NBorrowSEXP]->operator[](
-          VecIdx);
+    if constexpr (TypeIdx == 0) {
+      return av.varBuffer[Idx] ->operator[](VecIdx);
+    } else if constexpr(TypeIdx == 1) {
+      return av.varBorrow[Idx] ->operator[](VecIdx);
+    } else if constexpr(TypeIdx == 2) {
+      return av.varBorrowSEXP[Idx] ->operator[](VecIdx);
     } else {
       ass(false, "Unknown variable index found");
     }
   }
 
   template <typename AV> static auto getDeriv(AV &av, size_t VecIdx) {
-    if constexpr (Idx < av.NBuffer) {
-      if (av.varBuffer[Idx]->size() != av.VarSizes[Idx]) {
-        av.Derivs[Idx].resize(av.varBuffer[Idx]->size());
-        if (Idx == av.IndepVarIdx)
-          av.Derivs[Idx].fill(1.0); // issue: correct?
+    if constexpr (TypeIdx == 0) {
+      if (av.varBufferDerivs[Idx].size() != av.varBuffer[Idx] -> size()) {
+        av.varBufferDerivs[Idx].resize(av.varBuffer[Idx]->size());
+        if ( (Idx == av.IndepVarIdx) && !av.DerivInit) {
+          av.varBufferDerivs[Idx].fill(1.0); 
+          av.DerivInit = true;
+        } 
       }
-      return av.Derivs[Idx][VecIdx];
-    } else if constexpr (Idx >= av.NBuffer && Idx < (av.NBuffer + av.NBorrow)) {
-      if (av.varBorrow[Idx - av.NBuffer]->size() != av.VarSizes[Idx]) {
-        av.Derivs[Idx].resize(av.varBorrow[Idx - av.NBuffer]->size());
-        if (Idx == av.IndepVarIdx)
-          av.Derivs[Idx].fill(1.0); // issue: correct?
+      return av.varBufferDerivs[Idx][VecIdx];
+    } else if constexpr(TypeIdx == 1) {
+      if (av.varBorrowDerivs[Idx].size() != av.varBorrow[Idx] -> size()) {
+        av.varBorrowDerivs[Idx].resize(av.varBorrow[Idx]->size());
+        if ( (Idx == av.IndepVarIdx) && !av.DerivInit) {
+          av.varBorrowDerivs[Idx].fill(1.0); 
+          av.DerivInit = true;
+        } 
       }
-      return av.Derivs[Idx][VecIdx];
-    } else if constexpr (Idx >= (av.NBuffer + av.NBorrow) &&
-                         Idx < (av.NBuffer + av.NBorrow + av.NBorrowSEXP)) {
-      if (av.varBorrowSEXP[Idx - av.NBuffer - av.NBorrowSEXP]->size() !=
-          av.VarSizes[Idx]) {
-        av.Derivs[Idx].resize(
-            av.varBorrowSEXP[Idx - av.NBuffer - av.NBorrowSEXP]->size());
-        if (Idx == av.IndepVarIdx)
-          av.Derivs[Idx].fill(1.0); // issue: correct?
+      return av.varBorrowDerivs[Idx][VecIdx];
+    } else if constexpr(TypeIdx == 2) {
+      if (av.varBorrowSEXPDerivs[Idx].size() != av.varBorrowSEXP[Idx] -> size()) {
+        av.varBorrowSEXPDerivs[Idx].resize(av.varBorrowSEXP[Idx]->size());
+        if ( (Idx == av.IndepVarIdx) && !av.DerivInit) {
+          av.varBorrowSEXPDerivs[Idx].fill(1.0); 
+          av.DerivInit = true;
+        } 
       }
-      return av.Derivs[Idx][VecIdx];
+      return av.varBorrowSEXPDerivs[Idx][VecIdx];
+    } else {
+      ass(false, "Unknown variable index found");
+    }
+  }
+
+  template <typename AV, typename Val> static auto setDeriv(AV &av, size_t VecIdx, Val v) {
+    if constexpr (TypeIdx == 0) {
+      av.varBufferDerivs[Idx][VecIdx] = v;
+    } else if constexpr(TypeIdx == 1) {
+      av.varBorrowDerivs[Idx][VecIdx] = v;
+    } else if constexpr(TypeIdx == 2) {
+      av.varBorrowSEXPDerivs[Idx][VecIdx] = v;
+    } else {
+      ass(false, "Unknown variable index found");
+    }
+  }
+
+  template <typename AV, typename Val> static auto setVal(AV &av, size_t VecIdx, Val v) {
+    if constexpr (TypeIdx == 0) {
+      av.varBuffer[Idx] -> operator[](VecIdx) = v;
+    } else if constexpr(TypeIdx == 1) {
+      av.varBorrow[Idx] -> operator[](VecIdx) = v;
+    } else if constexpr(TypeIdx == 2) {
+      av.varBorrowSEXP[Idx] -> operator[](VecIdx) = v;
     } else {
       ass(false, "Unknown variable index found");
     }

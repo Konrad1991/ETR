@@ -205,12 +205,12 @@ template <typename T> struct ExtractTypeTrait {
   using type = std::false_type;
 };
 
-template <typename T, int Idx, typename TypeTrait>
-struct ExtractTypeTrait<VarPointer<T, Idx, TypeTrait>> {
+template <typename T, int Idx, int TypeIdx, typename TypeTrait>
+struct ExtractTypeTrait<VarPointer<T, Idx, TypeIdx, TypeTrait>> {
   using type = TypeTrait;
 };
-template <typename T, int Idx, typename TypeTrait>
-struct ExtractTypeTrait<const VarPointer<T, Idx, TypeTrait> &> {
+template <typename T, int Idx, int TypeIdx, typename TypeTrait>
+struct ExtractTypeTrait<const VarPointer<T, Idx, TypeIdx, TypeTrait> &> {
   using type = TypeTrait;
 };
 template <typename T>

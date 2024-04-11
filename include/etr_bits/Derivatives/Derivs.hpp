@@ -67,14 +67,19 @@ inline constexpr auto walkT() {
   return res;
 }
 
-template <typename T, typename AV>
+template <typename T, typename AV, typename V>
   requires(IsVec<T> && !IsVariable<T>)
-inline void eval(AV &av) {
+inline void assign(AV &av, V& var) {
   using tD = ExtractedTypeD<T>;
   constexpr auto res = walkT<tD>();
+  ass(res.getSize(av) == var.d.getSize(av), "Size of dependent variable does not match size of to be evaluated expression");
   for (size_t i = 0; i < res.getSize(av); i++) {
-    // std::cout << "val = " << res.getVal(av, i) << std::endl; 
-    std::cout << " deriv = " << res.getDeriv(av, i) << std::endl;
+    var.d.setDeriv(av, i, res.getDeriv(av, i));
+  }
+  
+  if(var.d.size() < res.getSize(av)) var.resize(res.getSize(av));
+  for (size_t i = 0; i < res.getSize(av); i++) {
+    var.d.setVal(av, i, res.getVal(av, i));
   }
 }
 
