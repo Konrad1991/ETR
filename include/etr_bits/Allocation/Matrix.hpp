@@ -12,7 +12,7 @@ const Vec
 */
 
 template<typename T>
-  requires std::is_arithmetic_v<L>
+  requires std::is_arithmetic_v<T>
 inline auto matrix(T val) {
   auto vec = createRVec(1);
   vec.d.mp.setMatrix(true, 1, 1); 
@@ -21,7 +21,7 @@ inline auto matrix(T val) {
 }
 
 template<typename T>
-  requires IsVec<L>
+  requires IsVec<T>
 inline auto matrix(T& val) {
   auto vec = createRVec(val.size());
   vec.d.mp.setMatrix(true, val.size(), 1); 
@@ -30,7 +30,7 @@ inline auto matrix(T& val) {
 }
 
 template<typename T>
-  requires IsVec<L>
+  requires IsVec<T>
 inline auto matrix(const T& val) {
   auto vec = createRVec(val.size());
   vec.d.mp.setMatrix(true, val.size(), 1); 
@@ -52,9 +52,9 @@ inline auto matrix(const T& val) {
 const Vec is an Operation
 */
 
-template<typename T, typename R>
+template<typename L, typename R>
   requires std::is_arithmetic_v<L> && std::is_arithmetic_v<R>
-inline auto matrix(T nrows, R ncols) {
+inline auto matrix(L nrows, R ncols) {
   return createRVec(nrows * ncols);
 }
 

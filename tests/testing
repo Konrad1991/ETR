@@ -1,8 +1,0 @@
-#!/bin/bash
-g++-10 --coverage alltests.cpp -std=c++17 
-./a.out
-lcov --directory . --capture --output-file coverage.info
-lcov --remove coverage.info '/usr/*' '/home/konrad/Documents/0Uni/programming/ETR/tests/catch/*' "${HOME}"'/.cache/*' --output-file coverage.info
-lcov --list coverage.info
-lcov --list coverage.info > output.txt
-
