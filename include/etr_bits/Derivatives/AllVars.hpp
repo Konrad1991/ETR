@@ -66,7 +66,10 @@ template <int NBuffer_, int NBorrow_, int NBorrowSEXP_> struct AllVars {
     } else if (TypeIdx == 1) {
       return varBorrow[Idx]->size();
     } else if (TypeIdx == 2) {
-      // return varBorrowSEXP[Idx]->size();
+      #ifdef STANDALONE_ETR
+      #else
+      return varBorrowSEXP[Idx]->size();
+      #endif
     }
   }
 
@@ -76,7 +79,10 @@ template <int NBuffer_, int NBorrow_, int NBorrowSEXP_> struct AllVars {
     } else if (TypeIdx == 1) {
       return varBorrow[Idx]->im();
     } else if (TypeIdx == 2) {
+      #ifdef STANDALONE_ETR
+      #else
       return varBorrowSEXP[Idx]->im();
+      #endif
     }
   }
 
@@ -86,7 +92,10 @@ template <int NBuffer_, int NBorrow_, int NBorrowSEXP_> struct AllVars {
     } else if (TypeIdx == 1) {
       return varBorrow[Idx]->nr();
     } else if (TypeIdx == 2) {
+      #ifdef STANDALONE_ETR
+      #else
       return varBorrowSEXP[Idx]->nr();
+      #endif
     }
   }
 
@@ -96,7 +105,10 @@ template <int NBuffer_, int NBorrow_, int NBorrowSEXP_> struct AllVars {
     } else if (TypeIdx == 1) {
       return varBorrow[Idx]->nc();
     } else if (TypeIdx == 2) {
+      #ifdef STANDALONE_ETR
+      #else
       return varBorrowSEXP[Idx]->nc();
+      #endif
     }
   }
 
@@ -106,8 +118,10 @@ template <int NBuffer_, int NBorrow_, int NBorrowSEXP_> struct AllVars {
     } else if (TypeIdx == 1) {
       return varBorrow[Idx]->resize(newSize);
     } else if (TypeIdx == 2) {
-      // issue: check why it is not working. But varBorrow should not work!
-      // return varBorrowSEXP[Idx]->resize(newSize);
+      #ifdef STANDALONE_ETR
+      #else
+      return varBorrowSEXP[Idx]->resize(newSize);
+      #endif
     }
    } 
 };
