@@ -2,6 +2,8 @@
 #define TYPES_ETR_H
 
 #include "Header.hpp"
+#include "Traits.hpp"
+#include "Utils.hpp"
 
 namespace etr {
 template <typename T, typename BaseTrait = BaseStoreTrait> struct BaseStore;
@@ -74,7 +76,6 @@ template <typename T> constexpr T convert(const T &obj) {
   return obj;
   // return std::forward(obj);
 }
-
 
 template <typename L, typename R, typename LDeriv, typename RDeriv,
           typename Trait, typename OpTrait>
