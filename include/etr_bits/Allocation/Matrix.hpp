@@ -2,6 +2,7 @@
 #define MATRIX_ETR_H
 
 #include "AllocationUtils.hpp"
+#include <cstddef>
 
 namespace etr {
 
@@ -11,33 +12,34 @@ Vec
 const Vec
 */
 
-template<typename T>
+template <typename T>
   requires std::is_arithmetic_v<T>
 inline auto matrix(T val) {
   auto vec = createRVec(1);
-  vec.d.mp.setMatrix(true, 1, 1); 
+  vec.d.mp.setMatrix(true, 1, 1);
   vec[0] = val;
   return vec;
 }
 
-template<typename T>
+template <typename T>
   requires IsVec<T>
-inline auto matrix(T& val) {
+inline auto matrix(T &val) {
   auto vec = createRVec(val.size());
-  vec.d.mp.setMatrix(true, val.size(), 1); 
+  vec.d.mp.setMatrix(true, val.size(), 1);
   vec.fill(val);
   return vec;
 }
 
-template<typename T>
+template <typename T>
   requires IsVec<T>
-inline auto matrix(const T& val) {
+inline auto matrix(const T &val) {
   auto vec = createRVec(val.size());
-  vec.d.mp.setMatrix(true, val.size(), 1); 
+  vec.d.mp.setMatrix(true, val.size(), 1);
   vec.fill(val);
   return vec;
 }
 /*
+TODO: Matrix missing implementation with 2 args
         Var1       Var2
 1 arithmetic arithmetic done
 2        Vec arithmetic
@@ -48,17 +50,76 @@ inline auto matrix(const T& val) {
 7 arithmetic  const Vec
 8        Vec  const Vec
 9  const Vec  const Vec
-
 const Vec is an Operation
 */
 
-template<typename L, typename R>
+// TODO: this changes the behaviour of the matrix function in ast2ast/ETR
+// therefore the documentation has to be updated
+
+// NOTE: the second argument is always handled as constant object. As only the
+// first element is used and the remaining elements are ignored. Therefore, this
+// simplification is added as it is unlikely that large vectors are used as a
+// second argument.
+
+template <typename L, typename R>
+  requires IsVec<L> && std::is_arithmetic_v<R>
+inline auto matrix(const L &inp, R nrows) {
+  using DataType = ExtractDataType<L>::RetType;
+  if (inp.size() == nrows) {
+    size_t size = convertSize(nrows);
+    Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> res(
+        SI{size});
+    for (size_t i = 0; i < res.size(); i++) {
+      res[i] = inp[i];
+    }
+    res.d.mp.setMatrix(true, nrows, 1);
+    return res;
+  } else if (inp.size() < nrows) {
+    ass(nrows > 0, "data is too long");
+    size_t size = convertSize(nrows);
+    Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> res(
+        SI{size});
+    for (size_t i = 0; i < res.size(); i++) {
+      res[i] = inp[i % inp.size()];
+    }
+    res.d.mp.setMatrix(true, nrows, 1);
+    return res;
+  } else {
+    if (inp.size() % nrows == 0) {
+      size_t size = convertSize(inp.size());
+      Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> res(
+          SI{size});
+      for (size_t i = 0; i < res.size(); i++) {
+        res[i] = inp[i];
+      }
+      res.d.mp.setMatrix(true, nrows, static_cast<size_t>(inp.size() / nrows));
+      return res;
+    } else {
+      size_t size = convertSize(inp.size() + (inp.size() % nrows) - 1);
+      Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> res(
+          SI{size});
+      for (size_t i = 0; i < res.size(); i++) {
+        res[i] = inp[i % inp.size()];
+      }
+      res.d.mp.setMatrix(true, nrows, static_cast<size_t>(size / nrows));
+      return res;
+    }
+  }
+}
+
+template <typename L, typename R>
   requires std::is_arithmetic_v<L> && std::is_arithmetic_v<R>
-inline auto matrix(L nrows, R ncols) {
-  return createRVec(nrows * ncols);
+inline auto matrix(L inp, R nrows) {
+  ass(nrows > 0, "data is too long");
+  auto res = createRVec(nrows);
+  res.fill(inp);
+  res.d.mp.setMatrix(true, nrows, 1);
+  return res;
 }
 
 /*
+
+TODO: Matrix missing implementation with 3 args
        Var1     Var2     Var3
 1       vec      vec      vec
 2     arith      vec      vec

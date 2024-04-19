@@ -24,7 +24,7 @@ namespace etr {
 template <typename T> inline size_t convertSize(const T &inp) {
   if constexpr (std::is_same_v<T, size_t>) {
     ass(inp >= 1, "invalid times argument");
-    return std::forward(inp);
+    return inp;
   } else if constexpr (std::is_floating_point_v<T>) {
     warn(isDoubleInt(inp),
          "The provided size is a floating-point number with non-zero decimal "
