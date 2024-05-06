@@ -40,7 +40,7 @@ struct BinaryOperation {
     }
     return false; // issue: correct?
   }
-  size_t nc() const {
+  std::size_t nc() const {
     if constexpr (std::is_arithmetic_v<L>) {
       return r.nc();
     } else if constexpr (std::is_arithmetic_v<R>) {
@@ -61,7 +61,7 @@ struct BinaryOperation {
     ass(false, "Matrix calculation failed!");
     return (0);
   }
-  size_t nr() const {
+  std::size_t nr() const {
     if constexpr (std::is_arithmetic_v<L>) {
       return r.nr();
     } else if constexpr (std::is_arithmetic_v<R>) {
@@ -91,7 +91,7 @@ struct BinaryOperation {
                       &other) // issue: needs move constructor
       : l(other.l), r(other.r) {}
 
-  auto operator[](size_t i) const {
+  auto operator[](std::size_t i) const {
     constexpr bool isDoubleL = std::is_arithmetic_v<L>;
     constexpr bool isDoubleR = std::is_arithmetic_v<R>;
     if constexpr (!isDoubleL && isDoubleR) {
@@ -102,7 +102,7 @@ struct BinaryOperation {
       return Trait::f(l[i % l.size()], r[i % r.size()]);
     }
   }
-  size_t size() const {
+  std::size_t size() const {
     constexpr bool isDoubleL = std::is_arithmetic_v<L>;
     constexpr bool isDoubleR = std::is_arithmetic_v<R>;
     if constexpr (isDoubleL && isDoubleR) {
@@ -116,7 +116,7 @@ struct BinaryOperation {
     }
   }
 
-  void setMatrix(bool i, size_t nrow, size_t ncol) {
+  void setMatrix(bool i, std::size_t nrow, std::size_t ncol) {
     mp.setMatrix(i, nrow, ncol);
   }
   void setMatrix(MatrixParameter &mp_) {
@@ -126,7 +126,7 @@ struct BinaryOperation {
     mp.setMatrix(mp_.ismatrix, mp_.rows, mp_.cols);
   }
 
-  template <typename AV> static size_t getSize(AV &av) {
+  template <typename AV> static std::size_t getSize(AV &av) {
     using TyL = typename std::remove_reference<typeTraitL>::type;
     using TyR = typename std::remove_reference<typeTraitR>::type;
     return TyL::getSize(av) > TyR::getSize(av) ? TyL::getSize(av)
@@ -135,7 +135,7 @@ struct BinaryOperation {
   template <typename AV>
   static RetType getVal(
       AV &av,
-      size_t VecIdx) { // issue: how to handle scalar types? Or temporary types?
+      std::size_t VecIdx) { // issue: how to handle scalar types? Or temporary types?
     using TyL = typename std::remove_reference<typeTraitL>::type;
     using TyR = typename std::remove_reference<typeTraitR>::type;
     return f(TyL::template getVal<AV>(av, VecIdx % TyL::getSize(av)),

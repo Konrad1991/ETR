@@ -7,16 +7,16 @@ template <typename T, typename BaseTrait> struct BaseStore {
   using Type = T;
   using TypeTrait = BaseTrait;
   T *p = nullptr;
-  size_t sz = 1;
-  size_t capacity = 1;
+  std::size_t sz = 1;
+  std::size_t capacity = 1;
   bool allocated = false;
   MatrixParameter mp;
 
-  size_t size() const { return sz; }
+  std::size_t size() const { return sz; }
   bool im() const { return mp.im(); }
-  size_t nc() const { return mp.nc(); }
-  size_t nr() const { return mp.nr(); }
-  void setMatrix(bool i, size_t nrow, size_t ncol) {
+  std::size_t nc() const { return mp.nc(); }
+  std::size_t nr() const { return mp.nr(); }
+  void setMatrix(bool i, std::size_t nrow, std::size_t ncol) {
     mp.setMatrix(i, nrow, ncol);
   }
   void setMatrix(MatrixParameter &mp_) {
@@ -53,8 +53,8 @@ template <typename T, typename BaseTrait> struct BaseStore {
       this->p = nullptr;
     }
     p = REAL(s);
-    sz = static_cast<size_t>(Rf_length(s));
-    capacity = static_cast<size_t>(sz * 1.15);
+    sz = static_cast<std::size_t>(Rf_length(s));
+    capacity = static_cast<std::size_t>(sz * 1.15);
     if (Rf_isMatrix(s) == true) {
       mp.setMatrix(true, Rf_nrows(s), Rf_ncols(s));
     }
@@ -64,19 +64,19 @@ template <typename T, typename BaseTrait> struct BaseStore {
     allocated = true;
   };
 #endif
-  BaseStore(size_t sz_) : sz(sz_), capacity(static_cast<size_t>(sz_ * 1.15)) {
+  BaseStore(std::size_t sz_) : sz(sz_), capacity(static_cast<std::size_t>(sz_ * 1.15)) {
     ass(sz_ > 0, "Size has to be larger than 0");
     p = new T[capacity];
-    for (size_t i = 0; i < capacity; i++)
+    for (std::size_t i = 0; i < capacity; i++)
       p[i] = 0.0;
     allocated = true;
   }
   BaseStore(int sz_)
-      : sz(static_cast<size_t>(sz_)),
-        capacity(static_cast<size_t>(sz_ * 1.15)) {
+      : sz(static_cast<std::size_t>(sz_)),
+        capacity(static_cast<std::size_t>(sz_ * 1.15)) {
     ass(sz_ > 0, "Size has to be larger than 0");
     p = new T[capacity];
-    for (size_t i = 0; i < sz; i++)
+    for (std::size_t i = 0; i < sz; i++)
       p[i] = 0.0;
     allocated = true;
   }
@@ -92,28 +92,28 @@ template <typename T, typename BaseTrait> struct BaseStore {
     allocated = true;
     mp.setMatrix(false, 0, 0);
   }
-  BaseStore(size_t r, size_t c) = delete;
-  BaseStore(size_t r, size_t c, const double value) = delete;
+  BaseStore(std::size_t r, std::size_t c) = delete;
+  BaseStore(std::size_t r, std::size_t c, const double value) = delete;
 
   BaseStore &operator=(const BaseStore<T> &other) { // deep copy
     if (this == &other)
       return *this;
     if (other.size() > this->sz) {
       if (allocated) {
-        size_t diff = other.size() - this->sz;
+        std::size_t diff = other.size() - this->sz;
         this->realloc(this->sz + diff);
       } else {
         resize(other.size());
       }
     }
-    for (size_t i = 0; i < this->sz; i++) {
+    for (std::size_t i = 0; i < this->sz; i++) {
       p[i] = other[i];
     }
     return *this;
   }
 
   void fill(T val) {
-    for (size_t i = 0; i < sz; i++) {
+    for (std::size_t i = 0; i < sz; i++) {
       p[i] = val;
     }
   }
@@ -126,8 +126,8 @@ template <typename T, typename BaseTrait> struct BaseStore {
       delete[] p;
       this->p = nullptr;
     }
-    sz = static_cast<size_t>(Rf_length(s));
-    capacity = static_cast<size_t>(sz * 1.15);
+    sz = static_cast<std::size_t>(Rf_length(s));
+    capacity = static_cast<std::size_t>(sz * 1.15);
     p = new T[capacity];
     if (Rf_isMatrix(s) == true) {
       mp.setMatrix(true, Rf_nrows(s), Rf_ncols(s));
@@ -151,18 +151,18 @@ template <typename T, typename BaseTrait> struct BaseStore {
     }
   }
 
-  void init(size_t size) {
+  void init(std::size_t size) {
     if (allocated) {
       ass(p != nullptr, "try to delete nullptr");
       delete[] p;
       p = nullptr;
     }
     sz = size;
-    capacity = static_cast<size_t>(1.15 * sz);
+    capacity = static_cast<std::size_t>(1.15 * sz);
     p = new T[capacity];
     allocated = true;
   }
-  void resize(size_t newSize) {
+  void resize(std::size_t newSize) {
     ass(newSize >= 1, "Size has to be larger than 0");
     if (!allocated) {
       init(newSize);
@@ -176,7 +176,7 @@ template <typename T, typename BaseTrait> struct BaseStore {
       if (newSize > capacity) {
         ass(p != nullptr, "try to delete nullptr");
         delete[] p;
-        capacity = static_cast<size_t>(newSize * 1.15);
+        capacity = static_cast<std::size_t>(newSize * 1.15);
         p = new T[capacity];
         sz = newSize;
         allocated = true;
@@ -192,14 +192,14 @@ template <typename T, typename BaseTrait> struct BaseStore {
     }
   }
 
-  RetType operator[](size_t idx) const {
+  RetType operator[](std::size_t idx) const {
     ass(allocated, "No memory was allocated");
     ass(idx >= 0, "Error: out of boundaries --> value below 1");
     ass(idx < sz, "Error: out of boundaries --> value beyond size of vector");
     return p[idx];
   }
 
-  RetType &operator[](size_t idx) {
+  RetType &operator[](std::size_t idx) {
     ass(allocated, "No memory was allocated");
     ass(idx >= 0, "Error: out of boundaries --> value below 1");
     ass(idx < sz, "Error: out of boundaries --> value beyond size of vector");
@@ -224,19 +224,19 @@ template <typename T, typename BaseTrait> struct BaseStore {
   T &back() { return p[sz]; }
   T *data() const { return p; }
 
-  void realloc(size_t new_size) {
+  void realloc(std::size_t new_size) {
     T *temp;
     temp = new T[sz];
-    for (size_t i = 0; i < sz; i++)
+    for (std::size_t i = 0; i < sz; i++)
       temp[i] = p[i];
     if (p != nullptr && allocated)
       delete[] p;
     p = new T[new_size];
-    for (size_t i = 0; i < sz; i++)
+    for (std::size_t i = 0; i < sz; i++)
       p[i] = temp[i];
     ass(temp != nullptr, "try to delete nullptr");
     delete[] temp;
-    for (size_t i = sz; i < new_size; i++)
+    for (std::size_t i = sz; i < new_size; i++)
       p[i] = 0.0;
     sz = new_size;
     capacity = sz;
@@ -254,7 +254,7 @@ template <typename T, typename BaseTrait> struct BaseStore {
   }
   friend std::ostream &operator<<(std::ostream &os, const BaseStore &b) {
     os << "Vec [ ";
-    for (size_t i = 0; i < b.size(); i++) {
+    for (std::size_t i = 0; i < b.size(); i++) {
       os << b.p[i] << " ";
     }
     os << "]";
@@ -262,8 +262,8 @@ template <typename T, typename BaseTrait> struct BaseStore {
   }
 };
 
-struct Indices : public BaseStore<size_t> {
-  using RetType = size_t;
+struct Indices : public BaseStore<std::size_t> {
+  using RetType = std::size_t;
 };
 } // namespace etr
 

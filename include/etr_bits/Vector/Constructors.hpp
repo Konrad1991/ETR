@@ -62,7 +62,7 @@ explicit Vec(const Borrow<T2> &borrowed) : d(borrowed) {
 }
 template <typename U = R>
   requires std::is_same_v<U, Borrow<T>>
-explicit Vec(T *ptr, size_t s) : d(ptr, s) {}
+explicit Vec(T *ptr, std::size_t s) : d(ptr, s) {}
 template <typename L2, typename R2, typename OperationTrait>
 explicit Vec(BinaryOperation<L2, R2, OperationTrait> &inp) : d(inp) {
   using TypeTrait = OperationTrait;
@@ -97,7 +97,7 @@ explicit Vec(SEXP inp) : d(inp) {}
 explicit Vec(int sz) : d(1) {
   d[0] = static_cast<T>(sz);
 }
-explicit Vec(size_t sz) : d(1) { d[0] = sz; }
+explicit Vec(std::size_t sz) : d(1) { d[0] = sz; }
 Vec(double sz) : d(1) { d[0] = sz; }
 
 #ifdef STANDALONE_ETR
@@ -107,10 +107,10 @@ Vec(Rboolean b) : d(1) { d[0] = static_cast<T>(b); }
 #endif
 
 explicit Vec() : d() {}
-explicit Vec(size_t rows, size_t cols) : d(rows * cols) {
+explicit Vec(std::size_t rows, std::size_t cols) : d(rows * cols) {
   d.setMatrix(true, rows, cols);
 }
-explicit Vec(size_t rows, size_t cols, const double value) : d(rows * cols) {
+explicit Vec(std::size_t rows, std::size_t cols, const double value) : d(rows * cols) {
   d.setMatrix(true, rows, cols);
   d.fill(value);
 }
@@ -121,7 +121,7 @@ Vec(const Vec<T2, R2, Trait2> &other_vec) { // : d()
   using CaseTrait = Trait2;
   if constexpr (isBorrow::value) { // issue: is this safe???
     d.sz = other_vec.size();
-    for (size_t i = 0; i < d.size(); i++) {
+    for (std::size_t i = 0; i < d.size(); i++) {
       d[i] = other_vec[i];
     }
     if (other_vec.d.im()) {
@@ -129,7 +129,7 @@ Vec(const Vec<T2, R2, Trait2> &other_vec) { // : d()
     }
   } else {
     this->d.resize(other_vec.size());
-    for (size_t i = 0; i < d.size(); i++) {
+    for (std::size_t i = 0; i < d.size(); i++) {
       d[i] = other_vec[i];
     }
     if (other_vec.d.im()) {
@@ -147,7 +147,7 @@ Vec(const Vec<T2, R2, Trait2>
   if constexpr (isBorrow::value) { // issue: is this safe???
     ass(d.sz <= other_vec.size(), "Sizes do not match");
     d.sz = other_vec.size();
-    for (size_t i = 0; i < d.size(); i++) {
+    for (std::size_t i = 0; i < d.size(); i++) {
       d[i] = other_vec[i];
     }
     if (other_vec.d.im()) {
@@ -159,7 +159,7 @@ Vec(const Vec<T2, R2, Trait2>
     } else {
       d.sz = other_vec.size();
     }
-    for (size_t i = 0; i < d.size(); i++) {
+    for (std::size_t i = 0; i < d.size(); i++) {
       d[i] = other_vec[i];
     }
     if (other_vec.d.im()) {
@@ -176,7 +176,7 @@ Vec(const Vec<T2, R2, Trait2> &&other_vec) {
   if constexpr (isBorrow::value) {
     ass(d.sz <= other_vec.size(), "Sizes do not match");
     d.sz = other_vec.size();
-    for (size_t i = 0; i < d.size(); i++) {
+    for (std::size_t i = 0; i < d.size(); i++) {
       d[i] = other_vec[i];
     }
     if (other_vec.d.im()) {
@@ -188,7 +188,7 @@ Vec(const Vec<T2, R2, Trait2> &&other_vec) {
     } else {
       d.sz = other_vec.size();
     }
-    for (size_t i = 0; i < d.size(); i++) {
+    for (std::size_t i = 0; i < d.size(); i++) {
       d[i] = other_vec[i];
     }
     if (other_vec.d.im()) {
@@ -205,14 +205,14 @@ Vec(Vec<T2, R2, Trait2> &&other_vec) {
   if constexpr (isBorrow::value) {
     ass(d.sz <= other_vec.size(), "Sizes do not match");
     d.sz = other_vec.size();
-    for (size_t i = 0; i < d.size(); i++) {
+    for (std::size_t i = 0; i < d.size(); i++) {
       d[i] = other_vec[i];
     }
     if (other_vec.d.im()) {
       d.setMatrix(true, other_vec.nr(), other_vec.nc());
     }
   } else {
-    size_t temp = other_vec.size();
+    std::size_t temp = other_vec.size();
     other_vec.d.sz = this->size();
     d.sz = temp;
     T *tempP = other_vec.d.p;
@@ -225,18 +225,18 @@ Vec(Vec<T2, R2, Trait2> &&other_vec) {
 }
 
 // pointer constructor
-Vec(BaseType *ptr, size_t size) : d(size) {
+Vec(BaseType *ptr, std::size_t size) : d(size) {
   if constexpr (isBorrow::value) {
     d.init(ptr, size);
   } else if constexpr (isBuffer::value) {
-    for (size_t i = 0; i < size; i++)
+    for (std::size_t i = 0; i < size; i++)
       d[i] = ptr[i];
     d.setMatrix(false, 0, 0);
   }
 }
 
-Vec(BaseType *ptr, size_t rows, size_t cols) : d(rows * cols) {
-  for (size_t i = 0; i < d.size(); i++)
+Vec(BaseType *ptr, std::size_t rows, std::size_t cols) : d(rows * cols) {
+  for (std::size_t i = 0; i < d.size(); i++)
     d[i] = ptr[i];
   d.setMatrix(true, rows, cols);
 }
@@ -245,7 +245,7 @@ template <typename T2>
   requires std::is_same_v<T2, bool>
 explicit Vec(const Vec<T2> &other_vec) : d() {
   d.resize(other_vec.size());
-  for (size_t i = 0; i < d.size(); i++)
+  for (std::size_t i = 0; i < d.size(); i++)
     d[i] = other_vec[i];
   if (other_vec.d.im()) {
     d.setMatrix(true, other_vec.nr(), other_vec.nc());

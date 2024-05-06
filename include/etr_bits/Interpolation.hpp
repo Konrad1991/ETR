@@ -30,7 +30,7 @@ inline double li(const A &t_, const B &timeVec, const C &parVec) {
       return ret;
     }
     // in boundaries
-    for (size_t i = 0; i < timeVec.size(); i++) {
+    for (std::size_t i = 0; i < timeVec.size(); i++) {
       if (t >= timeVec[i] && t < timeVec[i + 1]) {
         t0 = timeVec[i];
         t1 = timeVec[i + 1];
@@ -57,7 +57,7 @@ inline double li(const A &t_, const B &timeVec, const C &parVec) {
       return ret;
     }
     // in boundaries
-    for (size_t i = 0; i < timeVec.size(); i++) {
+    for (std::size_t i = 0; i < timeVec.size(); i++) {
       if (t >= timeVec[i] && t < timeVec[i + 1]) {
         t0 = timeVec[i];
         t1 = timeVec[i + 1];
@@ -107,7 +107,7 @@ inline double cmrInternal(const A &tInp, const B &timeVec, const C &parVec) {
   } else if (t > timeVec[timeVec.size() - 1]) {
     return parVec[parVec.size() - 1];
   }
-  for (size_t i = 0; i <= timeVec.size(); i++) {
+  for (std::size_t i = 0; i <= timeVec.size(); i++) {
     if (i == (timeVec.size() - 1)) {
       idx0 = timeVec.size() - 2;
       t0 = timeVec[idx0];

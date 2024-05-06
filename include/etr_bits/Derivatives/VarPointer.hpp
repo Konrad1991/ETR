@@ -19,19 +19,19 @@ struct VarPointer {
   T &AllVarsRef;
   VarPointer(T &AllVars_) : AllVarsRef(AllVars_) {}
 
-  size_t size() const { return AllVarsRef.size(Idx, TypeIdx); }
+  std::size_t size() const { return AllVarsRef.size(Idx, TypeIdx); }
 
   bool im() const { return AllVarsRef.im(Idx, TypeIdx); }
 
-  size_t nr() const { return AllVarsRef.nr(Idx, TypeIdx); }
+  std::size_t nr() const { return AllVarsRef.nr(Idx, TypeIdx); }
 
-  size_t nc() const { return AllVarsRef.nc(Idx, TypeIdx); }
+  std::size_t nc() const { return AllVarsRef.nc(Idx, TypeIdx); }
 
-  void resize(size_t newSize) {
+  void resize(std::size_t newSize) {
     AllVarsRef.resize(Idx, TIdx, newSize);
   }
 
-  template <typename AV> static size_t getSize(AV &av) {
+  template <typename AV> static std::size_t getSize(AV &av) {
     if constexpr (TypeIdx == 0) {
       return av.varBuffer[Idx] -> size();
     } else if constexpr(TypeIdx == 1) {
@@ -55,7 +55,7 @@ struct VarPointer {
     }
   }
 
-  template <typename AV> static auto getVal(AV &av, size_t VecIdx) {
+  template <typename AV> static auto getVal(AV &av, std::size_t VecIdx) {
     if constexpr (TypeIdx == 0) {
       return av.varBuffer[Idx] ->operator[](VecIdx);
     } else if constexpr(TypeIdx == 1) {
@@ -67,7 +67,7 @@ struct VarPointer {
     }
   }
 
-  template <typename AV> static auto getDeriv(AV &av, size_t VecIdx) {
+  template <typename AV> static auto getDeriv(AV &av, std::size_t VecIdx) {
     if constexpr (TypeIdx == 0) {
       if (av.varBufferDerivs[Idx].size() != av.varBuffer[Idx] -> size()) {
         av.varBufferDerivs[Idx].resize(av.varBuffer[Idx]->size());
@@ -100,7 +100,7 @@ struct VarPointer {
     }
   }
 
-  template <typename AV, typename Val> static auto setDeriv(AV &av, size_t VecIdx, Val v) {
+  template <typename AV, typename Val> static auto setDeriv(AV &av, std::size_t VecIdx, Val v) {
     if constexpr (TypeIdx == 0) {
       av.varBufferDerivs[Idx][VecIdx] = v;
     } else if constexpr(TypeIdx == 1) {
@@ -112,7 +112,7 @@ struct VarPointer {
     }
   }
 
-  template <typename AV, typename Val> static auto setVal(AV &av, size_t VecIdx, Val v) {
+  template <typename AV, typename Val> static auto setVal(AV &av, std::size_t VecIdx, Val v) {
     if constexpr (TypeIdx == 0) {
       av.varBuffer[Idx] -> operator[](VecIdx) = v;
     } else if constexpr(TypeIdx == 1) {

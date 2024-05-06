@@ -71,7 +71,7 @@ template <typename... Args> inline auto coca(Args &&...args) {
       args...);
 
   Vec<cType, Buffer<cType, BufferTrait, RBufTrait>, RVecTrait> ret(SI{size});
-  size_t index = 0;
+  std::size_t index = 0;
 
   forEachArg(
       [&](auto arg) {

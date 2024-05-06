@@ -35,7 +35,7 @@ inline void calcInd(T &vec, Indices &ind, const I &idx) {
   if constexpr (std::is_same_v<I, bool>) {
     if (idx) {
       ind.resize(vec.size());
-      for (size_t i = 0; i < vec.size(); i++)
+      for (std::size_t i = 0; i < vec.size(); i++)
         ind[i] = i;
       return;
     } else {
@@ -57,13 +57,13 @@ inline void calcInd(T &vec, Indices &ind, const I &idx) {
       using whichType = std::remove_reference<decltype(idx)>::type::Type;
       using isBool = std::is_same<whichType, bool>;
       if constexpr (isBool::value) {
-        size_t sizeTrue = 0;
-        for (size_t i = 0; i < vec.size(); i++)
+        std::size_t sizeTrue = 0;
+        for (std::size_t i = 0; i < vec.size(); i++)
           if (idx[i % idx.size()])
             sizeTrue++;
         ind.resize(sizeTrue);
-        size_t counter = 0;
-        for (size_t i = 0; i < vec.size(); i++) {
+        std::size_t counter = 0;
+        for (std::size_t i = 0; i < vec.size(); i++) {
           if (idx[i % idx.size()]) {
             ind[counter] = i;
             counter++;
@@ -71,8 +71,8 @@ inline void calcInd(T &vec, Indices &ind, const I &idx) {
         }
       } else if constexpr (std::is_same_v<whichType, BaseType>) {
         ind.resize(idx.size());
-        for (size_t i = 0; i < idx.size(); i++) {
-          size_t sizeTIdx = static_cast<size_t>(idx[i]) - 1;
+        for (std::size_t i = 0; i < idx.size(); i++) {
+          std::size_t sizeTIdx = static_cast<std::size_t>(idx[i]) - 1;
           ind[i] = sizeTIdx;
         }
       } else {
@@ -100,7 +100,7 @@ inline auto subset(Vec<L, R> &vec, const I &idx) { // can this even happen?
   Indices ind;
   calcInd(vec, ind, idx);
   Vec<BaseType> ret(ind.size());
-  for (size_t i = 0; i < ret.size(); i++)
+  for (std::size_t i = 0; i < ret.size(); i++)
     ret[i] = vec[ind[i]];
   return ret;
 }
@@ -111,7 +111,7 @@ inline auto subset(const Vec<L, R> &vec, const I &idx) {
   Indices ind;
   calcInd(vec, ind, idx);
   Vec<BaseType> ret(ind.size());
-  for (size_t i = 0; i < ret.size(); i++)
+  for (std::size_t i = 0; i < ret.size(); i++)
     ret[i] = vec[ind[i]];
   return ret;
 }
@@ -131,7 +131,7 @@ inline auto subset(const Vec<L, R, Trait> &vec, const I &idx) {
   Indices ind;
   calcInd(vec, ind, idx);
   Vec<BaseType> ret(ind.size());
-  for (size_t i = 0; i < ret.size(); i++)
+  for (std::size_t i = 0; i < ret.size(); i++)
     ret[i] = vec[ind[i]];
   return ret;
 }
@@ -142,7 +142,7 @@ inline auto subset(const Vec<L, R, Trait> &vec, const I &idx) {
   Indices ind;
   calcInd(vec, ind, idx);
   Vec<BaseType> ret(ind.size());
-  for (size_t i = 0; i < ret.size(); i++)
+  for (std::size_t i = 0; i < ret.size(); i++)
     ret[i] = vec[ind[i]];
   return ret;
 }
@@ -183,7 +183,7 @@ inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
   if constexpr (std::is_same_v<R, bool>) {
     if (idxL && idxR) {
       ind.resize(vec.size());
-      for (size_t i = 0; i < vec.size(); i++)
+      for (std::size_t i = 0; i < vec.size(); i++)
         ind[i] = i;
       mp.setMatrix(vec.d.mp);
       return;
@@ -194,7 +194,7 @@ inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
     if (!idxL)
       return;
     ind.resize(vec.nr());
-    for (size_t j = 0; j < vec.nr(); j++) {
+    for (std::size_t j = 0; j < vec.nr(); j++) {
       ind[j] = (idxR - 1) * vec.nr() + j;
     }
     mp.setMatrix(false, 0, 0);
@@ -203,8 +203,8 @@ inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
     if (!idxL)
       return;
     ind.resize(vec.nr());
-    size_t col = static_cast<size_t>(idxR);
-    for (size_t j = 0; j < vec.nr(); j++) {
+    std::size_t col = static_cast<std::size_t>(idxR);
+    for (std::size_t j = 0; j < vec.nr(); j++) {
       ind[j] = (col - 1) * vec.nr() + j;
     }
     mp.setMatrix(false, 0, 0);
@@ -221,18 +221,18 @@ inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
         /*
         if(idxR.size() < vec.size()) {
             Vec<bool, Buffer<bool, ComparisonTrait, ComparisonTrait>,
-        VectorTrait> temp(vec.size()); for(size_t i = 0; i < vec.size(); i++) {
+        VectorTrait> temp(vec.size()); for(std::size_t i = 0; i < vec.size(); i++) {
               temp[i] = idxR[i % idxR.size()];
             }
-            size_t counter = 0;
-            for (size_t i = 0; i < temp.size(); i++) {
+            std::size_t counter = 0;
+            for (std::size_t i = 0; i < temp.size(); i++) {
                 if (temp[i]) counter++;
             }
             ass(counter > 0, "subset has to have at least one element");
-            BaseStore<size_t> positions(counter);
+            BaseStore<std::size_t> positions(counter);
             counter = 0;
-            size_t counter2 = 0;
-            for (size_t i = 0; i < temp.size(); i++) {
+            std::size_t counter2 = 0;
+            for (std::size_t i = 0; i < temp.size(); i++) {
               if (((i % vec.nc()) == 0) && i != 0) counter2++;
               if (temp[i]) {
                 positions[counter] = i - counter2 * vec.nc();
@@ -241,8 +241,8 @@ inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
             }
             ind.resize(vec.nr() * positions.size());
             counter = 0;
-            for (size_t j = 0; j < positions.size(); j++) {
-              for (size_t i = 0; i < vec.nr(); i++) {
+            for (std::size_t j = 0; j < positions.size(); j++) {
+              for (std::size_t i = 0; i < vec.nr(); i++) {
                 ind[counter] = (positions[j]) * vec.nr() + i;
                 counter++;
               }
@@ -251,16 +251,16 @@ inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
           return;
         }
         */
-        size_t counter = 0;
-        for (size_t i = 0; i < idxR.size(); i++) {
+        std::size_t counter = 0;
+        for (std::size_t i = 0; i < idxR.size(); i++) {
           if (idxR[i])
             counter++;
         }
         ass(counter > 0, "subset has to have at least one element");
-        BaseStore<size_t> positions(counter);
+        BaseStore<std::size_t> positions(counter);
         counter = 0;
-        size_t counter2 = 0;
-        for (size_t i = 0; i < idxR.size(); i++) {
+        std::size_t counter2 = 0;
+        for (std::size_t i = 0; i < idxR.size(); i++) {
           if (((i % vec.nc()) == 0) && i != 0)
             counter2++;
           if (idxR[i]) {
@@ -270,8 +270,8 @@ inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
         }
         ind.resize(vec.nr() * positions.size());
         counter = 0;
-        for (size_t j = 0; j < positions.size(); j++) {
-          for (size_t i = 0; i < vec.nr(); i++) {
+        for (std::size_t j = 0; j < positions.size(); j++) {
+          for (std::size_t i = 0; i < vec.nr(); i++) {
             ind[counter] = (positions[j]) * vec.nr() + i;
             counter++;
           }
@@ -280,10 +280,10 @@ inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
       } else if constexpr (std::is_same_v<whichType, BaseType>) {
         if (!idxL)
           return;
-        size_t counter = 0;
+        std::size_t counter = 0;
         ind.resize(vec.nr() * idxR.size());
-        for (size_t j = 0; j < idxR.size(); j++) {
-          for (size_t i = 0; i < vec.nr(); i++) {
+        for (std::size_t j = 0; j < idxR.size(); j++) {
+          for (std::size_t i = 0; i < vec.nr(); i++) {
             ind[counter] = (d2i(idxR[j]) - 1) * vec.nr() + i;
             counter++;
           }
@@ -302,16 +302,16 @@ inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
 template <typename L, typename R>
   requires(std::is_same_v<L, int> ||
            std::is_same_v<L, double>) // issue: replace all BaseStore<subset>
-                                      // with BaseStore<size_t>
+                                      // with BaseStore<std::size_t>
 inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
                     const L &idxL, const R &idxR) {
   ass(vec.im(), "incorrect number of dimensions");
-  int indexRow = static_cast<size_t>(idxL);
+  int indexRow = static_cast<std::size_t>(idxL);
   if constexpr (std::is_same_v<R, bool>) {
     if (!idxR)
       return;
     ind.resize(vec.nc());
-    for (size_t j = 0; j < vec.nc(); j++)
+    for (std::size_t j = 0; j < vec.nc(); j++)
       ind[j] = j * vec.nr() + (indexRow - 1);
     mp.setMatrix(false, 0, 0);
     return;
@@ -323,7 +323,7 @@ inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
   } else if constexpr (std::is_same_v<R, double>) {
     indexRow--;
     ind.resize(1);
-    ind[0] = (static_cast<size_t>(idxR) - 1) * vec.nr() + indexRow;
+    ind[0] = (static_cast<std::size_t>(idxR) - 1) * vec.nr() + indexRow;
     return;
   } else {
     using vecTrait = std::remove_reference<decltype(idxR)>::type::TypeTrait;
@@ -332,17 +332,17 @@ inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
       using whichType = std::remove_reference<decltype(idxR)>::type::Type;
       using isBool = std::is_same<whichType, bool>;
       if constexpr (isBool::value) {
-        size_t counter = 0;
+        std::size_t counter = 0;
         ass(idxR.size() <= vec.nc(),
             "Error in matrix: logical subscript too long");
-        for (size_t i = 0; i < vec.nc(); i++) {
+        for (std::size_t i = 0; i < vec.nc(); i++) {
           if (idxR[i % idxR.size()])
             counter++;
         }
         BaseStore<int> positions(counter);
         counter = 0;
-        size_t counter2 = 0;
-        for (size_t i = 0; i < vec.nc(); i++) {
+        std::size_t counter2 = 0;
+        for (std::size_t i = 0; i < vec.nc(); i++) {
           if (((i % vec.nc()) == 0) && i != 0)
             counter2++;
           if (idxR[i % idxR.size()]) {
@@ -352,14 +352,14 @@ inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
         }
         ind.resize(positions.size());
         indexRow--;
-        for (size_t j = 0; j < positions.size(); j++) {
+        for (std::size_t j = 0; j < positions.size(); j++) {
           ind[j] = (d2i(positions[j])) * vec.nr() + indexRow;
         }
         mp.setMatrix(false, 0, 0);
       } else if constexpr (std::is_same_v<whichType, BaseType>) {
         ind.resize(idxR.size());
         indexRow--;
-        for (size_t j = 0; j < idxR.size(); j++)
+        for (std::size_t j = 0; j < idxR.size(); j++)
           ind[j] = (d2i(idxR[j]) - 1) * vec.nr() + indexRow;
         mp.setMatrix(false, 0, 0);
       } else {
@@ -381,9 +381,9 @@ inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
     if (!idxR)
       return;
     ind.resize(idxL.size() * vec.nc());
-    size_t counter = 0;
-    for (size_t i = 0; i < vec.nc(); i++) {
-      for (size_t j = 0; j < idxL.size(); j++) {
+    std::size_t counter = 0;
+    for (std::size_t i = 0; i < vec.nc(); i++) {
+      for (std::size_t j = 0; j < idxL.size(); j++) {
         ind[counter] = i * vec.nr() + (d2i(idxL[j]) - 1);
         counter++;
       }
@@ -408,14 +408,14 @@ inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
       using whichType = std::remove_reference<decltype(idxR)>::type::Type;
       using isBool = std::is_same<whichType, bool>;
       if constexpr (isBool::value) {
-        size_t counter = 0;
-        for (size_t i = 0; i < idxR.size(); i++)
+        std::size_t counter = 0;
+        for (std::size_t i = 0; i < idxR.size(); i++)
           if (idxR[i])
             counter++;
         BaseStore<int> positions(counter);
         counter = 0;
-        size_t counter2 = 0;
-        for (size_t i = 0; i < idxR.size(); i++) {
+        std::size_t counter2 = 0;
+        for (std::size_t i = 0; i < idxR.size(); i++) {
           if (((i % vec.nc()) == 0) && i != 0) {
             counter2++;
           }
@@ -426,8 +426,8 @@ inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
         }
         ind.resize(idxL.size() * positions.size());
         counter = 0;
-        for (size_t j = 0; j < positions.size(); j++) {
-          for (size_t i = 0; i < idxL.size(); i++) {
+        for (std::size_t j = 0; j < positions.size(); j++) {
+          for (std::size_t i = 0; i < idxL.size(); i++) {
             ind[counter] = (positions[j]) * vec.nr() + d2i(idxL[i]) - 1;
             counter++;
           }
@@ -436,9 +436,9 @@ inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
         return;
       } else if constexpr (std::is_same_v<whichType, BaseType>) {
         ind.resize(idxL.size() * idxR.size());
-        size_t counter = 0;
-        for (size_t i = 0; i < idxR.size(); i++) {
-          for (size_t j = 0; j < idxL.size(); j++) {
+        std::size_t counter = 0;
+        for (std::size_t i = 0; i < idxR.size(); i++) {
+          for (std::size_t j = 0; j < idxL.size(); j++) {
             ind[counter] = (d2i(idxR[i]) - 1) * vec.nr() + (d2i(idxL[j]) - 1);
             counter++;
           }
@@ -463,15 +463,15 @@ inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
   if constexpr (std::is_same_v<R, bool>) {
     if (!idxR)
       return;
-    size_t counter = 0;
-    for (size_t i = 0; i < idxL.size(); i++) {
+    std::size_t counter = 0;
+    for (std::size_t i = 0; i < idxL.size(); i++) {
       if (idxL[i])
         counter++;
     }
-    BaseStore<size_t> positions(counter);
+    BaseStore<std::size_t> positions(counter);
     counter = 0;
-    size_t counter2 = 0;
-    for (size_t i = 0; i < idxL.size(); i++) {
+    std::size_t counter2 = 0;
+    for (std::size_t i = 0; i < idxL.size(); i++) {
       if (((i % vec.nr()) == 0) && i != 0)
         counter2++;
       if (idxL[i]) {
@@ -482,15 +482,15 @@ inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
     ind.resize(vec.nc() * positions.size());
     ind.fill(0);
     counter = 0;
-    for (size_t j = 0; j < vec.nc(); j++) {
-      for (size_t i = 0; i < positions.size(); i++) {
+    for (std::size_t j = 0; j < vec.nc(); j++) {
+      for (std::size_t i = 0; i < positions.size(); i++) {
         ind[counter] = j * vec.nr() + positions[i];
         counter++;
       }
     }
     mp.setMatrix(true, positions.size(), vec.nc());
   } else if constexpr (std::is_same_v<R, int>) {
-    size_t counter = 0;
+    std::size_t counter = 0;
     for (int i = 0; i < vec.nr(); i++) {
       if (idxL[i % idxL.size()])
         counter++;
@@ -498,8 +498,8 @@ inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
     ass(idxL.size() <= vec.nr(), "Error in matrix: logical subscript too long");
     BaseStore<int> positions(counter);
     counter = 0;
-    size_t counter2 = 0;
-    for (size_t i = 0; i < vec.nr(); i++) {
+    std::size_t counter2 = 0;
+    for (std::size_t i = 0; i < vec.nr(); i++) {
       if (((i % vec.nr()) == 0) && i != 0) {
         counter2++;
       }
@@ -509,20 +509,20 @@ inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
       }
     }
     ind.resize(positions.size());
-    for (size_t j = 0; j < positions.size(); j++) {
+    for (std::size_t j = 0; j < positions.size(); j++) {
       ind[j] = (idxR - 1) * vec.nr() + positions[j];
     }
     mp.setMatrix(false, 0, 0);
   } else if constexpr (std::is_same_v<R, double>) {
-    size_t counter = 0;
+    std::size_t counter = 0;
     for (int i = 0; i < idxL.size(); i++) {
       if (idxL[i])
         counter++;
     }
     BaseStore<int> positions(counter);
     counter = 0;
-    size_t counter2 = 0;
-    for (size_t i = 0; i < idxL.size(); i++) {
+    std::size_t counter2 = 0;
+    for (std::size_t i = 0; i < idxL.size(); i++) {
       if (((i % vec.nr()) == 0) && i != 0) {
         counter2++;
       }
@@ -532,7 +532,7 @@ inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
       }
     }
     ind.resize(positions.size());
-    for (size_t j = 0; j < positions.size(); j++) {
+    for (std::size_t j = 0; j < positions.size(); j++) {
       ind[j] = d2i(idxR - 1.0) * vec.nr() + positions[j];
     }
     mp.setMatrix(false, 0, 0);
@@ -543,16 +543,16 @@ inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
       using whichType = std::remove_reference<decltype(idxR)>::type::Type;
       using isBool = std::is_same<whichType, bool>;
       if constexpr (isBool::value) {
-        size_t counter = 0;
-        for (size_t i = 0; i < idxL.size(); i++) {
+        std::size_t counter = 0;
+        for (std::size_t i = 0; i < idxL.size(); i++) {
           if (idxL[i] == true) {
             counter++;
           }
         }
         BaseStore<int> positions_rows(counter);
         counter = 0;
-        size_t counter2 = 0;
-        for (size_t i = 0; i < idxL.size(); i++) {
+        std::size_t counter2 = 0;
+        for (std::size_t i = 0; i < idxL.size(); i++) {
           if (((i % vec.nr()) == 0) && i != 0) {
             counter2++;
           }
@@ -562,14 +562,14 @@ inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
           }
         }
         counter = 0;
-        for (size_t i = 0; i < idxR.size(); i++) {
+        for (std::size_t i = 0; i < idxR.size(); i++) {
           if (idxR[i])
             counter++;
         }
         BaseStore<int> positions_cols(counter);
         counter = 0;
         counter2 = 0;
-        for (size_t i = 0; i < idxR.size(); i++) {
+        for (std::size_t i = 0; i < idxR.size(); i++) {
           if (((i % vec.nc()) == 0) && i != 0) {
             counter2++;
           }
@@ -580,8 +580,8 @@ inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
         }
         ind.resize(positions_rows.size() * positions_cols.size());
         counter = 0;
-        for (size_t j = 0; j < positions_cols.size(); j++) {
-          for (size_t i = 0; i < positions_rows.size(); i++) {
+        for (std::size_t j = 0; j < positions_cols.size(); j++) {
+          for (std::size_t i = 0; i < positions_rows.size(); i++) {
             ind[counter] = positions_cols[j] * vec.nr() + positions_rows[i];
             counter++;
           }
@@ -589,14 +589,14 @@ inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
         mp.setMatrix(true, positions_rows.size(), positions_cols.size());
         return;
       } else if constexpr (std::is_same_v<whichType, BaseType>) {
-        size_t counter = 0;
-        for (size_t i = 0; i < idxL.size(); i++)
+        std::size_t counter = 0;
+        for (std::size_t i = 0; i < idxL.size(); i++)
           if (idxL[i])
             counter++;
         BaseStore<int> positions(counter);
         counter = 0;
-        size_t counter2 = 0;
-        for (size_t i = 0; i < idxL.size(); i++) {
+        std::size_t counter2 = 0;
+        for (std::size_t i = 0; i < idxL.size(); i++) {
           if (((i % vec.nr()) == 0) && i != 0) {
             counter2++;
           }
@@ -607,8 +607,8 @@ inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
         }
         ind.resize(positions.size() * idxR.size());
         counter = 0;
-        for (size_t j = 0; j < idxR.size(); j++) {
-          for (size_t i = 0; i < positions.size(); i++) {
+        for (std::size_t j = 0; j < idxR.size(); j++) {
+          for (std::size_t i = 0; i < positions.size(); i++) {
             ind[counter] = (d2i(idxR[j]) - 1) * vec.nr() + positions[i];
             counter++;
           }
@@ -662,7 +662,7 @@ inline auto subset(const Vec<T, R> &vec, const IL &idxL,
   MatrixParameter mp;
   calcInd(vec, ind, mp, idxL, idxR);
   Buffer<BaseType> retBuffer(ind.size());
-  for (size_t i = 0; i < retBuffer.size(); i++)
+  for (std::size_t i = 0; i < retBuffer.size(); i++)
     retBuffer[i] = vec[ind[i]];
   retBuffer.setMatrix(mp);
   Vec<BaseType> ret(retBuffer);
@@ -677,7 +677,7 @@ inline auto subset(const Vec<L, R, Trait> &vec, const IL &idxL,
   MatrixParameter mp;
   calcInd(vec, ind, mp, idxL, idxR);
   Buffer<BaseType> retBuffer(ind.size());
-  for (size_t i = 0; i < retBuffer.size(); i++)
+  for (std::size_t i = 0; i < retBuffer.size(); i++)
     retBuffer[i] = vec[ind[i]];
   retBuffer.setMatrix(mp);
   Vec<BaseType> ret(retBuffer);
@@ -687,7 +687,7 @@ inline auto subset(const Vec<L, R, Trait> &vec, const IL &idxL,
 // issue: not all "at" cases are catched
 
 template <typename T, typename R>
-  requires std::is_same_v<R, size_t>
+  requires std::is_same_v<R, std::size_t>
 inline BaseType &at(T &inp, R i) {
   i--;
   ass(i >= 0, "Error: out of boundaries --> value below 1");
@@ -697,7 +697,7 @@ inline BaseType &at(T &inp, R i) {
 }
 
 template <typename T> inline BaseType &at(T &inp, BaseType i_) {
-  size_t i = d2i(i_);
+  std::size_t i = d2i(i_);
   i--;
   ass(i >= 0, "Error: out of boundaries --> value below 1");
   ass(i < inp.size(),
@@ -705,7 +705,7 @@ template <typename T> inline BaseType &at(T &inp, BaseType i_) {
   return inp.d.p[i];
 }
 
-template <typename T> inline BaseType &at(T &inp, size_t r, size_t c) {
+template <typename T> inline BaseType &at(T &inp, std::size_t r, std::size_t c) {
   ass(inp.im() == true, "Input is not a matrix!");
   r--;
   c--;
@@ -717,8 +717,8 @@ template <typename T> inline BaseType &at(T &inp, size_t r, size_t c) {
 
 template <typename T> inline BaseType &at(T &inp, BaseType r_, BaseType c_) {
   ass(inp.im() == true, "Input is not a matrix!");
-  size_t r = d2i(r_);
-  size_t c = d2i(c_);
+  std::size_t r = d2i(r_);
+  std::size_t c = d2i(c_);
   r--;
   c--;
   ass((c * inp.nr() + r) >= 0, "Error: out of boundaries --> value below 1");
@@ -728,7 +728,7 @@ template <typename T> inline BaseType &at(T &inp, BaseType r_, BaseType c_) {
 }
 
 template <typename T, typename R>
-  requires std::is_same_v<R, size_t>
+  requires std::is_same_v<R, std::size_t>
 inline BaseType &at(const Vec<BaseType> &inp, R i) {
   i--;
   ass(i >= 0, "Error: out of boundaries --> value below 1");
@@ -738,7 +738,7 @@ inline BaseType &at(const Vec<BaseType> &inp, R i) {
 }
 
 inline BaseType &at(const Vec<BaseType> &inp, BaseType i_) {
-  size_t i = d2i(i_);
+  std::size_t i = d2i(i_);
   i--;
   ass(i >= 0, "Error: out of boundaries --> value below 1");
   ass(i < inp.size(),
@@ -746,7 +746,7 @@ inline BaseType &at(const Vec<BaseType> &inp, BaseType i_) {
   return inp.d.p[i];
 }
 
-inline BaseType &at(const Vec<BaseType> &inp, size_t r, size_t c) {
+inline BaseType &at(const Vec<BaseType> &inp, std::size_t r, std::size_t c) {
   ass(inp.im() == true, "Input is not a matrix!");
   r--;
   c--;
@@ -758,8 +758,8 @@ inline BaseType &at(const Vec<BaseType> &inp, size_t r, size_t c) {
 
 inline BaseType &at(const Vec<BaseType> &inp, BaseType r_, BaseType c_) {
   ass(inp.im() == true, "Input is not a matrix!");
-  size_t r = d2i(r_);
-  size_t c = d2i(c_);
+  std::size_t r = d2i(r_);
+  std::size_t c = d2i(c_);
   r--;
   c--;
   ass((c * inp.nr() + r) >= 0, "Error: out of boundaries --> value below 1");
@@ -768,7 +768,7 @@ inline BaseType &at(const Vec<BaseType> &inp, BaseType r_, BaseType c_) {
   return inp.d.p[c * inp.nr() + r];
 }
 
-inline BaseType &at(const Vec<BaseType> &&inp, size_t r, size_t c) {
+inline BaseType &at(const Vec<BaseType> &&inp, std::size_t r, std::size_t c) {
   ass(inp.im() == true, "Input is not a matrix!");
   r--;
   c--;

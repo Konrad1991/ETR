@@ -4,17 +4,17 @@
 namespace etr {
 struct MatrixParameter {
   bool ismatrix = false;
-  size_t rows = 0;
-  size_t cols = 0;
+  std::size_t rows = 0;
+  std::size_t cols = 0;
   MatrixParameter() {}
-  MatrixParameter(size_t rows_, size_t cols_)
+  MatrixParameter(std::size_t rows_, std::size_t cols_)
       : ismatrix(true), rows(rows_), cols(cols_) {}
   MatrixParameter(const MatrixParameter &other)
       : ismatrix(other.im()), rows(other.nr()), cols(other.nc()) {}
   bool im() const { return this->ismatrix; }
-  size_t nc() const { return cols; }
-  size_t nr() const { return rows; }
-  void setMatrix(bool i, size_t nrow, size_t ncol) {
+  std::size_t nc() const { return cols; }
+  std::size_t nr() const { return rows; }
+  void setMatrix(bool i, std::size_t nrow, std::size_t ncol) {
     this->ismatrix = i;
     this->cols = ncol;
     this->rows = nrow;
@@ -46,16 +46,16 @@ void defineMatrix(const L &l, const R &r, MatrixParameter &mp) {
     }
   } else {
     if (l.im() && r.im()) {
-      size_t nrows = (l.nr() > r.nr()) ? l.nr() : r.nr();
-      size_t ncols = (l.nc() > r.nc()) ? l.nc() : r.nc();
+      std::size_t nrows = (l.nr() > r.nr()) ? l.nr() : r.nr();
+      std::size_t ncols = (l.nc() > r.nc()) ? l.nc() : r.nc();
       mp.setMatrix(true, nrows, ncols);
     } else if (!l.im() && r.im()) {
-      size_t nrows = r.nr();
-      size_t ncols = r.nc();
+      std::size_t nrows = r.nr();
+      std::size_t ncols = r.nc();
       mp.setMatrix(true, nrows, ncols);
     } else if (l.im() && !r.im()) {
-      size_t nrows = l.nr();
-      size_t ncols = l.nc();
+      std::size_t nrows = l.nr();
+      std::size_t ncols = l.nc();
       mp.setMatrix(true, nrows, ncols);
     }
   }

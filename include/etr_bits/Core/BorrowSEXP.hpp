@@ -13,21 +13,21 @@ template <typename T, typename BorrowSEXPSEXPTrait> struct BorrowSEXP {
   T *p = nullptr;
   bool todelete = false;
   bool allocated = false;
-  size_t sz = 0;
-  size_t capacity = 0;
+  std::size_t sz = 0;
+  std::size_t capacity = 0;
   MatrixParameter mp;
 
-  size_t size() const { return sz; }
+  std::size_t size() const { return sz; }
   bool im() const { return mp.im(); }
-  size_t nc() const { return mp.nc(); }
-  size_t nr() const { return mp.nr(); }
-  void setMatrix(bool i, size_t nrow, size_t ncol) {
+  std::size_t nc() const { return mp.nc(); }
+  std::size_t nr() const { return mp.nr(); }
+  void setMatrix(bool i, std::size_t nrow, std::size_t ncol) {
     mp.setMatrix(i, nrow, ncol);
   }
 
   BorrowSEXP(const BorrowSEXP<T> &other) {
     resize(other.size());
-    for (size_t i = 0; i < sz; i++)
+    for (std::size_t i = 0; i < sz; i++)
       p[i] = other[i];
     mp.setMatrix(other.mp);
   }
@@ -46,11 +46,11 @@ template <typename T, typename BorrowSEXPSEXPTrait> struct BorrowSEXP {
     todelete = false;
     allocated = true;
   }
-  BorrowSEXP(size_t i) = delete;
+  BorrowSEXP(std::size_t i) = delete;
   BorrowSEXP(int i) = delete;
   BorrowSEXP() {}
-  BorrowSEXP(size_t r, size_t c) = delete;
-  BorrowSEXP(size_t r, size_t c, const double value) = delete;
+  BorrowSEXP(std::size_t r, std::size_t c) = delete;
+  BorrowSEXP(std::size_t r, std::size_t c, const double value) = delete;
 
   ~BorrowSEXP() {
     if (todelete) {
@@ -60,7 +60,7 @@ template <typename T, typename BorrowSEXPSEXPTrait> struct BorrowSEXP {
 
   BorrowSEXP &operator=(const BorrowSEXP<T> &other) {
     resize(other.size());
-    for (size_t i = 0; i < sz; i++)
+    for (std::size_t i = 0; i < sz; i++)
       p[i] = other[i];
     mp.setMatrix(other.mp);
     return *this;
@@ -73,7 +73,7 @@ template <typename T, typename BorrowSEXPSEXPTrait> struct BorrowSEXP {
       this->p = nullptr;
     }
     p = REAL(inp);
-    sz = static_cast<size_t>(Rf_length(inp));
+    sz = static_cast<std::size_t>(Rf_length(inp));
     capacity = sz;
     if (Rf_isMatrix(inp) == true) {
       mp.setMatrix(true, Rf_nrows(inp), Rf_ncols(inp));
@@ -83,34 +83,34 @@ template <typename T, typename BorrowSEXPSEXPTrait> struct BorrowSEXP {
     return *this;
   }
 
-  RetType &operator[](size_t pos) {
+  RetType &operator[](std::size_t pos) {
     ass(p != nullptr, "Subset is pointing to nothing!");
     ass(pos >= 0, "Error: out of boundaries --> value below 1");
     ass(pos < sz, "Error: out of boundaries --> value beyond size of vector");
     return this->p[pos];
   }
 
-  RetType operator[](size_t pos) const {
+  RetType operator[](std::size_t pos) const {
     ass(this->p != nullptr, "Subset is pointing to nothing!");
     ass(pos >= 0, "Error: out of boundaries --> value below 1");
     ass(pos < sz, "Error: out of boundaries --> value beyond size of vector");
     return this->p[pos];
   }
 
-  void init(size_t size) {
+  void init(std::size_t size) {
     if (allocated && todelete) {
       ass(p != nullptr, "try to delete nullptr");
       delete[] p;
       p = nullptr;
     }
     sz = size;
-    capacity = static_cast<size_t>(1.15 * sz);
+    capacity = static_cast<std::size_t>(1.15 * sz);
     p = new T[capacity];
     allocated = true;
     todelete = true;
   }
 
-  void resize(size_t newSize) {
+  void resize(std::size_t newSize) {
     ass(newSize >= 1, "Size has to be larger than 0");
     if (!allocated) {
       init(newSize);
@@ -125,7 +125,7 @@ template <typename T, typename BorrowSEXPSEXPTrait> struct BorrowSEXP {
         ass(p != nullptr, "try to delete nullptr");
         delete[] p;
         sz = newSize;
-        capacity = static_cast<size_t>(newSize * 1.15);
+        capacity = static_cast<std::size_t>(newSize * 1.15);
         p = new T[capacity];
         allocated = true;
         todelete = true;
@@ -178,35 +178,35 @@ template <typename T, typename BorrowSEXPSEXPTrait> struct BorrowSEXP {
     if (!todelete) {
       T *temp;
       temp = new T[sz];
-      for (size_t i = 0; i < sz; i++)
+      for (std::size_t i = 0; i < sz; i++)
         temp[i] = p[i];
       p = new T[new_size];
-      for (size_t i = 0; i < sz; i++)
+      for (std::size_t i = 0; i < sz; i++)
         p[i] = temp[i];
       ass(temp != nullptr, "try to delete nullptr");
       delete[] temp;
       temp = nullptr;
       allocated = true;
       todelete = true;
-      for (size_t i = sz; i < new_size; i++)
+      for (std::size_t i = sz; i < new_size; i++)
         p[i] = 0.0;
       sz = new_size;
       capacity = sz;
     } else {
       T *temp;
       temp = new T[sz];
-      for (size_t i = 0; i < sz; i++)
+      for (std::size_t i = 0; i < sz; i++)
         temp[i] = p[i];
       ass(p != nullptr, "try to delete nullptr");
       delete[] p;
       p = new T[new_size];
-      for (size_t i = 0; i < sz; i++)
+      for (std::size_t i = 0; i < sz; i++)
         p[i] = temp[i];
       ass(temp != nullptr, "try to delete nullptr");
       delete[] temp;
       temp = nullptr;
       allocated = true;
-      for (size_t i = sz; i < new_size; i++)
+      for (std::size_t i = sz; i < new_size; i++)
         p[i] = 0.0;
       sz = new_size;
       capacity = sz;
@@ -222,14 +222,14 @@ template <typename T, typename BorrowSEXPSEXPTrait> struct BorrowSEXP {
   }
   friend std::ostream &operator<<(std::ostream &os, const BorrowSEXP &b) {
     os << "Vec [ ";
-    for (size_t i = 0; i < b.size(); i++) {
+    for (std::size_t i = 0; i < b.size(); i++) {
       os << b.p[i] << " ";
     }
     os << "]";
     return os;
   }
   void fill(T val) {
-    for (size_t i = 0; i < sz; i++) {
+    for (std::size_t i = 0; i < sz; i++) {
       p[i] = val;
     }
   }

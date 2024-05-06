@@ -1,8 +1,8 @@
 #ifndef ALLVARS_ETR_H
 #define ALLVARS_ETR_H
 
-#include "../Core.hpp"
 #include "../BinaryCalculations.hpp"
+#include "../Core.hpp"
 #include "../UnaryCalculations.hpp"
 
 namespace etr {
@@ -27,8 +27,8 @@ template <int NBuffer_, int NBorrow_, int NBorrowSEXP_> struct AllVars {
   int IndepVarTypeIdx;
   bool DerivInit = false;
 
-  AllVars(int IndepVarIdx_, int IndepVarTypeIdx_) : 
-      IndepVarIdx(IndepVarIdx_), IndepVarTypeIdx(IndepVarTypeIdx_) {}
+  AllVars(int IndepVarIdx_, int IndepVarTypeIdx_)
+      : IndepVarIdx(IndepVarIdx_), IndepVarTypeIdx(IndepVarTypeIdx_) {}
 
   template <typename... Args> void initBuffer(Args &&...args) {
     int idx = 0;
@@ -60,72 +60,72 @@ template <int NBuffer_, int NBorrow_, int NBorrowSEXP_> struct AllVars {
         args...);
   }
 
-  std::size_t size(size_t Idx, int TypeIdx) const {
+  std::size_t size(std::size_t Idx, int TypeIdx) const {
     if (TypeIdx == 0) {
       return varBuffer[Idx]->size();
     } else if (TypeIdx == 1) {
       return varBorrow[Idx]->size();
     } else if (TypeIdx == 2) {
-      #ifdef STANDALONE_ETR
-      #else
+#ifdef STANDALONE_ETR
+#else
       return varBorrowSEXP[Idx]->size();
-      #endif
+#endif
     }
   }
 
-  bool im(size_t Idx, int TypeIdx) const {
+  bool im(std::size_t Idx, int TypeIdx) const {
     if (TypeIdx == 0) {
       return varBuffer[Idx]->im();
     } else if (TypeIdx == 1) {
       return varBorrow[Idx]->im();
     } else if (TypeIdx == 2) {
-      #ifdef STANDALONE_ETR
-      #else
+#ifdef STANDALONE_ETR
+#else
       return varBorrowSEXP[Idx]->im();
-      #endif
+#endif
     }
   }
 
-  std::size_t nr(size_t Idx, int TypeIdx) const {
+  std::size_t nr(std::size_t Idx, int TypeIdx) const {
     if (TypeIdx == 0) {
       return varBuffer[Idx]->nr();
     } else if (TypeIdx == 1) {
       return varBorrow[Idx]->nr();
     } else if (TypeIdx == 2) {
-      #ifdef STANDALONE_ETR
-      #else
+#ifdef STANDALONE_ETR
+#else
       return varBorrowSEXP[Idx]->nr();
-      #endif
+#endif
     }
   }
 
-  std::size_t nc(size_t Idx, int TypeIdx) const {
+  std::size_t nc(std::size_t Idx, int TypeIdx) const {
     if (TypeIdx == 0) {
       return varBuffer[Idx]->nc();
     } else if (TypeIdx == 1) {
       return varBorrow[Idx]->nc();
     } else if (TypeIdx == 2) {
-      #ifdef STANDALONE_ETR
-      #else
+#ifdef STANDALONE_ETR
+#else
       return varBorrowSEXP[Idx]->nc();
-      #endif
+#endif
     }
   }
 
-  void resize(size_t Idx, int TypeIdx, size_t newSize) {
+  void resize(std::size_t Idx, int TypeIdx, std::size_t newSize) {
     if (TypeIdx == 0) {
-      return varBuffer[Idx]-> resize(newSize);
+      return varBuffer[Idx]->resize(newSize);
     } else if (TypeIdx == 1) {
       return varBorrow[Idx]->resize(newSize);
     } else if (TypeIdx == 2) {
-      #ifdef STANDALONE_ETR
-      #else
+#ifdef STANDALONE_ETR
+#else
       return varBorrowSEXP[Idx]->resize(newSize);
-      #endif
+#endif
     }
-   } 
+  }
 };
 
-}
+} // namespace etr
 
 #endif

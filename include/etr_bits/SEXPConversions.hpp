@@ -28,7 +28,7 @@ inline SEXP cpp2R(const Vec<BaseType> &res) {
   } else {
     ret = PROTECT(Rf_allocVector(REALSXP, res.size()));
   }
-  for (size_t i = 0; i < res.size(); i++) {
+  for (std::size_t i = 0; i < res.size(); i++) {
     REAL(ret)[i] = res[i];
   }
   UNPROTECT(1);

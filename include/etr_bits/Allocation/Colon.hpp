@@ -23,9 +23,9 @@ namespace etr {
 
 template <typename T> inline auto colonInternal(T start, T end) {
   if (start < end) {
-    size_t length = convertSize(end - start + 1);
+    std::size_t length = convertSize(end - start + 1);
     Vec<T, Buffer<T, RBufTrait>, RVecTrait> ret(SI{length});
-    size_t counter = 0;
+    std::size_t counter = 0;
     while (start <= end) {
       ret[counter] = start;
       start++;
@@ -33,9 +33,9 @@ template <typename T> inline auto colonInternal(T start, T end) {
     }
     return ret;
   }
-  size_t length = convertSize(start - end + 1);
+  std::size_t length = convertSize(start - end + 1);
   Vec<T, Buffer<T, RBufTrait>, RVecTrait> ret(SI{length});
-  size_t counter = 0;
+  std::size_t counter = 0;
   while (end <= start) {
     ret[counter] = start;
     start--;

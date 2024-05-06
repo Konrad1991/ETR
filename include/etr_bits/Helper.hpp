@@ -39,7 +39,7 @@ template <typename T>
 inline auto isNA(T &inp) {
   Vec<bool, Buffer<bool, BufferTrait, RBufTrait>, RVecTrait> res(
       SI{inp.size()});
-  for (size_t i = 0; i < res.size(); i++) {
+  for (std::size_t i = 0; i < res.size(); i++) {
     res[i] = ISNA(inp[i]);
   }
   return res;
@@ -50,7 +50,7 @@ template <typename T>
 inline auto isNA(const T &&inp) {
   Vec<bool, Buffer<bool, BufferTrait, RBufTrait>, RVecTrait> res(
       SI{inp.size()});
-  for (size_t i = 0; i < res.size(); i++) {
+  for (std::size_t i = 0; i < res.size(); i++) {
     res[i] = ISNA(inp[i]);
   }
   return res;
@@ -62,7 +62,7 @@ template <typename T>
 inline auto isInf(T &inp) {
   Vec<bool, Buffer<bool, BufferTrait, RBufTrait>, RVecTrait> res(
       SI{inp.size()});
-  for (size_t i = 0; i < res.size(); i++) {
+  for (std::size_t i = 0; i < res.size(); i++) {
     res[i] = ISInfinite(inp[i]);
   }
   return res;
@@ -73,7 +73,7 @@ template <typename T>
 inline auto isInf(const T &&inp) {
   Vec<bool, Buffer<bool, BufferTrait, RBufTrait>, RVecTrait> res(
       SI{inp.size()});
-  for (size_t i = 0; i < res.size(); i++) {
+  for (std::size_t i = 0; i < res.size(); i++) {
     res[i] = ISInfinite(inp[i]);
   }
   return res;
@@ -81,7 +81,7 @@ inline auto isInf(const T &&inp) {
 
 template <typename T>
   requires std::is_arithmetic_v<T>
-inline size_t length(T inp) {
+inline std::size_t length(T inp) {
   return 1;
 }
 

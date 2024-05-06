@@ -14,6 +14,8 @@
 
 #endif
 
+#include <array>
+#include <cstddef>
 #include <ios>
 #include <iostream>
 #include <iterator>
@@ -24,6 +26,5 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
-#include <array>
 
 #endif

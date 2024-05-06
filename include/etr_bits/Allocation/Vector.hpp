@@ -7,7 +7,7 @@
 
 namespace etr {
 template <typename T> inline auto vector(const T &inp) {
-  if constexpr (std::is_same_v<T, size_t>) {
+  if constexpr (std::is_same_v<T, std::size_t>) {
     return createRVec(inp);
   } else if constexpr (std::is_floating_point_v<T>) {
     warn(isDoubleInt(inp),
@@ -25,7 +25,7 @@ template <typename T> inline auto vector(const T &inp) {
 }
 
 template <typename T> inline auto vector(T &inp) {
-  if constexpr (std::is_same_v<T, size_t>) {
+  if constexpr (std::is_same_v<T, std::size_t>) {
     return createRVec(inp);
   } else if constexpr (std::is_floating_point_v<T>) {
     warn(isDoubleInt(inp),

@@ -12,8 +12,8 @@ template <typename I, typename Trait, typename CTrait> struct UnaryOperation {
   using typeTraitObj = I;
   MatrixParameter mp;
   bool im() const { return mp.im(); }
-  size_t nc() const { return mp.nc(); }
-  size_t nr() const { return mp.nr(); }
+  std::size_t nc() const { return mp.nc(); }
+  std::size_t nr() const { return mp.nr(); }
   UnaryOperation(const UnaryOperation &other) : obj(other.obj), mp(other.mp) {}
   UnaryOperation(const UnaryOperation &&other) : obj(other.obj), mp(other.mp) {}
   UnaryOperation(const I &obj_, const MatrixParameter &mp)
@@ -21,7 +21,7 @@ template <typename I, typename Trait, typename CTrait> struct UnaryOperation {
   template <typename IType, typename TraitOther>
   UnaryOperation(const UnaryOperation<IType, TraitOther> &other)
       : obj(other.obj), mp(other.mp) {}
-  RetType operator[](size_t i) const {
+  RetType operator[](std::size_t i) const {
     constexpr bool isDouble = std::is_same_v<I, double>;
     if constexpr (isDouble) {
       return Trait::f(obj);
@@ -29,7 +29,7 @@ template <typename I, typename Trait, typename CTrait> struct UnaryOperation {
       return Trait::f(obj[i % obj.size()]);
     }
   }
-  size_t size() const {
+  std::size_t size() const {
     constexpr bool isDouble = std::is_same_v<I, double>;
     if constexpr (isDouble) {
       return 1;
@@ -37,7 +37,7 @@ template <typename I, typename Trait, typename CTrait> struct UnaryOperation {
       return obj.size();
     }
   }
-  void setMatrix(bool i, size_t nrow, size_t ncol) {
+  void setMatrix(bool i, std::size_t nrow, std::size_t ncol) {
     mp.setMatrix(i, nrow, ncol);
   }
   void setMatrix(MatrixParameter &mp_) {
@@ -52,7 +52,7 @@ template <typename I, typename Trait, typename CTrait> struct UnaryOperation {
     return Ty::template getSize<AV>(av);
   }
 
-  template <typename AV> static RetType getVal(AV &av, size_t VecIdx) {
+  template <typename AV> static RetType getVal(AV &av, std::size_t VecIdx) {
     using Ty = typename std::remove_reference<typeTraitObj>::type;
     return f(Ty::template getVal<AV>(av, VecIdx % Ty::template getSize(av)));
   }

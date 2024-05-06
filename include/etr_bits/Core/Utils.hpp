@@ -69,10 +69,10 @@ inline void warn(bool inp, std::string message) {
 }
 
 struct SI {
-  size_t sz = 0;
-  SI(const size_t sz) : sz(sz) {}
-  SI(const int sz) : sz(static_cast<size_t>(sz)) {}
-  SI(const long long sz) : sz(static_cast<size_t>(sz)) {}
+  std::size_t sz = 0;
+  SI(const std::size_t sz) : sz(sz) {}
+  SI(const int sz) : sz(static_cast<std::size_t>(sz)) {}
+  SI(const long long sz) : sz(static_cast<std::size_t>(sz)) {}
 };
 
 } // namespace etr

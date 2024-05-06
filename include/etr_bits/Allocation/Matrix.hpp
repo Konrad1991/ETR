@@ -75,42 +75,42 @@ template <typename L, typename R>
 inline auto matrix(const L &inp, R nrows) {
   using DataType = ExtractDataType<L>::RetType;
   if (inp.size() == nrows) {
-    size_t size = convertSize(nrows);
+    std::size_t size = convertSize(nrows);
     Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> res(
         SI{size});
-    for (size_t i = 0; i < res.size(); i++) {
+    for (std::size_t i = 0; i < res.size(); i++) {
       res[i] = inp[i];
     }
     res.d.mp.setMatrix(true, size, 1);
     return res;
   } else if (inp.size() < nrows) {
     ass(nrows > 0, "data is too long");
-    size_t size = convertSize(nrows);
+    std::size_t size = convertSize(nrows);
     Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> res(
         SI{size});
-    for (size_t i = 0; i < res.size(); i++) {
+    for (std::size_t i = 0; i < res.size(); i++) {
       res[i] = inp[i % inp.size()];
     }
     res.d.mp.setMatrix(true, nrows, 1);
     return res;
   } else {
     if (inp.size() % nrows == 0) {
-      size_t size = convertSize(inp.size());
+      std::size_t size = convertSize(inp.size());
       Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> res(
           SI{size});
-      for (size_t i = 0; i < res.size(); i++) {
+      for (std::size_t i = 0; i < res.size(); i++) {
         res[i] = inp[i];
       }
-      res.d.mp.setMatrix(true, nrows, static_cast<size_t>(inp.size() / nrows));
+      res.d.mp.setMatrix(true, nrows, static_cast<std::size_t>(inp.size() / nrows));
       return res;
     } else {
-      size_t size = convertSize(inp.size() + (inp.size() % nrows) - 1);
+      std::size_t size = convertSize(inp.size() + (inp.size() % nrows) - 1);
       Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> res(
           SI{size});
-      for (size_t i = 0; i < res.size(); i++) {
+      for (std::size_t i = 0; i < res.size(); i++) {
         res[i] = inp[i % inp.size()];
       }
-      res.d.mp.setMatrix(true, nrows, static_cast<size_t>(size / nrows));
+      res.d.mp.setMatrix(true, nrows, static_cast<std::size_t>(size / nrows));
       return res;
     }
   }
@@ -138,41 +138,41 @@ template <typename L, typename R>
 inline auto matrix(const L &inp, const R &nrows) {
   using DataType = ExtractDataType<L>::RetType;
   if (inp.size() == convertSize(nrows[0])) {
-    size_t size = convertSize(nrows[0]);
+    std::size_t size = convertSize(nrows[0]);
     Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> res(
         SI{size});
-    for (size_t i = 0; i < res.size(); i++) {
+    for (std::size_t i = 0; i < res.size(); i++) {
       res[i] = inp[i];
     }
     res.d.mp.setMatrix(true, size, 1);
     return res;
   } else if (inp.size() < convertSize(nrows[0])) {
-    size_t size = convertSize(nrows[0]);
+    std::size_t size = convertSize(nrows[0]);
     Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> res(
         SI{size});
-    for (size_t i = 0; i < res.size(); i++) {
+    for (std::size_t i = 0; i < res.size(); i++) {
       res[i] = inp[i % inp.size()];
     }
     res.d.mp.setMatrix(true, size, 1);
     return res;
   } else {
     if (inp.size() % nrows == 0) {
-      size_t size = convertSize(inp.size());
+      std::size_t size = convertSize(inp.size());
       Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> res(
           SI{size});
-      for (size_t i = 0; i < res.size(); i++) {
+      for (std::size_t i = 0; i < res.size(); i++) {
         res[i] = inp[i];
       }
-      res.d.mp.setMatrix(true, nrows, static_cast<size_t>(inp.size() / nrows));
+      res.d.mp.setMatrix(true, nrows, static_cast<std::size_t>(inp.size() / nrows));
       return res;
     } else {
-      size_t size = convertSize(inp.size() + (inp.size() % nrows[0]) - 1);
+      std::size_t size = convertSize(inp.size() + (inp.size() % nrows[0]) - 1);
       Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> res(
           SI{size});
-      for (size_t i = 0; i < res.size(); i++) {
+      for (std::size_t i = 0; i < res.size(); i++) {
         res[i] = inp[i % inp.size()];
       }
-      res.d.mp.setMatrix(true, nrows, static_cast<size_t>(size / nrows[0]));
+      res.d.mp.setMatrix(true, nrows, static_cast<std::size_t>(size / nrows[0]));
       return res;
     }
   }
@@ -214,55 +214,55 @@ template <typename V, typename R, typename C>
 inline Vec<BaseType> matrix(const V &inp, const R &nrows, const C &ncols) {
   if constexpr (std::is_arithmetic_v<R> && std::is_arithmetic_v<C>) {
     if constexpr (std::is_arithmetic_v<V>) {
-      Vec<BaseType> ret(static_cast<size_t>(nrows), static_cast<size_t>(ncols));
-      for (size_t i = 0; i < ret.size(); i++)
+      Vec<BaseType> ret(static_cast<std::size_t>(nrows), static_cast<std::size_t>(ncols));
+      for (std::size_t i = 0; i < ret.size(); i++)
         ret[i] = static_cast<BaseType>(inp);
       return ret;
     } else {
-      ass((static_cast<size_t>(nrows) * static_cast<size_t>(ncols)) ==
+      ass((static_cast<std::size_t>(nrows) * static_cast<std::size_t>(ncols)) ==
               inp.size(),
           "data length is not a sub-multiple or multiple of the number of "
           "rows");
-      Vec<BaseType> ret(static_cast<size_t>(nrows), static_cast<size_t>(ncols));
-      for (size_t i = 0; i < ret.size(); i++)
+      Vec<BaseType> ret(static_cast<std::size_t>(nrows), static_cast<std::size_t>(ncols));
+      for (std::size_t i = 0; i < ret.size(); i++)
         ret[i] = inp[i];
       return ret;
     }
   } else if constexpr (!std::is_arithmetic_v<R> && std::is_arithmetic_v<C>) {
     ass(nrows.size() == 1, "invalid length argument for rows");
     if constexpr (std::is_arithmetic_v<V>) {
-      Vec<BaseType> ret(static_cast<size_t>(nrows[0]),
-                        static_cast<size_t>(ncols));
-      for (size_t i = 0; i < ret.size(); i++)
+      Vec<BaseType> ret(static_cast<std::size_t>(nrows[0]),
+                        static_cast<std::size_t>(ncols));
+      for (std::size_t i = 0; i < ret.size(); i++)
         ret[i] = static_cast<BaseType>(inp);
       return ret;
     } else {
-      ass((static_cast<size_t>(nrows[0]) * static_cast<size_t>(ncols)) ==
+      ass((static_cast<std::size_t>(nrows[0]) * static_cast<std::size_t>(ncols)) ==
               inp.size(),
           "data length is not a sub-multiple or multiple of the number of "
           "rows");
-      Vec<BaseType> ret(static_cast<size_t>(nrows[0]),
-                        static_cast<size_t>(ncols));
-      for (size_t i = 0; i < ret.size(); i++)
+      Vec<BaseType> ret(static_cast<std::size_t>(nrows[0]),
+                        static_cast<std::size_t>(ncols));
+      for (std::size_t i = 0; i < ret.size(); i++)
         ret[i] = inp[i];
       return ret;
     }
   } else if constexpr (std::is_arithmetic_v<R> && !std::is_arithmetic_v<C>) {
     ass(ncols.size() == 1, "invalid length argument for cols");
     if constexpr (std::is_arithmetic_v<V>) {
-      Vec<BaseType> ret(static_cast<size_t>(nrows),
-                        static_cast<size_t>(ncols[0]));
-      for (size_t i = 0; i < ret.size(); i++)
+      Vec<BaseType> ret(static_cast<std::size_t>(nrows),
+                        static_cast<std::size_t>(ncols[0]));
+      for (std::size_t i = 0; i < ret.size(); i++)
         ret[i] = static_cast<BaseType>(inp);
       return ret;
     } else {
-      ass((static_cast<size_t>(nrows) * static_cast<size_t>(ncols[0])) ==
+      ass((static_cast<std::size_t>(nrows) * static_cast<std::size_t>(ncols[0])) ==
               inp.size(),
           "data length is not a sub-multiple or multiple of the number of "
           "rows");
-      Vec<BaseType> ret(static_cast<size_t>(nrows),
-                        static_cast<size_t>(ncols[0]));
-      for (size_t i = 0; i < ret.size(); i++)
+      Vec<BaseType> ret(static_cast<std::size_t>(nrows),
+                        static_cast<std::size_t>(ncols[0]));
+      for (std::size_t i = 0; i < ret.size(); i++)
         ret[i] = inp[i];
       return ret;
     }
@@ -270,19 +270,19 @@ inline Vec<BaseType> matrix(const V &inp, const R &nrows, const C &ncols) {
     ass(nrows.size() == 1, "invalid length argument for rows");
     ass(ncols.size() == 1, "invalid length argument for cols");
     if constexpr (std::is_arithmetic_v<V>) {
-      Vec<BaseType> ret(static_cast<size_t>(nrows[0]),
-                        static_cast<size_t>(ncols[0]));
-      for (size_t i = 0; i < ret.size(); i++)
+      Vec<BaseType> ret(static_cast<std::size_t>(nrows[0]),
+                        static_cast<std::size_t>(ncols[0]));
+      for (std::size_t i = 0; i < ret.size(); i++)
         ret[i] = static_cast<BaseType>(inp);
       return ret;
     } else {
-      ass((static_cast<size_t>(nrows[0]) * static_cast<size_t>(ncols[0])) ==
+      ass((static_cast<std::size_t>(nrows[0]) * static_cast<std::size_t>(ncols[0])) ==
               inp.size(),
           "data length is not a sub-multiple or multiple of the number of "
           "rows");
-      Vec<BaseType> ret(static_cast<size_t>(nrows[0]),
-                        static_cast<size_t>(ncols[0]));
-      for (size_t i = 0; i < ret.size(); i++)
+      Vec<BaseType> ret(static_cast<std::size_t>(nrows[0]),
+                        static_cast<std::size_t>(ncols[0]));
+      for (std::size_t i = 0; i < ret.size(); i++)
         ret[i] = inp[i];
       return ret;
     }

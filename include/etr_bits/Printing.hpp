@@ -40,12 +40,12 @@ template <typename L, typename R>
   requires NotOperation<R>
 inline void print(const Vec<L, R> &inp) {
   if (!inp.im()) {
-    for (size_t i = 0; i < inp.size(); i++)
+    for (std::size_t i = 0; i < inp.size(); i++)
       PRINT_STREAM << std::boolalpha << inp[i] << " ";
     PRINT_STREAM << std::endl;
   } else {
-    for (size_t i = 0; i < inp.nr(); i++) {
-      for (size_t j = 0; j < inp.nc(); j++) {
+    for (std::size_t i = 0; i < inp.nr(); i++) {
+      for (std::size_t j = 0; j < inp.nc(); j++) {
         PRINT_STREAM << inp[j * inp.nr() + i] << "\t";
       }
       PRINT_STREAM << std::endl;
@@ -57,12 +57,12 @@ template <typename T, typename Op, typename Trait>
   requires UnaryOrBinaryOperation<Op>
 inline void print(const etr::Vec<T, Op, Trait> &inp) {
   if (!inp.im()) {
-    for (size_t i = 0; i < inp.size(); i++)
+    for (std::size_t i = 0; i < inp.size(); i++)
       PRINT_STREAM << std::boolalpha << inp[i] << " ";
     PRINT_STREAM << std::endl;
   } else {
-    for (size_t i = 0; i < inp.nr(); i++) {
-      for (size_t j = 0; j < inp.nc(); j++) {
+    for (std::size_t i = 0; i < inp.nr(); i++) {
+      for (std::size_t j = 0; j < inp.nc(); j++) {
         PRINT_STREAM << inp[j * inp.nr() + i] << "\t";
       }
       PRINT_STREAM << std::endl;
@@ -75,12 +75,12 @@ template <typename T> // issue: unnecessary new line
 inline void
 print(const T &inp) { // issue: just a quick fix for printing unary expression
   if (!inp.im()) {
-    for (size_t i = 0; i < inp.size(); i++)
+    for (std::size_t i = 0; i < inp.size(); i++)
       PRINT_STREAM << std::boolalpha << inp[i] << " ";
     PRINT_STREAM << std::endl;
   } else {
-    for (size_t i = 0; i < inp.nr(); i++) {
-      for (size_t j = 0; j < inp.nc(); j++) {
+    for (std::size_t i = 0; i < inp.nr(); i++) {
+      for (std::size_t j = 0; j < inp.nc(); j++) {
         PRINT_STREAM << inp[j * inp.nr() + i] << "\t";
       }
       PRINT_STREAM << std::endl;

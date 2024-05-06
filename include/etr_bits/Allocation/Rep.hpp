@@ -22,7 +22,7 @@ namespace etr {
 template <typename L, typename R>
   requires std::is_arithmetic_v<L> && std::is_arithmetic_v<R>
 inline Vec<L, Buffer<L, BufferTrait, RBufTrait>, RVecTrait> rep(L inp, R s) {
-  size_t length = convertSize(s);
+  std::size_t length = convertSize(s);
   Vec<L> ret(SI{length});
   ret.fill(inp);
   return ret;
@@ -31,12 +31,12 @@ inline Vec<L, Buffer<L, BufferTrait, RBufTrait>, RVecTrait> rep(L inp, R s) {
 template <typename L, typename R>
   requires IsVec<L> && std::is_arithmetic_v<R>
 inline auto rep(L &inp, R s) {
-  size_t length = convertSize(s) * inp.size();
+  std::size_t length = convertSize(s) * inp.size();
   using DataType = ExtractDataType<L>::RetType;
   Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> ret(
       SI{length});
-  size_t counter = 0;
-  for (size_t i = 0; i < ret.size(); i++) {
+  std::size_t counter = 0;
+  for (std::size_t i = 0; i < ret.size(); i++) {
     ret[i] = inp[counter];
     counter++;
     if (counter >= inp.size())
@@ -48,12 +48,12 @@ inline auto rep(L &inp, R s) {
 template <typename L, typename R>
   requires IsVec<L> && std::is_arithmetic_v<R>
 inline auto rep(const L &inp, R s) {
-  size_t length = convertSize(s) * inp.size();
+  std::size_t length = convertSize(s) * inp.size();
   using DataType = ExtractDataType<L>::RetType;
   Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> ret(
       SI{length});
-  size_t counter = 0;
-  for (size_t i = 0; i < ret.size(); i++) {
+  std::size_t counter = 0;
+  for (std::size_t i = 0; i < ret.size(); i++) {
     ret[i] = inp[counter];
     counter++;
     if (counter >= inp.size())
@@ -65,7 +65,7 @@ inline auto rep(const L &inp, R s) {
 template <typename L, typename R>
   requires std::is_arithmetic_v<L> && IsVec<R>
 inline auto rep(L inp, R &s) {
-  size_t length = convertSize(s);
+  std::size_t length = convertSize(s);
   Vec<L> ret(SI{length});
   ret.fill(inp);
   return ret;
@@ -74,12 +74,12 @@ inline auto rep(L inp, R &s) {
 template <typename L, typename R>
   requires IsVec<L> && IsVec<R>
 inline auto rep(L &inp, R &s) {
-  size_t length = convertSize(s) * inp.size();
+  std::size_t length = convertSize(s) * inp.size();
   using DataType = ExtractDataType<L>::RetType;
   Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> ret(
       SI{length});
-  size_t counter = 0;
-  for (size_t i = 0; i < ret.size(); i++) {
+  std::size_t counter = 0;
+  for (std::size_t i = 0; i < ret.size(); i++) {
     ret[i] = inp[counter];
     counter++;
     if (counter >= inp.size())
@@ -91,12 +91,12 @@ inline auto rep(L &inp, R &s) {
 template <typename L, typename R>
   requires IsVec<L> && IsVec<R>
 inline auto rep(const L &inp, R &s) {
-  size_t length = convertSize(s) * inp.size();
+  std::size_t length = convertSize(s) * inp.size();
   using DataType = ExtractDataType<L>::RetType;
   Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> ret(
       SI{length});
-  size_t counter = 0;
-  for (size_t i = 0; i < ret.size(); i++) {
+  std::size_t counter = 0;
+  for (std::size_t i = 0; i < ret.size(); i++) {
     ret[i] = inp[counter];
     counter++;
     if (counter >= inp.size())
@@ -108,7 +108,7 @@ inline auto rep(const L &inp, R &s) {
 template <typename L, typename R>
   requires std::is_arithmetic_v<L> && IsVec<R>
 inline auto rep(L inp, const R &s) {
-  size_t length = convertSize(s);
+  std::size_t length = convertSize(s);
   Vec<L> ret(SI{length});
   ret.fill(inp);
   return ret;
@@ -117,12 +117,12 @@ inline auto rep(L inp, const R &s) {
 template <typename L, typename R>
   requires IsVec<L> && IsVec<R>
 inline auto rep(L &inp, const R &s) {
-  size_t length = convertSize(s) * inp.size();
+  std::size_t length = convertSize(s) * inp.size();
   using DataType = ExtractDataType<L>::RetType;
   Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> ret(
       SI{length});
-  size_t counter = 0;
-  for (size_t i = 0; i < ret.size(); i++) {
+  std::size_t counter = 0;
+  for (std::size_t i = 0; i < ret.size(); i++) {
     ret[i] = inp[counter];
     counter++;
     if (counter >= inp.size())
@@ -134,12 +134,12 @@ inline auto rep(L &inp, const R &s) {
 template <typename L, typename R>
   requires IsVec<L> && IsVec<R>
 inline auto rep(const L &inp, const R &s) {
-  size_t length = convertSize(s) * inp.size();
+  std::size_t length = convertSize(s) * inp.size();
   using DataType = ExtractDataType<L>::RetType;
   Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> ret(
       SI{length});
-  size_t counter = 0;
-  for (size_t i = 0; i < ret.size(); i++) {
+  std::size_t counter = 0;
+  for (std::size_t i = 0; i < ret.size(); i++) {
     ret[i] = inp[counter];
     counter++;
     if (counter >= inp.size())

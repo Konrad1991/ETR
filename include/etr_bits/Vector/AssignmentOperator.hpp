@@ -7,7 +7,7 @@ Vec &operator=(const T inp) {
   static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
   static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
   if constexpr (isSubset::value) {
-    for (size_t i = 0; i < d.ind.size(); i++) {
+    for (std::size_t i = 0; i < d.ind.size(); i++) {
       d[i] = inp;
     }
   } else if constexpr (isBorrow::value) {
@@ -26,7 +26,7 @@ Vec &operator=(const TD inp) {
   static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
   static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
   if constexpr (isSubset::value) {
-    for (size_t i = 0; i < d.ind.size(); i++) {
+    for (std::size_t i = 0; i < d.ind.size(); i++) {
       d[i] = static_cast<BaseType>(inp);
     }
   } else if constexpr (isBorrow::value) {
@@ -45,7 +45,7 @@ Vec &operator=(const TD inp) {
   static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
   static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
   if constexpr (isSubset::value) {
-    for (size_t i = 0; i < d.ind.size(); i++) {
+    for (std::size_t i = 0; i < d.ind.size(); i++) {
       d[i] = static_cast<BaseType>(inp);
     }
   } else if constexpr (isBorrow::value) {
@@ -64,13 +64,13 @@ Vec &operator=(Vec<BaseType> &other) {
   if constexpr (isSubset::value) {
     ass(other.size() == d.ind.size(),
         "number of items to replace is not a multiple of replacement length");
-    for (size_t i = 0; i < d.ind.size(); i++) {
+    for (std::size_t i = 0; i < d.ind.size(); i++) {
       d[i] = other[i];
     }
   } else {
     if (size() != other.size()) {
       resize(other.size());
-      for (size_t i = 0; i < other.size(); i++)
+      for (std::size_t i = 0; i < other.size(); i++)
         d[i] = other[i];
     }
   }
@@ -86,21 +86,21 @@ Vec &operator=(const Vec<T, R, Trait> &otherVec) {
   static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
   if constexpr (isBuffer::value) {
     Buffer<T> temp(otherVec.size()); // issue: create Buffer<T> as attribute
-    for (size_t i = 0; i < otherVec.size(); i++)
+    for (std::size_t i = 0; i < otherVec.size(); i++)
       temp[i] = otherVec[i];
     d.moveit(temp);
   } else if constexpr (isBorrow::value) {
     ass(otherVec.size() <= d.capacity,
         "number of items to replace is not a multiple of replacement length");
     Buffer<T> temp(otherVec.size());
-    for (size_t i = 0; i < otherVec.size(); i++)
+    for (std::size_t i = 0; i < otherVec.size(); i++)
       temp[i] = otherVec[i];
     d.sz = otherVec.size();
-    for (size_t i = 0; i < otherVec.size(); i++)
+    for (std::size_t i = 0; i < otherVec.size(); i++)
       d[i] = temp[i];
   } else if constexpr (isBorrowSEXP::value) {
     Buffer<T> temp(otherVec.size());
-    for (size_t i = 0; i < otherVec.size(); i++)
+    for (std::size_t i = 0; i < otherVec.size(); i++)
       temp[i] = otherVec[i];
     if (otherVec.size() > this->size())
       d.resize(otherVec.size());
@@ -109,12 +109,12 @@ Vec &operator=(const Vec<T, R, Trait> &otherVec) {
     ass(otherVec.size() == d.ind.size(),
         "number of items to replace is not a multiple of replacement length");
     Buffer<T> temp(otherVec.size());
-    for (size_t i = 0; i < otherVec.size(); i++) {
+    for (std::size_t i = 0; i < otherVec.size(); i++) {
       temp[i] = otherVec[i];
     }
     if (d.p->size() < temp.size())
       d.resize(temp.size());
-    for (size_t i = 0; i < d.ind.size(); i++) {
+    for (std::size_t i = 0; i < d.ind.size(); i++) {
       d[i % d.ind.size()] = temp[i];
     }
   }
@@ -134,11 +134,11 @@ Vec &operator=(const Vec<T2, R2, Trait2> &otherVec) {
         std::remove_reference<decltype(otherVec.d)>::type::RetType;
     using isBaseTypeRet = std::is_same<RetTypeOtherVec, BaseType>;
     if constexpr (isBaseTypeRet::value) {
-      for (size_t i = 0; i < otherVec.size(); i++) {
+      for (std::size_t i = 0; i < otherVec.size(); i++) {
         temp[i] = otherVec[i];
       }
     } else {
-      for (size_t i = 0; i < otherVec.size(); i++) {
+      for (std::size_t i = 0; i < otherVec.size(); i++) {
         temp[i] = static_cast<BaseType>(otherVec[i]);
       }
     }
@@ -147,10 +147,10 @@ Vec &operator=(const Vec<T2, R2, Trait2> &otherVec) {
     ass(otherVec.size() <= d.capacity,
         "number of items to replace is not a multiple of replacement length");
     Buffer<T> temp(otherVec.size());
-    for (size_t i = 0; i < otherVec.size(); i++)
+    for (std::size_t i = 0; i < otherVec.size(); i++)
       temp[i] = otherVec[i];
     d.sz = otherVec.size();
-    for (size_t i = 0; i < otherVec.size(); i++)
+    for (std::size_t i = 0; i < otherVec.size(); i++)
       d[i] = temp[i];
   } else if constexpr (isBorrowSEXP::value) {
     Buffer<T> temp(otherVec.size());
@@ -158,11 +158,11 @@ Vec &operator=(const Vec<T2, R2, Trait2> &otherVec) {
         std::remove_reference<decltype(otherVec.d)>::type::RetType;
     using isBaseTypeRet = std::is_same<RetTypeOtherVec, BaseType>;
     if constexpr (isBaseTypeRet::value) {
-      for (size_t i = 0; i < otherVec.size(); i++) {
+      for (std::size_t i = 0; i < otherVec.size(); i++) {
         temp[i] = otherVec[i];
       }
     } else {
-      for (size_t i = 0; i < otherVec.size(); i++) {
+      for (std::size_t i = 0; i < otherVec.size(); i++) {
         temp[i] = static_cast<BaseType>(otherVec[i]);
       }
     }
@@ -177,15 +177,15 @@ Vec &operator=(const Vec<T2, R2, Trait2> &otherVec) {
         std::remove_reference<decltype(otherVec.d)>::type::RetType;
     using isBaseTypeRet = std::is_same<RetTypeOtherVec, BaseType>;
     if constexpr (isBaseTypeRet::value) {
-      for (size_t i = 0; i < otherVec.size(); i++) {
+      for (std::size_t i = 0; i < otherVec.size(); i++) {
         temp[i] = otherVec[i];
       }
     } else {
-      for (size_t i = 0; i < otherVec.size(); i++) {
+      for (std::size_t i = 0; i < otherVec.size(); i++) {
         temp[i] = static_cast<BaseType>(otherVec[i]);
       }
     }
-    for (size_t i = 0; i < d.ind.size(); i++) {
+    for (std::size_t i = 0; i < d.ind.size(); i++) {
       d[i % d.ind.size()] = temp[i];
     }
   }
