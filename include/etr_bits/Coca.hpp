@@ -62,38 +62,37 @@ template <typename... Args> inline auto coca(Args &&...args) {
   int size = 0;
   forEachArg(
       [&](auto arg) {
-        if constexpr (std::is_same<decltype(arg), int>::value) {
-          size++;
-        } else if constexpr (std::is_same<decltype(arg), double>::value) {
-          size++;
-        } else if constexpr (std::is_same<decltype(arg), bool>::value) {
+        if constexpr (std::is_arithmetic_v<decltype(arg)>) {
           size++;
         } else {
-          using tD = ExtractedTypeD<decltype(arg)>;
-          using tDInner = ExtractDataType<tD>::RetType;
           size += arg.size();
         }
       },
       args...);
 
-  Vec<cType> ret(SI{size});
+  Vec<cType, Buffer<cType, BufferTrait, RBufTrait>, RVecTrait> ret(SI{size});
   size_t index = 0;
 
   forEachArg(
       [&](auto arg) {
-        if constexpr (std::is_same<decltype(arg), int>::value) {
-          ret[index] = static_cast<BaseType>(arg);
-          index++;
-        } else if constexpr (std::is_same<decltype(arg), double>::value) {
-          ret[index] = arg;
-          index++;
-        } else if constexpr (std::is_same<decltype(arg), bool>::value) {
-          ret[index] = static_cast<BaseType>(arg);
-          ;
+        if constexpr (std::is_arithmetic_v<decltype(arg)>) {
+          if constexpr (std::is_same_v<decltype(arg), cType>) {
+            ret[index] = arg;
+          } else {
+            ret[index] = static_cast<cType>(arg);
+          }
           index++;
         } else {
-          for (int i = 0; i < arg.size(); i++) {
-            ret[index + i] = arg[i];
+          using tD = ExtractedTypeD<decltype(arg)>;
+          using InnerType = ExtractDataType<tD>::RetType;
+          if constexpr (std::is_same_v<InnerType, cType>) {
+            for (int i = 0; i < arg.size(); i++) {
+              ret[index + i] = arg[i];
+            }
+          } else {
+            for (int i = 0; i < arg.size(); i++) {
+              ret[index + i] = static_cast<cType>(arg[i]);
+            }
           }
           index += arg.size();
         }
