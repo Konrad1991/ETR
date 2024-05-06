@@ -3,77 +3,103 @@
 
 #include "BufferVector.hpp"
 #include "Core.hpp"
+#include <cstddef>
 
 namespace etr {
 
-#ifdef STANDALONE_ETR
+// TODO: check how r values behave here
 
-template <typename T> bool ISNA(T inp) { return std::isnan(inp); }
+template <typename T>
+  requires std::is_arithmetic_v<T>
+inline bool ISNA(T inp) {
+  return std::isnan(inp);
+}
 
-template <typename T> bool R_FINITE(T inp) { return !std::isinf(inp); }
+template <typename T>
+  requires std::is_arithmetic_v<T>
+inline bool ISInfinite(T inp) {
+  return std::isinf(inp);
+}
 
-#endif
+// TODO: can the vecotr operator= handle the result of the funciton?
+template <typename T>
+  requires std::is_arithmetic_v<T>
+inline bool isNA(T inp) {
+  return std::isnan(inp);
+}
 
-template <typename T, typename R> inline Vec<bool> isNA(Vec<T, R> &inp) {
-  Vec<bool> res(inp.size());
+template <typename T>
+  requires std::is_arithmetic_v<T>
+inline bool isInf(T inp) {
+  return std::isinf(inp);
+}
+
+template <typename T>
+  requires IsVec<T>
+inline auto isNA(T &inp) {
+  Vec<bool, Buffer<bool, BufferTrait, RBufTrait>, RVecTrait> res(
+      SI{inp.size()});
   for (size_t i = 0; i < res.size(); i++) {
     res[i] = ISNA(inp[i]);
   }
   return res;
 }
 
-template <typename T, typename R, typename Trait>
-inline Vec<bool> isNA(Vec<T, R, Trait> &inp) {
-  Vec<bool> res(inp.size());
+template <typename T>
+  requires IsVec<T>
+inline auto isNA(const T &&inp) {
+  Vec<bool, Buffer<bool, BufferTrait, RBufTrait>, RVecTrait> res(
+      SI{inp.size()});
   for (size_t i = 0; i < res.size(); i++) {
     res[i] = ISNA(inp[i]);
   }
   return res;
 }
 
-template <typename T, typename R> inline Vec<bool> isNA(const Vec<T, R> &&inp) {
-  Vec<bool> res(inp.size());
+// TODO: check that the same fct name is used in ast2ast
+template <typename T>
+  requires IsVec<T>
+inline auto isInf(T &inp) {
+  Vec<bool, Buffer<bool, BufferTrait, RBufTrait>, RVecTrait> res(
+      SI{inp.size()});
   for (size_t i = 0; i < res.size(); i++) {
-    res[i] = ISNA(inp[i]);
+    res[i] = ISInfinite(inp[i]);
   }
   return res;
 }
 
-template <typename T, typename R, typename Trait>
-inline Vec<bool> isNA(const Vec<T, R, Trait> &&inp) {
-  Vec<bool> res(inp.size());
+template <typename T>
+  requires IsVec<T>
+inline auto isInf(const T &&inp) {
+  Vec<bool, Buffer<bool, BufferTrait, RBufTrait>, RVecTrait> res(
+      SI{inp.size()});
   for (size_t i = 0; i < res.size(); i++) {
-    res[i] = ISNA(inp[i]);
+    res[i] = ISInfinite(inp[i]);
   }
   return res;
 }
 
-inline Vec<BaseType> isInfinite(const Vec<BaseType> &inp) {
-  Vec<BaseType> res(inp.size());
-  for (size_t i = 0; i < res.size(); i++) {
-    res[i] = (!R_FINITE(inp[i]) && !ISNA(inp[i]));
-  }
-  return res;
+template <typename T>
+  requires std::is_arithmetic_v<T>
+inline size_t length(T inp) {
+  return 1;
 }
 
-inline int length(double inp) { return 1; }
+template <typename T>
+  requires IsVec<T>
+inline auto length(T &inp) {
+  return inp.size();
+}
 
-inline int length(int inp) { return 1; }
-
-inline int length(bool inp) { return 1; }
-
-inline int length(const Vec<BaseType> &inp) { return inp.size(); }
-
-template <typename L, typename R> inline int length(const Vec<L, R> &inp) {
+template <typename T>
+  requires IsVec<T>
+inline auto length(const T &&inp) {
   return inp.size();
 }
 
 inline Vec<BaseType> dim(const Vec<BaseType> &inp) {
-  using typeTraitInp = std::remove_reference<decltype(inp)>::type::TypeTrait;
-  using isVec = std::is_same<typeTraitInp, VectorTrait>;
-  static_assert(isVec::value, "dim can only be called with matrix");
   ass(inp.im(), "dim can only be called with matrix");
-  Vec<BaseType> ret(SI(2));
+  Vec<int> ret(SI{2});
   ret[0] = inp.nr();
   ret[1] = inp.nc();
   return ret;

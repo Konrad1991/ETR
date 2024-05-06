@@ -2,7 +2,7 @@
 
 #include "../include/etr.hpp"
 using namespace etr;
-
+// TODO: implement tests
 int main() {
   Vec<double> a = colon(5, 3);
   auto v1 = coca(1.2, 3.4, 5.6);

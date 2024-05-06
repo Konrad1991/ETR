@@ -4,10 +4,13 @@
 #include "BufferVector.hpp"
 #include "Core.hpp"
 
+// TODO: fix the printing if NA and Inf
+
 namespace etr {
 #ifdef STANDALONE_ETR
 #define PRINT_STREAM std::cout
 #else
+// TODO: find appropriate R variante for printing
 #define PRINT_STREAM PRINT_STREAM
 #endif
 
