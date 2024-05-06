@@ -7,6 +7,12 @@
 namespace etr {
 
 /*
+ TODO: all cases whith data, ncols
+*/
+
+/*
+TODO: all cases with data, nrows
+TODO: missing tests
 arithmetic
 Vec
 const Vec
@@ -39,17 +45,17 @@ inline auto matrix(const T &val) {
   return vec;
 }
 /*
-TODO: Matrix missing implementation with 2 args
+TODO: Matrix missing tests
         Var1       Var2
 1 arithmetic arithmetic done
-2        Vec arithmetic
-3  const Vec arithmetic
-4 arithmetic        Vec
-5        Vec        Vec
-6  const Vec        Vec
-7 arithmetic  const Vec
-8        Vec  const Vec
-9  const Vec  const Vec
+2        Vec arithmetic done
+3  const Vec arithmetic done
+4 arithmetic        Vec done
+5        Vec        Vec done
+6  const Vec        Vec done
+7 arithmetic  const Vec done
+8        Vec  const Vec done
+9  const Vec  const Vec done
 const Vec is an Operation
 */
 
@@ -61,6 +67,9 @@ const Vec is an Operation
 // simplification is added as it is unlikely that large vectors are used as a
 // second argument.
 
+// TODO: Check whether an l vector is copied when passed as const Vec&
+
+// TODO: add here the warning messages as in R
 template <typename L, typename R>
   requires IsVec<L> && std::is_arithmetic_v<R>
 inline auto matrix(const L &inp, R nrows) {
@@ -72,7 +81,7 @@ inline auto matrix(const L &inp, R nrows) {
     for (size_t i = 0; i < res.size(); i++) {
       res[i] = inp[i];
     }
-    res.d.mp.setMatrix(true, nrows, 1);
+    res.d.mp.setMatrix(true, size, 1);
     return res;
   } else if (inp.size() < nrows) {
     ass(nrows > 0, "data is too long");
@@ -117,8 +126,59 @@ inline auto matrix(L inp, R nrows) {
   return res;
 }
 
-/*
+// TODO: add warning that only first element is used
+template <typename L, typename R>
+  requires std::is_arithmetic_v<L> && IsVec<R>
+inline auto matrix(L inp, const R &nrows) {
+  return matrix(inp, convertSize(nrows[0]));
+}
 
+template <typename L, typename R>
+  requires IsVec<L> && IsVec<R>
+inline auto matrix(const L &inp, const R &nrows) {
+  using DataType = ExtractDataType<L>::RetType;
+  if (inp.size() == convertSize(nrows[0])) {
+    size_t size = convertSize(nrows[0]);
+    Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> res(
+        SI{size});
+    for (size_t i = 0; i < res.size(); i++) {
+      res[i] = inp[i];
+    }
+    res.d.mp.setMatrix(true, size, 1);
+    return res;
+  } else if (inp.size() < convertSize(nrows[0])) {
+    size_t size = convertSize(nrows[0]);
+    Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> res(
+        SI{size});
+    for (size_t i = 0; i < res.size(); i++) {
+      res[i] = inp[i % inp.size()];
+    }
+    res.d.mp.setMatrix(true, size, 1);
+    return res;
+  } else {
+    if (inp.size() % nrows == 0) {
+      size_t size = convertSize(inp.size());
+      Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> res(
+          SI{size});
+      for (size_t i = 0; i < res.size(); i++) {
+        res[i] = inp[i];
+      }
+      res.d.mp.setMatrix(true, nrows, static_cast<size_t>(inp.size() / nrows));
+      return res;
+    } else {
+      size_t size = convertSize(inp.size() + (inp.size() % nrows[0]) - 1);
+      Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> res(
+          SI{size});
+      for (size_t i = 0; i < res.size(); i++) {
+        res[i] = inp[i % inp.size()];
+      }
+      res.d.mp.setMatrix(true, nrows, static_cast<size_t>(size / nrows[0]));
+      return res;
+    }
+  }
+}
+
+/*
 TODO: Matrix missing implementation with 3 args
        Var1     Var2     Var3
 1       vec      vec      vec

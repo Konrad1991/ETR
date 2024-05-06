@@ -6,6 +6,11 @@
 using namespace etr;
 
 int main() {
+  // TODO: it is not necesary to declare first a,b and than vp1 and vp2
+  // One could directly work with Vec, double, VarPointer...>
+  // Change AllVars so that it does not use references but it is more like a
+  // general storage of all vairables Thereby, only one additional variable is
+  // created which is pretty cool
   Vec<double> a, b;
   etr::AllVars<2, 0, 0> av(1, 0);
   av.initBuffer(&a, &b);

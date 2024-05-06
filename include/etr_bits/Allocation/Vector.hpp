@@ -3,6 +3,8 @@
 
 #include "AllocationUtils.hpp"
 
+// TODO: implement vecotr_integer, vector_logical and vector_numeric
+
 namespace etr {
 template <typename T> inline auto vector(const T &inp) {
   if constexpr (std::is_same_v<T, size_t>) {
