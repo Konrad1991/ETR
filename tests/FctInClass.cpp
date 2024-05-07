@@ -2,90 +2,71 @@
 #include "../include/etr.hpp"
 using namespace etr;
 
-#include <iostream>
-#include <functional>
-
-// All constants handled as Vec<double, Buffer, ConstantTrait>
-
-struct ConstantTrait {};
-
-template<template<typename...> class Func, typename Trait = ConstantTrait >
-struct FctInClass {
-    template<typename... TArgs>
-    static auto funcPtr(TArgs&&... args) {
-        return Func<TArgs...>::func(std::forward<TArgs>(args)...);
-    }
-    template<typename... TArgs>
-    constexpr auto callFunction(TArgs&&... args) const {
-        return funcPtr(std::forward<TArgs>(args)...);
-    }
-};
-
-template<typename T>
-struct TemplatedFunc {
-    static inline auto func(T arg) {
-        return etr::vector(arg);
-    }
-};
-
-int main() {
-
-  Vec<double> length = coca(2);
-  
-  constexpr FctInClass<TemplatedFunc> f;
-  Vec<double> res = f.callFunction(length); 
-  print(res);
-
-  Vec<double> a, b;
-  etr::AllVars<2, 0, 0> av(1);
-  av.initBuffer(&a, &b);
-  Vec<double, VarPointer<decltype(av), 0>, VariableTypeTrait> vp1(av);
-  Vec<double, VarPointer<decltype(av), 1>, VariableTypeTrait> vp2(av);
-  a = etr::coca(1, 2, 3);
-  b = etr::coca(4, 5, 6);
-  eval<decltype(vp1 + vp2 * vp1)>(av);
-
-  f.callFunction(3) + a;
-  
-}
-
-
-
 /*
-#include <iostream>
-#include <functional>
+1. define namespace Constants
+2. put functions into struct
+3. define function which returns struct wrapped in Vec or maybe also return only naked struct
+4. replace constant with function from Nr.3
+*/
 
-// Define a class template for templated free functions
-template<typename... T>
-struct TemplatedFunc {
-    static auto func(T... args) {
-        return (args + ...);
-    }
+namespace Constants {
+
+template <typename Func>
+struct ConstantClass {
+  static constexpr Func func{};
+
+  static constexpr auto getVal() {
+    return func();
+  }
+
+  static constexpr auto getDeriv() {
+    return 0; 
+  }
+
+  using RetType = double;
+  using TypeTrait = RetType;
+  using CaseTrait = RetType;
 };
 
-// Define a class template for FctInClass
-template<template<typename...> class Func, typename... Args>
-struct FctInClass {
-    // Pointer to the templated free function
-    template<typename... TArgs>
-    static auto funcPtr(TArgs&&... args) {
-        return Func<TArgs...>::func(std::forward<TArgs>(args)...);
+template <auto Value>
+struct ConstantClassValue {
+    static constexpr auto getVal() {
+        return Value;
     }
 
-    // Call the function using funcPtr and provided arguments (constexpr)
-    template<typename... TArgs>
-    constexpr auto callFunction(TArgs&&... args) const {
-        return funcPtr(std::forward<TArgs>(args)...);
+    static constexpr auto getDeriv() {
+        return 0; 
     }
+
+    using RetType = std::decay_t<decltype(Value)>;
+    using TypeTrait = RetType;
+    using CaseTrait = RetType;
 };
+
+
+inline auto cons1() {
+  auto myFunction = []() { return 10.5; };
+  return Vec<decltype(myFunction()), Constants::ConstantClass<decltype(myFunction)> >{};
+}
+
+template <auto Value>
+inline auto makeConstantClassValue() {
+    return Vec<decltype(Value), ConstantClassValue<Value> >{};
+}
+
+}
 
 int main() {
-    // Create and call the function using FctInClass at compile time
-    constexpr FctInClass<TemplatedFunc, int, float> f;
-    constexpr auto result = f.callFunction(3, 4.5); // Pass arguments 3 and 4.5
+  Vec<double> v = coca(1, 2, 3);
+  printTAST<decltype(Constants::cons1())>();
+  printTAST<decltype(v + Constants::cons1())>();
+  using constantType = ExtractDType<decltype(Constants::cons1())>::type;
+  printTAST<constantType>();
+  std::cout << constantType::getVal() << std::endl;
 
-    std::cout << "Result: " << result << std::endl;
-
-    return 0;
+  printTAST<decltype(Constants::makeConstantClassValue<20.5>())>();
+  using constantTypeVal = ExtractDType<decltype(Constants::makeConstantClassValue<20.5>())>::type;
+  printTAST<constantTypeVal>();
+  std::cout << constantTypeVal::getVal() << std::endl;
+  
 }
-*/

@@ -118,7 +118,6 @@ concept IsVecLorRorCalc = requires {
                std::is_same_v<typename R::TypeTrait, BinaryTrait>;
 };
 
-
 // Concepts for Derivs
 template <typename T>
 concept IsVariableTypeTrait = requires(T t) {
@@ -174,14 +173,12 @@ everywhere
 */
 
 template <typename T>
-auto extractRetType(const T &instance) ->
+inline auto extractRetType(const T &instance) ->
     typename T::RetType { // issue: finish work. This can be used to handle also
                           // int and bool for all unary/binary operations
   using ret = typename T::RetType;
   return instance.getRetType();
 }
-
-
 
 template <typename T> struct ExtractTypeD;
 template <typename T, typename R, typename Trait>
@@ -198,9 +195,6 @@ template <typename T> constexpr T getL() { return T(); }
 
 template <typename T> constexpr T getR() { return T(); }
 
-
-
-
 template <typename T> struct ExtractTypeTrait {
   using type = std::false_type;
 };
@@ -216,7 +210,6 @@ struct ExtractTypeTrait<const VarPointer<T, Idx, TypeIdx, TypeTrait> &> {
 template <typename T>
 using ExtractedTypeTrait = typename ExtractTypeTrait<T>::type;
 
-
 template <typename T>
 concept IsVarPointer = requires {
   typename ExtractedTypeTrait<T>;
@@ -231,8 +224,6 @@ struct ExtractDType<Vec<T, R, Trait>> {
 };
 
 template <typename T> using ExtractedDType = typename ExtractDType<T>::type;
-
-
 
 } // namespace etr
 

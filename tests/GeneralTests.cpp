@@ -5,5 +5,6 @@ using namespace etr;
 
 int main(int argc, char *argv[]) {
   Vec<double> v = vector(3);
+  etr::print(v);
   return 0;
 }
