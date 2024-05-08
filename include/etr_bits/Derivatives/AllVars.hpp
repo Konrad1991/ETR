@@ -16,9 +16,9 @@ template <int NBuffer_, int NBorrow_, int NBorrowSEXP_> struct AllVars {
   static constexpr int NBuffer = NBuffer_;
   static constexpr int NBorrow = NBorrow_;
   static constexpr int NBorrowSEXP = NBorrowSEXP_;
-  std::array<Vec<BaseType, Buffer<BaseType>> *, NBuffer> varBuffer;
-  std::array<Vec<BaseType, Borrow<BaseType>> *, NBorrow> varBorrow;
-  std::array<Vec<BaseType, BorrowSEXP<BaseType>> *, NBorrowSEXP> varBorrowSEXP;
+  std::array<Vec<BaseType, Buffer<BaseType>>, NBuffer> varBuffer;
+  std::array<Vec<BaseType, Borrow<BaseType>>, NBorrow> varBorrow;
+  std::array<Vec<BaseType, BorrowSEXP<BaseType>>, NBorrowSEXP> varBorrowSEXP;
 
   std::array<Buffer<BaseType>, NBuffer> varBufferDerivs;
   std::array<Buffer<BaseType>, NBorrow> varBorrowDerivs;
@@ -62,65 +62,65 @@ template <int NBuffer_, int NBorrow_, int NBorrowSEXP_> struct AllVars {
 
   std::size_t size(std::size_t Idx, int TypeIdx) const {
     if (TypeIdx == 0) {
-      return varBuffer[Idx]->size();
+      return varBuffer[Idx].size();
     } else if (TypeIdx == 1) {
-      return varBorrow[Idx]->size();
+      return varBorrow[Idx].size();
     } else if (TypeIdx == 2) {
 #ifdef STANDALONE_ETR
 #else
-      return varBorrowSEXP[Idx]->size();
+      return varBorrowSEXP[Idx].size();
 #endif
     }
   }
 
   bool im(std::size_t Idx, int TypeIdx) const {
     if (TypeIdx == 0) {
-      return varBuffer[Idx]->im();
+      return varBuffer[Idx].im();
     } else if (TypeIdx == 1) {
-      return varBorrow[Idx]->im();
+      return varBorrow[Idx].im();
     } else if (TypeIdx == 2) {
 #ifdef STANDALONE_ETR
 #else
-      return varBorrowSEXP[Idx]->im();
+      return varBorrowSEXP[Idx].im();
 #endif
     }
   }
 
   std::size_t nr(std::size_t Idx, int TypeIdx) const {
     if (TypeIdx == 0) {
-      return varBuffer[Idx]->nr();
+      return varBuffer[Idx].nr();
     } else if (TypeIdx == 1) {
-      return varBorrow[Idx]->nr();
+      return varBorrow[Idx].nr();
     } else if (TypeIdx == 2) {
 #ifdef STANDALONE_ETR
 #else
-      return varBorrowSEXP[Idx]->nr();
+      return varBorrowSEXP[Idx].nr();
 #endif
     }
   }
 
   std::size_t nc(std::size_t Idx, int TypeIdx) const {
     if (TypeIdx == 0) {
-      return varBuffer[Idx]->nc();
+      return varBuffer[Idx].nc();
     } else if (TypeIdx == 1) {
-      return varBorrow[Idx]->nc();
+      return varBorrow[Idx].nc();
     } else if (TypeIdx == 2) {
 #ifdef STANDALONE_ETR
 #else
-      return varBorrowSEXP[Idx]->nc();
+      return varBorrowSEXP[Idx].nc();
 #endif
     }
   }
 
   void resize(std::size_t Idx, int TypeIdx, std::size_t newSize) {
     if (TypeIdx == 0) {
-      return varBuffer[Idx]->resize(newSize);
+      return varBuffer[Idx].resize(newSize);
     } else if (TypeIdx == 1) {
-      return varBorrow[Idx]->resize(newSize);
+      return varBorrow[Idx].resize(newSize);
     } else if (TypeIdx == 2) {
 #ifdef STANDALONE_ETR
 #else
-      return varBorrowSEXP[Idx]->resize(newSize);
+      return varBorrowSEXP[Idx].resize(newSize);
 #endif
     }
   }

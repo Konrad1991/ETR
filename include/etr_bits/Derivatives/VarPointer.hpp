@@ -30,11 +30,11 @@ template <typename T, int Idx, int TypeIdx, typename Trait> struct VarPointer {
 
   template <typename AV> static std::size_t getSize(AV &av) {
     if constexpr (TypeIdx == 0) {
-      return av.varBuffer[Idx]->size();
+      return av.varBuffer[Idx].size();
     } else if constexpr (TypeIdx == 1) {
-      return av.varBorrow[Idx]->size();
+      return av.varBorrow[Idx].size();
     } else if constexpr (TypeIdx == 2) {
-      return av.varBorrowSEXP[Idx]->size();
+      return av.varBorrowSEXP[Idx].size();
     } else {
       ass(false, "Unknown variable index found");
     }
@@ -55,11 +55,11 @@ template <typename T, int Idx, int TypeIdx, typename Trait> struct VarPointer {
   // TODO: change BaseType to the correct type
   template <typename AV> static auto getPtr(AV &av, BaseType **ptr) {
     if constexpr (TypeIdx == 0) {
-      *ptr = av.varBuffer[Idx]->d.p;
+      *ptr = av.varBuffer[Idx].d.p;
     } else if constexpr (TypeIdx == 1) {
-      *ptr = av.varBorrow[Idx]->d.p;
+      *ptr = av.varBorrow[Idx].d.p;
     } else if constexpr (TypeIdx == 2) {
-      *ptr = av.varBorrowSEXP[Idx]->d.p;
+      *ptr = av.varBorrowSEXP[Idx].d.p;
     } else {
       ass(false, "Unknown variable index found");
     }
@@ -67,11 +67,11 @@ template <typename T, int Idx, int TypeIdx, typename Trait> struct VarPointer {
 
   template <typename AV> static auto getVal(AV &av, std::size_t VecIdx) {
     if constexpr (TypeIdx == 0) {
-      return av.varBuffer[Idx]->operator[](VecIdx);
+      return av.varBuffer[Idx][VecIdx];
     } else if constexpr (TypeIdx == 1) {
-      return av.varBorrow[Idx]->operator[](VecIdx);
+      return av.varBorrow[Idx][VecIdx];
     } else if constexpr (TypeIdx == 2) {
-      return av.varBorrowSEXP[Idx]->operator[](VecIdx);
+      return av.varBorrowSEXP[Idx][VecIdx];
     } else {
       ass(false, "Unknown variable index found");
     }
@@ -79,8 +79,8 @@ template <typename T, int Idx, int TypeIdx, typename Trait> struct VarPointer {
 
   template <typename AV> static auto getDeriv(AV &av, std::size_t VecIdx) {
     if constexpr (TypeIdx == 0) {
-      if (av.varBufferDerivs[Idx].size() != av.varBuffer[Idx]->size()) {
-        av.varBufferDerivs[Idx].resize(av.varBuffer[Idx]->size());
+      if (av.varBufferDerivs[Idx].size() != av.varBuffer[Idx].size()) {
+        av.varBufferDerivs[Idx].resize(av.varBuffer[Idx].size());
         if ((Idx == av.IndepVarIdx) && !av.DerivInit) {
           av.varBufferDerivs[Idx].fill(1.0);
           av.DerivInit = true;
@@ -88,8 +88,8 @@ template <typename T, int Idx, int TypeIdx, typename Trait> struct VarPointer {
       }
       return av.varBufferDerivs[Idx][VecIdx];
     } else if constexpr (TypeIdx == 1) {
-      if (av.varBorrowDerivs[Idx].size() != av.varBorrow[Idx]->size()) {
-        av.varBorrowDerivs[Idx].resize(av.varBorrow[Idx]->size());
+      if (av.varBorrowDerivs[Idx].size() != av.varBorrow[Idx].size()) {
+        av.varBorrowDerivs[Idx].resize(av.varBorrow[Idx].size());
         if ((Idx == av.IndepVarIdx) && !av.DerivInit) {
           av.varBorrowDerivs[Idx].fill(1.0);
           av.DerivInit = true;
@@ -97,8 +97,8 @@ template <typename T, int Idx, int TypeIdx, typename Trait> struct VarPointer {
       }
       return av.varBorrowDerivs[Idx][VecIdx];
     } else if constexpr (TypeIdx == 2) {
-      if (av.varBorrowSEXPDerivs[Idx].size() != av.varBorrowSEXP[Idx]->size()) {
-        av.varBorrowSEXPDerivs[Idx].resize(av.varBorrowSEXP[Idx]->size());
+      if (av.varBorrowSEXPDerivs[Idx].size() != av.varBorrowSEXP[Idx].size()) {
+        av.varBorrowSEXPDerivs[Idx].resize(av.varBorrowSEXP[Idx].size());
         if ((Idx == av.IndepVarIdx) && !av.DerivInit) {
           av.varBorrowSEXPDerivs[Idx].fill(1.0);
           av.DerivInit = true;
@@ -126,11 +126,11 @@ template <typename T, int Idx, int TypeIdx, typename Trait> struct VarPointer {
   template <typename AV, typename Val>
   static auto setVal(AV &av, std::size_t VecIdx, Val v) {
     if constexpr (TypeIdx == 0) {
-      av.varBuffer[Idx]->operator[](VecIdx) = v;
+      av.varBuffer[Idx][VecIdx] = v;
     } else if constexpr (TypeIdx == 1) {
-      av.varBorrow[Idx]->operator[](VecIdx) = v;
+      av.varBorrow[Idx][VecIdx] = v;
     } else if constexpr (TypeIdx == 2) {
-      av.varBorrowSEXP[Idx]->operator[](VecIdx) = v;
+      av.varBorrowSEXP[Idx][VecIdx] = v;
     } else {
       ass(false, "Unknown variable index found");
     }
