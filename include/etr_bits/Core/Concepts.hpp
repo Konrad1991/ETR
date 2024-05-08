@@ -2,6 +2,7 @@
 #define CONCEPTS_ETR_H
 
 #include "Header.hpp"
+#include <type_traits>
 
 namespace etr {
 template <typename T>
@@ -161,6 +162,15 @@ concept IsSinus = requires(T t) {
   requires std::is_same<
       typename std::remove_reference<decltype(t)>::type::TypeTrait,
       SinusTrait>::value;
+};
+
+template <typename T>
+concept IsConstant = requires(T t) {
+  typename std::remove_reference<decltype(t)>::type::CaseTrait;
+  typename std::remove_reference<decltype(t)>::type::TypeTrait;
+  requires std::is_same<
+      typename std::remove_reference<decltype(t)>::type::TypeTrait,
+      ConstantTypeTrait>::value;
 };
 
 /*

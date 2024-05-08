@@ -38,11 +38,12 @@ explicit Vec(const UnaryOperation<L2, OperationTrait> &&inp) : d(inp) {
   d.setMatrix(inp.mp);
 }
 
-template <int NBuffer_, int NBorrow_, int NBorrowSEXP_>
-explicit Vec(const AllVars<NBuffer_, NBorrow_, NBorrowSEXP_> && inp) : d(inp) {
+template <int NBuffer_, int NBorrow_, int NBorrowSEXP_, int NConstants_>
+explicit Vec(const AllVars<NBuffer_, NBorrow_, NBorrowSEXP_, NConstants_> &&inp)
+    : d(inp) {
   using TypeTrait = VariableTypeTrait;
   using CaseTrait = VariableTypeTrait;
-} 
+}
 
 // copy constructors
 template <typename L2> explicit Vec(Subset<L2> &inp) : d(inp) {
@@ -74,8 +75,9 @@ explicit Vec(UnaryOperation<L2, OperationTrait> &inp) : d(inp) {
   d.setMatrix(inp.mp);
 }
 
-template <int NBuffer_, int NBorrow_, int NBorrowSEXP_>
-explicit Vec(AllVars<NBuffer_, NBorrow_, NBorrowSEXP_> & inp) : d(inp) {
+template <int NBuffer_, int NBorrow_, int NBorrowSEXP_, int NConstants_>
+explicit Vec(AllVars<NBuffer_, NBorrow_, NBorrowSEXP_, NConstants_> &inp)
+    : d(inp) {
   using TypeTrait = VariableTypeTrait;
   using CaseTrait = VariableTypeTrait;
 }
@@ -110,7 +112,8 @@ explicit Vec() : d() {}
 explicit Vec(std::size_t rows, std::size_t cols) : d(rows * cols) {
   d.setMatrix(true, rows, cols);
 }
-explicit Vec(std::size_t rows, std::size_t cols, const double value) : d(rows * cols) {
+explicit Vec(std::size_t rows, std::size_t cols, const double value)
+    : d(rows * cols) {
   d.setMatrix(true, rows, cols);
   d.fill(value);
 }

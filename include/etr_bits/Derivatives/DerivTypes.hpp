@@ -1,8 +1,8 @@
 #ifndef DERIV_TYPES_ETR_H
 #define DERIV_TYPES_ETR_H
 
-#include "../Core.hpp"
 #include "../BinaryCalculations.hpp"
+#include "../Core.hpp"
 #include "../UnaryCalculations.hpp"
 
 namespace etr {
@@ -101,8 +101,7 @@ template <typename T, typename Trait> struct VariableType {
   template <typename AV> static auto getVal(AV &av, std::size_t VecIdx) {
     using Ty = typename std::remove_reference<Type>::type;
     if constexpr (IsBinary<Ty>) {
-      return Ty::template getVal<AV>(
-          av, VecIdx); 
+      return Ty::template getVal<AV>(av, VecIdx);
     } else {
       return Ty::template getVal<AV>(av, VecIdx);
     }
@@ -124,6 +123,14 @@ template <typename TRaw> inline constexpr auto produceVariableType() {
   }
 }
 
-}
+template <typename T, int Idx, typename Trait> struct Constants {
+  using TypeTrait = Trait;
+  using CaseTrait = Trait;
+  using Type = T;
+  using RetType = T;
+  static constexpr int I = Idx;
+};
+
+} // namespace etr
 
 #endif

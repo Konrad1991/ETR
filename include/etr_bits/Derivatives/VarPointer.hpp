@@ -29,7 +29,9 @@ template <typename T, int Idx, int TypeIdx, typename Trait> struct VarPointer {
   void resize(std::size_t newSize) { AllVarsRef.resize(Idx, TIdx, newSize); }
 
   template <typename AV> static std::size_t getSize(AV &av) {
-    if constexpr (TypeIdx == 0) {
+    if constexpr (TypeIdx == -1) {
+      return av.varConstants[Idx].size();
+    } else if constexpr (TypeIdx == 0) {
       return av.varBuffer[Idx].size();
     } else if constexpr (TypeIdx == 1) {
       return av.varBorrow[Idx].size();
@@ -41,7 +43,9 @@ template <typename T, int Idx, int TypeIdx, typename Trait> struct VarPointer {
   }
 
   auto get() const {
-    if constexpr (TypeIdx == 0) {
+    if constexpr (TypeIdx == -1) {
+      return AllVarsRef.varConstants[Idx];
+    } else if constexpr (TypeIdx == 0) {
       return AllVarsRef.varBuffer[Idx];
     } else if constexpr (TypeIdx == 1) {
       return AllVarsRef.varBorrow[Idx];
@@ -53,8 +57,11 @@ template <typename T, int Idx, int TypeIdx, typename Trait> struct VarPointer {
   }
 
   // TODO: change BaseType to the correct type
+  // TODO: remove method
   template <typename AV> static auto getPtr(AV &av, BaseType **ptr) {
-    if constexpr (TypeIdx == 0) {
+    if constexpr (TypeIdx == -1) {
+      *ptr = av.varConstants[Idx].d.p;
+    } else if constexpr (TypeIdx == 0) {
       *ptr = av.varBuffer[Idx].d.p;
     } else if constexpr (TypeIdx == 1) {
       *ptr = av.varBorrow[Idx].d.p;
@@ -66,7 +73,9 @@ template <typename T, int Idx, int TypeIdx, typename Trait> struct VarPointer {
   }
 
   template <typename AV> static auto getVal(AV &av, std::size_t VecIdx) {
-    if constexpr (TypeIdx == 0) {
+    if constexpr (TypeIdx == -1) {
+      return av.varConstants[Idx][VecIdx];
+    } else if constexpr (TypeIdx == 0) {
       return av.varBuffer[Idx][VecIdx];
     } else if constexpr (TypeIdx == 1) {
       return av.varBorrow[Idx][VecIdx];
@@ -78,7 +87,9 @@ template <typename T, int Idx, int TypeIdx, typename Trait> struct VarPointer {
   }
 
   template <typename AV> static auto getDeriv(AV &av, std::size_t VecIdx) {
-    if constexpr (TypeIdx == 0) {
+    if constexpr (TypeIdx == -1) {
+      return 0.0;
+    } else if constexpr (TypeIdx == 0) {
       if (av.varBufferDerivs[Idx].size() != av.varBuffer[Idx].size()) {
         av.varBufferDerivs[Idx].resize(av.varBuffer[Idx].size());
         if ((Idx == av.IndepVarIdx) && !av.DerivInit) {
@@ -110,6 +121,8 @@ template <typename T, int Idx, int TypeIdx, typename Trait> struct VarPointer {
     }
   }
 
+  // NOTE: TypeIdx -1 not implemented as for a constant the derivative can not
+  // be set
   template <typename AV, typename Val>
   static auto setDeriv(AV &av, std::size_t VecIdx, Val v) {
     if constexpr (TypeIdx == 0) {
@@ -123,6 +136,8 @@ template <typename T, int Idx, int TypeIdx, typename Trait> struct VarPointer {
     }
   }
 
+  // NOTE: TypeIdx -1 not implemented as for a constant the value cannot be
+  // changed
   template <typename AV, typename Val>
   static auto setVal(AV &av, std::size_t VecIdx, Val v) {
     if constexpr (TypeIdx == 0) {

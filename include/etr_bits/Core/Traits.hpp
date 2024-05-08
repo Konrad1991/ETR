@@ -40,24 +40,32 @@ inline double PlusDeriv(double lDeriv, double rDeriv) {
 }
 
 struct PlusDerivTrait {
-  template <typename L, typename R> 
-  static inline std::common_type<L, R>::type f(L l, R r) { return l + r; }
+  template <typename L, typename R>
+  static inline std::common_type<L, R>::type f(L l, R r) {
+    return l + r;
+  }
 
-  template <typename L, typename R> 
-  static inline std::common_type<L, R>::type fDeriv(L l, R r) { return l + r; }
+  template <typename L, typename R>
+  static inline std::common_type<L, R>::type fDeriv(L l, R r) {
+    return l + r;
+  }
 };
 
 struct TimesDerivTrait {
-  template <typename L, typename R> 
-  static inline std::common_type<L, R>::type f(L l, R r) { return l * r; }
+  template <typename L, typename R>
+  static inline std::common_type<L, R>::type f(L l, R r) {
+    return l * r;
+  }
 
-  template <typename L, typename R, typename LDeriv, typename RDeriv> 
-  static inline std::common_type<L, R>::type fDeriv(L l, R r, LDeriv ld, RDeriv rd) { return ld * r + rd * l; }
+  template <typename L, typename R, typename LDeriv, typename RDeriv>
+  static inline std::common_type<L, R>::type fDeriv(L l, R r, LDeriv ld,
+                                                    RDeriv rd) {
+    return ld * r + rd * l;
+  }
 };
 
 struct SinusDerivTrait {
-  template <typename L> 
-  static inline L f(L l) { return sin(l); }
+  template <typename L> static inline L f(L l) { return sin(l); }
 };
 
 struct PlusTrait {
@@ -205,10 +213,9 @@ struct MinusUnaryTrait {
   template <typename L = BaseType> static inline auto f(L a) { return -a; }
 };
 
-
-
 struct VarPointerTrait {};
 struct VariableTypeTrait {};
+struct ConstantTypeTrait {};
 
 } // namespace etr
 

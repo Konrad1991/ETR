@@ -4,6 +4,7 @@
 #include "../BinaryCalculations.hpp"
 #include "../Core.hpp"
 #include "../UnaryCalculations.hpp"
+#include "DerivTypes.hpp"
 
 namespace etr {
 
@@ -12,13 +13,18 @@ template <class F, class... Args> inline F LoopVariadicT(F f, Args &&...args) {
   return f;
 }
 
-template <int NBuffer_, int NBorrow_, int NBorrowSEXP_> struct AllVars {
+// TODO: the arguments passed to the function need own catzegories and have to
+// be saved as pointer
+template <int NBuffer_, int NBorrow_, int NBorrowSEXP_, int NConstants_>
+struct AllVars {
   static constexpr int NBuffer = NBuffer_;
   static constexpr int NBorrow = NBorrow_;
   static constexpr int NBorrowSEXP = NBorrowSEXP_;
+  static constexpr int NConstants = NConstants_;
   std::array<Vec<BaseType, Buffer<BaseType>>, NBuffer> varBuffer;
   std::array<Vec<BaseType, Borrow<BaseType>>, NBorrow> varBorrow;
   std::array<Vec<BaseType, BorrowSEXP<BaseType>>, NBorrowSEXP> varBorrowSEXP;
+  std::array<Vec<BaseType, Buffer<BaseType>>, NConstants> varConstants;
 
   std::array<Buffer<BaseType>, NBuffer> varBufferDerivs;
   std::array<Buffer<BaseType>, NBorrow> varBorrowDerivs;
