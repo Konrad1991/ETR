@@ -53,14 +53,13 @@ template <typename T, int Idx, int TypeIdx, typename Trait> struct VarPointer {
   }
 
   // TODO: change BaseType to the correct type
-  // TODO: add always pointer type
   template <typename AV> static auto getPtr(AV &av, BaseType **ptr) {
     if constexpr (TypeIdx == 0) {
       *ptr = av.varBuffer[Idx]->d.p;
     } else if constexpr (TypeIdx == 1) {
-      return av.varBorrow[Idx]->d.p;
+      *ptr = av.varBorrow[Idx]->d.p;
     } else if constexpr (TypeIdx == 2) {
-      return av.varBorrowSEXP[Idx]->d.p;
+      *ptr = av.varBorrowSEXP[Idx]->d.p;
     } else {
       ass(false, "Unknown variable index found");
     }
