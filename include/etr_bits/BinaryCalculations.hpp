@@ -133,13 +133,13 @@ struct BinaryOperation {
                                                : TyR::getSize(av);
   }
   template <typename AV>
-  static RetType getVal(
-      AV &av,
-      std::size_t VecIdx) { // issue: how to handle scalar types? Or temporary types?
+  static RetType getVal(AV &av,
+                        std::size_t VecIdx) { // issue: how to handle scalar
+                                              // types? Or temporary types?
     using TyL = typename std::remove_reference<typeTraitL>::type;
     using TyR = typename std::remove_reference<typeTraitR>::type;
-    return f(TyL::template getVal<AV>(av, VecIdx % TyL::getSize(av)),
-             TyR::template getVal<AV>(av, VecIdx % TyR::getSize(av)));
+    return Trait::f(TyL::template getVal<AV>(av, VecIdx % TyL::getSize(av)),
+                    TyR::template getVal<AV>(av, VecIdx % TyR::getSize(av)));
   }
 };
 

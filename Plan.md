@@ -1,22 +1,21 @@
-# ToDo
+# To-Do
 
-## Types
+# Derivatives
 
-- CommonType everywhere
-- all helper functions such as vector, colon etc. have to return a vector of type RBufTrait and RVecTrait
-- subsetting 
-    * currently the index operators are all passed as const vars. All cases/combinations have to be implemented. 
-- remove BaseType everywhere
-- remove all const classifiers (at least where possible)
+- How to handle derivatives with types such as subset(variable)
+- Is it the best solution to store all different kind of constants in AllVars?
+- Need a assignment function for IsVarPointer --> than one can use Vec<double, VarPointer<decltype(av), 0, 0>, VariableTypeTrait> vp1(av) as normal variable
 
-## Functions
+# Types
 
-- add: abs
+- does different types of vector work well together
+- remove not required traits
 
-## Derivatives
+# Required code
 
-- calc Derivatives based on type during compile time
-
-## RNG
-
-- rewrite Rs RNG lib in C++ (if possible lock free)
+- update all unary functions
+- update all binary functions
+- update subsetting
+- update interpolation
+- update helper
+- update printing

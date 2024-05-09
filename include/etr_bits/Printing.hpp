@@ -88,6 +88,22 @@ print(const T &inp) { // issue: just a quick fix for printing unary expression
   }
 }
 
+template <typename T, typename Op, typename Trait, typename AV>
+inline void print(const etr::Vec<T, Op, Trait> &inp, AV &av) {
+  if (!inp.im()) {
+    for (std::size_t i = 0; i < inp.size(); i++)
+      PRINT_STREAM << std::boolalpha << decltype(inp.d)::getVal(av, i) << " ";
+    PRINT_STREAM << std::endl;
+  } else {
+    for (std::size_t i = 0; i < inp.nr(); i++) {
+      for (std::size_t j = 0; j < inp.nc(); j++) {
+        PRINT_STREAM << inp.d.getVal(av, j * inp.nr() + i) << "\t";
+      }
+      PRINT_STREAM << std::endl;
+    }
+  }
+}
+
 } // namespace etr
 
 #endif

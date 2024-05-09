@@ -22,6 +22,7 @@ template <typename T, typename R, typename Trait> struct Vec {
   using isBorrow = std::is_same<typeTraitD, BorrowTrait>;
   using isBorrowSEXP = std::is_same<typeTraitD, BorrowSEXPTrait>;
   using isSubset = std::is_same<typeTraitD, SubsetTrait>;
+  using isVarPointer = std::is_same<typeTraitD, VarPointerTrait>;
   using caseTraitD = std::remove_reference<decltype(d)>::type::CaseTrait;
   using isUnaryOP = std::is_same<caseTraitD, UnaryTrait>;
   using isBinaryOP = std::is_same<caseTraitD, BinaryTrait>;
@@ -47,7 +48,7 @@ template <typename T, typename R, typename Trait> struct Vec {
   bool im() const { return d.im(); }
   std::size_t nc() const { return d.nc(); }
   std::size_t nr() const { return d.nr(); }
-  
+
   auto begin() const {
     if constexpr (isSubset::value) {
       return It<T>{d.p->p};

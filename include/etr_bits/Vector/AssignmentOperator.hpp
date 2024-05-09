@@ -203,3 +203,30 @@ Vec &operator=(SEXP s) {
 }
 #endif
 #endif
+
+// TODO: finish this
+template <typename T2, typename R2, typename Trait2>
+Vec &operator<<(const Vec<T2, R2, Trait2> &otherVec) {
+  using tD = decltype(otherVec.d);
+  if constexpr (IsVarPointer<tD> && IsVarPointer<DType>) {
+    // d.resize(tD::getSize(av));
+    // for (std::size_t i = 0; i < tD::getSize(av); i++) {
+    // d.setVal(av, i, tD::getVal(av, i));
+    //}
+  } else if constexpr (IsVarPointer<tD> && !IsVarPointer<DType>) {
+    // d.resize(tD::getSize(av));
+    // for (std::size_t i = 0; i < tD::getSize(av); i++) {
+    //  d[i] = tD::getVal(av, i);
+    //}
+  } else if constexpr (!IsVarPointer<tD> && IsVarPointer<DType>) {
+    d.resize(otherVec.size());
+    for (std::size_t i = 0; i < otherVec.size(); i++) {
+      d.AllVarsRef.varBuffer[d.I][i] = otherVec[i];
+    }
+  } else if constexpr (!IsVarPointer<tD> && !IsVarPointer<DType>) {
+    // d.resize(otherVec.size());
+    // for (std::size_t i = 0; i < otherVec.size(); i++) {
+    //  d[i] = otherVec[i];
+    //}
+  }
+}

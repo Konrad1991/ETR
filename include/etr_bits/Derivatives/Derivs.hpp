@@ -29,6 +29,12 @@ inline constexpr auto walkT() -> VariableType<T> {
   return VariableType<T>();
 }
 
+template <typename T>
+  requires IsConstant<T>
+inline constexpr auto walkT() {
+  return Constants<typename T::Type, T::I, ConstantTypeTrait>{};
+}
+
 template <typename TRaw>
   requires IsMultiplication<TRaw>
 inline constexpr auto walkT() {
