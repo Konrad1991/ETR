@@ -205,7 +205,6 @@ Vec &operator=(SEXP s) {
 #endif
 #endif
 
-
 template <typename LT, typename RT, typename LDeriv, typename RDeriv,
           typename TraitTD, typename OpTrait>
 static constexpr QuarternyType<LT, RT, LDeriv, RDeriv, TraitTD, OpTrait>
@@ -251,8 +250,10 @@ template <typename TRaw>
   requires IsMultiplication<TRaw>
 static constexpr auto walkTD() {
   using TDMultiplication = std::remove_const_t<std::remove_reference_t<TRaw>>;
-  constexpr auto LT = produceVariableType<typename TDMultiplication::typeTraitL>();
-  constexpr auto RT = produceVariableType<typename TDMultiplication::typeTraitR>();
+  constexpr auto LT =
+      produceVariableType<typename TDMultiplication::typeTraitL>();
+  constexpr auto RT =
+      produceVariableType<typename TDMultiplication::typeTraitR>();
   constexpr auto LDeriv = walkTD<typename TDMultiplication::typeTraitL>();
   constexpr auto RDeriv = walkTD<typename TDMultiplication::typeTraitR>();
   return produceQuarternyType<decltype(LT), decltype(RT), decltype(LDeriv),
@@ -308,6 +309,12 @@ Vec &operator<<(const Vec<T2, R2, Trait2> &otherVec) {
     for (std::size_t i = 0; i < otherVec.size(); i++) {
       d.AllVarsRef.varBuffer[d.I][i] = otherVec[i];
     }
+
+    d.AllVarsRef.resizeDerivs(R::I, R::TIdx, otherVec.size());
+    for (std::size_t i = 0; i < res.getSize(d.AllVarsRef); i++) {
+      d.setDeriv(d.AllVarsRef, i, res.getDeriv(d.AllVarsRef, i));
+    }
+
   } else if constexpr (!IsVarPointer<tD> && !IsVarPointer<DType>) {
     d.resize(otherVec.size());
     for (std::size_t i = 0; i < otherVec.size(); i++) {

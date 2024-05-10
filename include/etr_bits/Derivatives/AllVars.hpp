@@ -132,6 +132,19 @@ struct AllVars {
 #endif
     }
   }
+
+  void resizeDerivs(std::size_t Idx, int TypeIdx, std::size_t newSize) {
+    if (TypeIdx == 0) {
+      return varBufferDerivs[Idx].resize(newSize);
+    } else if (TypeIdx == 1) {
+      return varBorrowDerivs[Idx].resize(newSize);
+    } else if (TypeIdx == 2) {
+#ifdef STANDALONE_ETR
+#else
+      return varBorrowSEXPDerivs[Idx].resize(newSize);
+#endif
+    }
+  }
 };
 
 } // namespace etr
