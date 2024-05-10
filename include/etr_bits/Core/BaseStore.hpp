@@ -1,6 +1,11 @@
 #ifndef BASESTORE_ETR_H
 #define BASESTORE_ETR_H
 
+#include "Header.hpp"
+#include "MatrixParameter.hpp"
+#include "Types.hpp"
+#include "Utils.hpp"
+
 namespace etr {
 template <typename T, typename BaseTrait> struct BaseStore {
   using RetType = T;
@@ -64,7 +69,8 @@ template <typename T, typename BaseTrait> struct BaseStore {
     allocated = true;
   };
 #endif
-  BaseStore(std::size_t sz_) : sz(sz_), capacity(static_cast<std::size_t>(sz_ * 1.15)) {
+  BaseStore(std::size_t sz_)
+      : sz(sz_), capacity(static_cast<std::size_t>(sz_ * 1.15)) {
     ass(sz_ > 0, "Size has to be larger than 0");
     p = new T[capacity];
     for (std::size_t i = 0; i < capacity; i++)
