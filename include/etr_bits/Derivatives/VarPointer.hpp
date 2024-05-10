@@ -4,6 +4,7 @@
 #include "../BinaryCalculations.hpp"
 #include "../Core.hpp"
 #include "../UnaryCalculations.hpp"
+#include <cstddef>
 
 namespace etr {
 
@@ -81,6 +82,20 @@ template <typename T, int Idx, int TypeIdx, typename Trait> struct VarPointer {
       return av.varBorrow[Idx][VecIdx];
     } else if constexpr (TypeIdx == 2) {
       return av.varBorrowSEXP[Idx][VecIdx];
+    } else {
+      ass(false, "Unknown variable index found");
+    }
+  }
+
+  auto operator[](std::size_t VecIdx) const {
+    if constexpr (TypeIdx == -1) {
+      return AllVarsRef.varConstants[Idx][VecIdx];
+    } else if constexpr (TypeIdx == 0) {
+      return AllVarsRef.varBuffer[Idx][VecIdx];
+    } else if constexpr (TypeIdx == 1) {
+      return AllVarsRef.varBorrow[Idx][VecIdx];
+    } else if constexpr (TypeIdx == 2) {
+      return AllVarsRef.varBorrowSEXP[Idx][VecIdx];
     } else {
       ass(false, "Unknown variable index found");
     }

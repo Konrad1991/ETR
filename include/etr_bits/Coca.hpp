@@ -101,6 +101,53 @@ template <typename... Args> inline auto coca(Args &&...args) {
   return ret;
 }
 
+template <int Idx, typename AV, typename... Args>
+inline auto coca(AV &av, Args &&...args) {
+  using cType = decltype(determine_type(args...));
+  int size = 0;
+  forEachArg(
+      [&](auto arg) {
+        if constexpr (std::is_arithmetic_v<decltype(arg)>) {
+          size++;
+        } else {
+          size += arg.size();
+        }
+      },
+      args...);
+
+  av.varConstants[Idx].resize(size);
+  std::size_t index = 0;
+
+  forEachArg(
+      [&](auto arg) {
+        if constexpr (std::is_arithmetic_v<decltype(arg)>) {
+          if constexpr (std::is_same_v<decltype(arg), cType>) {
+            av.varConstants[Idx][index] = arg;
+          } else {
+            av.varConstants[Idx][index] = static_cast<cType>(arg);
+          }
+          index++;
+        } else {
+          using tD = ExtractedTypeD<decltype(arg)>;
+          using InnerType = ExtractDataType<tD>::RetType;
+          if constexpr (std::is_same_v<InnerType, cType>) {
+            for (int i = 0; i < arg.size(); i++) {
+              av.varConstants[Idx][index + i] = arg[i];
+            }
+          } else {
+            for (int i = 0; i < arg.size(); i++) {
+              av.varConstants[Idx][index + i] = static_cast<cType>(arg[i]);
+            }
+          }
+          index += arg.size();
+        }
+      },
+      args...);
+
+  Vec<double, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
+  return ret;
+}
+
 } // namespace etr
 
 #endif

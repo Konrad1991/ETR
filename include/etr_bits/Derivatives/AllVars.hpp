@@ -67,7 +67,9 @@ struct AllVars {
   }
 
   std::size_t size(std::size_t Idx, int TypeIdx) const {
-    if (TypeIdx == 0) {
+    if (TypeIdx == -1) {
+      return varConstants[Idx].size();
+    } else if (TypeIdx == 0) {
       return varBuffer[Idx].size();
     } else if (TypeIdx == 1) {
       return varBorrow[Idx].size();

@@ -38,8 +38,9 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 #include "etr_bits/Distri.hpp"
 #endif
 // #include "etr_bits/Derivs.hpp"
-#include "etr_bits/BufferVector.hpp"
 #include "etr_bits/Derivatives/Derivs.hpp"
+#include "etr_bits/BufferVector.hpp"
+
 
 typedef etr::Vec<etr::BaseType> sexp;
 typedef etr::Vec<etr::BaseType,
