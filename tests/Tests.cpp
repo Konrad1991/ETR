@@ -9,7 +9,7 @@ template <typename T> void printVarPointer(T &v) {
 }
 
 int main(int argc, char *argv[]) {
-  etr::AllVars<2, 0, 0, 2> av(0, 0);
+  etr::AllVars<2, 0, 0, 4> av(0, 0); // deriv with respect tp variable 1 = vp1
   Vec<double, VarPointer<decltype(av), 0, 0>, VariableTypeTrait> vp1(av);
   Vec<double, VarPointer<decltype(av), 1, 0>, VariableTypeTrait> vp2(av);
   vp1 << coca<0>(av, 1, 2, 3);
@@ -17,12 +17,12 @@ int main(int argc, char *argv[]) {
 
   print(vp1, av);
   print(vp2, av);
-  for (size_t i = 0; i < vp2.d.getSize(av); i++) {
-    std::cout << vp2.d.getDeriv(av, i) << std::endl;
-  }
-  for (size_t i = 0; i < vp1.d.getSize(av); i++) {
-    std::cout << vp1.d.getDeriv(av, i) << std::endl;
-  }
+
+  auto deriv1 = get_deriv<2>(vp1);
+  print(deriv1, av);
+
+  auto deriv2 = get_deriv<3>(vp2);
+  print(deriv2, av);
 
   return 0;
 }
