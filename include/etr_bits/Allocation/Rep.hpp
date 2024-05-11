@@ -1,6 +1,7 @@
 #ifndef REP_ETR_H
 #define REP_ETR_H
 
+#include "../Core/Types.hpp"
 #include "AllocationUtils.hpp"
 
 /*
