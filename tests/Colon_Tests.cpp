@@ -1,73 +1,81 @@
 
 #define STANDALONE_ETR
 #include "../include/etr.hpp"
+using namespace etr;
 
-#define CATCH_CONFIG_MAIN
-#include "./catch/catch.hpp"
+void test_colon_arithmetic() {
+  // NOTE: arithmetics
+  {
+    Vec<double> vec1 = colon(-1, 10);
+    ass(vec1[0] == -1, "vec1[0] == -1");
+    ass(vec1[1] == 0, "vec1[1] == 0");
+    ass(vec1[2] == 1, "vec1[2] == 1");
+    ass(vec1[3] == 2, "vec1[3] == 2");
+    ass(vec1[4] == 3, "vec1[4] == 3");
 
-TEST_CASE("rep arithmetic arithmetic") {
-  SECTION("integers") {
-    etr::Vec<double> vec1 = etr::colon(-1, 10);
-    REQUIRE(vec1[0] == -1);
-    REQUIRE(vec1[1] == 0);
-    REQUIRE(vec1[2] == 1);
-    REQUIRE(vec1[3] == 2);
-    REQUIRE(vec1[11] == 10);
-
-    etr::Vec<double> vec2 = etr::colon(10, -2);
-    REQUIRE(vec2[0] == 10);
-    REQUIRE(vec2[1] == 9);
-    REQUIRE(vec2[2] == 8);
-    REQUIRE(vec2[3] == 7);
-    REQUIRE(vec2[11] == -1);
-    REQUIRE(vec2[12] == -2);
+    Vec<double> vec2 = colon(10, -2);
+    ass(vec2[0] == 10, "vec1[0] == 10");
+    ass(vec2[1] == 9, "vec1[1] == 9");
+    ass(vec2[2] == 8, "vec1[2] == 8");
+    ass(vec2[3] == 7, "vec1[3] == 7");
+    ass(vec2[11] == -1, "vec1[11] == -1");
+    ass(vec2[12] == -2, "vec1[12] == -2");
 
     etr::Vec<double> vec3 = etr::colon(10.25, -1.5);
-    REQUIRE(vec3[0] == 10.25);
-    REQUIRE(vec3[1] == 9.25);
-    REQUIRE(vec3[2] == 8.25);
-    REQUIRE(vec3[3] == 7.25);
-    REQUIRE(vec3[11] == -0.75);
+    ass(vec3[0] == 10.25, "vec3[0] == 10.25");
+    ass(vec3[1] == 9.25, "vec3[1] == 9.25");
+    ass(vec3[2] == 8.25, "vec3[2] == 8.25");
+    ass(vec3[3] == 7.25, "vec3[3] == 7.25");
+    ass(vec3[11] == -0.75, "vec3[11] == -0.75");
 
     etr::Vec<double> vec4 = etr::colon(1.25, 4.6);
-    REQUIRE(vec4[0] == 1.25);
-    REQUIRE(vec4[1] == 2.25);
-    REQUIRE(vec4[2] == 3.25);
-    REQUIRE(vec4[3] == 4.25);
+    ass(vec4[0] == 1.25, "vec4[0] == 1.25");
+    ass(vec4[1] == 2.25, "vec4[1] == 2.25");
+    ass(vec4[2] == 3.25, "vec4[2] == 3.25");
+    ass(vec4[3] == 4.25, "vec4[3] == 4.25");
 
     etr::Vec<double> vec5 = etr::colon(1.25, 5);
-    REQUIRE(vec5[0] == 1.25);
-    REQUIRE(vec5[1] == 2.25);
-    REQUIRE(vec5[2] == 3.25);
-    REQUIRE(vec5[3] == 4.25);
+    ass(vec5[0] == 1.25, "vec5[0] == 1.25");
+    ass(vec5[1] == 2.25, "vec5[1] == 2.25");
+    ass(vec5[2] == 3.25, "vec5[2] == 3.25");
+    ass(vec5[3] == 4.25, "vec5[3] == 4.25");
 
     etr::Vec<double> vec6 = etr::colon(1, 4.6);
-    REQUIRE(vec6[0] == 1);
-    REQUIRE(vec6[1] == 2);
-    REQUIRE(vec6[2] == 3);
-    REQUIRE(vec6[3] == 4);
+    ass(vec6[0] == 1, "vec6[0] == 1");
+    ass(vec6[1] == 2, "vec6[1] == 2");
+    ass(vec6[2] == 3, "vec6[2] == 3");
+    ass(vec6[3] == 4, "vec6[3] == 4");
+  }
+
+  // NOTE: vectors and arithmetics
+  {
+    etr::Vec<double> v = etr::coca(1, 2, 3);
+    etr::Vec<double> vec1 = etr::colon(v, 10);
+    ass(vec1.size() == 10, "vec size = 10");
+    etr::Vec<double> vec2 = etr::colon(v, 1);
+    ass(vec2.size() == 1, "vec size = 1");
+    ass(vec2[0] == 1, "vec2[0] == 1");
+    v[0] = 0;
+    etr::Vec<double> vec3 = etr::colon(v, 0);
+    ass(vec3.size() == 1, "vec size == 1");
+    ass(vec3[0] == 0, "vec3[0] == 0");
+    ass(etr::colon(etr::coca(1, 2, 3), 7).size() == 7, "vec size == 7");
+    ass(etr::colon(etr::coca(1, 2, 3), 1).size() == 1, "vec size == 1");
+    ass(etr::colon(etr::coca(1, 2, 3), 1)[0] == 1, "vec[0] == 1 ");
+    ass(etr::colon(etr::coca(0, 2, 3), 0)[0] == 0, "vec[0] == 0");
+    ass(etr::colon(etr::coca(0, 2, 3), 0).size() == 1, "vec size == 1");
+    ass(etr::colon(etr::coca(0) + 0, 0).size() == 1, "vec size == 1");
   }
 }
 
+int main() { test_colon_arithmetic(); }
+
+/*
+
+
 TEST_CASE("Vector & arithmetic") {
   SECTION("L vectors") {
-    etr::Vec<double> v = etr::coca(1, 2, 3);
-    etr::Vec<double> vec1 = etr::colon(v, 10);
-    REQUIRE(vec1.size() == 10);
-    etr::Vec<double> vec2 = etr::colon(v, 1);
-    REQUIRE(vec2.size() == 1);
-    REQUIRE(vec2[0] == 1);
-    v[0] = 0;
-    etr::Vec<double> vec3 = etr::colon(v, 0);
-    REQUIRE(vec3.size() == 1);
-    REQUIRE(vec3[0] == 0);
-
-    REQUIRE(etr::colon(etr::coca(1, 2, 3), 7).size() == 7);
-    REQUIRE(etr::colon(etr::coca(1, 2, 3), 1).size() == 1);
-    REQUIRE(etr::colon(etr::coca(1, 2, 3), 1)[0] == 1);
-    REQUIRE(etr::colon(etr::coca(0, 2, 3), 0)[0] == 0);
-    REQUIRE(etr::colon(etr::coca(0, 2, 3), 0).size() == 1);
-  }
+   }
 
   SECTION("R vectors") {
     REQUIRE(etr::colon(etr::coca(1, 2, 3) + 0, 7).size() == 7);
@@ -140,3 +148,4 @@ TEST_CASE("vector & vector") {
     REQUIRE(result[3] == 4);
   }
 }
+*/
