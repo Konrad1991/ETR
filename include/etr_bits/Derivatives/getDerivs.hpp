@@ -9,7 +9,6 @@
 namespace etr {
 
 // NOTE: this fct extracts the derivative
-
 template <typename T>
   requires IsVariableTypeTrait<T>
 inline auto get_derivs(T &v) {
@@ -19,6 +18,8 @@ inline auto get_derivs(T &v) {
   }
   return res;
 }
+
+// TODO: find a better way instead of copying.
 } // namespace etr
 
 #endif

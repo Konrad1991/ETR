@@ -49,10 +49,10 @@ template <typename T> inline auto createLVec(T s) {
       SI{size});
 }
 
-template <typename T> inline auto createRVec(T s) {
+template <typename T, typename VecType = BaseType> inline auto createRVec(T s) {
   std::size_t size = convertSize(s);
   ass(size > 0, "invalid length argument");
-  return Vec<BaseType, Buffer<BaseType, BufferTrait, RBufTrait>, RVecTrait>(
+  return Vec<VecType, Buffer<BaseType, BufferTrait, RBufTrait>, RVecTrait>(
       SI{size});
 }
 
