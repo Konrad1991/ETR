@@ -2,12 +2,6 @@
 #include "../include/etr.hpp"
 using namespace etr;
 
-template <typename T> void printVarPointer(T &v) {
-  std::cout << v.d.I << std::endl;
-  std::cout << v.d.TIdx << std::endl;
-  std::cout << v.d.AllVarsRef.varBuffer[0] << std::endl;
-}
-
 int main(int argc, char *argv[]) {
   etr::AllVars<2, 0, 0, 2> av(0, 0);
   Vec<double, VarPointer<decltype(av), 0, 0>, VariableTypeTrait> vp1(av);
@@ -17,12 +11,11 @@ int main(int argc, char *argv[]) {
 
   print(vp1, av);
   print(vp2, av);
-  for (size_t i = 0; i < vp2.d.getSize(av); i++) {
-    std::cout << vp2.d.getDeriv(av, i) << std::endl;
-  }
-  for (size_t i = 0; i < vp1.d.getSize(av); i++) {
-    std::cout << vp1.d.getDeriv(av, i) << std::endl;
-  }
+
+  Vec<double> deriv_vp1 = get_derivs(vp1);
+  print(deriv_vp1);
+  Vec<double> deriv_vp2 = get_derivs(vp2);
+  print(deriv_vp2);
 
   return 0;
 }

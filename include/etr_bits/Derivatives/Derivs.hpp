@@ -7,6 +7,7 @@
 #include "AllVars.hpp"
 #include "DerivTypes.hpp"
 #include "VarPointer.hpp"
+#include "getDerivs.hpp"
 
 namespace etr {
 
