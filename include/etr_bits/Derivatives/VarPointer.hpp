@@ -101,6 +101,20 @@ template <typename T, int Idx, int TypeIdx, typename Trait> struct VarPointer {
     }
   }
 
+  RetType &operator[](std::size_t VecIdx) {
+    if constexpr (TypeIdx == -1) {
+      return AllVarsRef.varConstants[Idx][VecIdx];
+    } else if constexpr (TypeIdx == 0) {
+      return AllVarsRef.varBuffer[Idx][VecIdx];
+    } else if constexpr (TypeIdx == 1) {
+      return AllVarsRef.varBorrow[Idx][VecIdx];
+    } else if constexpr (TypeIdx == 2) {
+      return AllVarsRef.varBorrowSEXP[Idx][VecIdx];
+    } else {
+      ass(false, "Unknown variable index found");
+    }
+  }
+
   template <typename AV> static auto getDeriv(AV &av, std::size_t VecIdx) {
     if constexpr (TypeIdx == -1) {
       return 0.0;

@@ -100,7 +100,6 @@ inline auto colon(const A &start, O end) {
   }
 }
 
-// TODO: for all const Vec the start[0] or end[0] has to be changed to temp
 template <typename A, typename O>
   requires std::is_arithmetic_v<A> && IsVec<O>
 inline auto colon(A start, O &end) {
@@ -129,13 +128,16 @@ inline auto colon(A start, const O &end) {
   using DataType = std::common_type<A, DataTypeO>::type;
   if constexpr (std::is_same_v<A, DataType> &&
                 std::is_same_v<DataTypeO, DataType>) {
-    return colonInternal(start, end[0]);
+    DataType temp = end[0];
+    return colonInternal(start, temp);
   } else if constexpr (!std::is_same_v<A, DataType> &&
                        std::is_same_v<DataTypeO, DataType>) {
-    return colonInternal(static_cast<DataType>(start), end[0]);
+    DataType temp = end[0];
+    return colonInternal(static_cast<DataType>(start), temp);
   } else if constexpr (std::is_same_v<A, DataType> &&
                        !std::is_same_v<DataTypeO, DataType>) {
-    return colonInternal(start, static_cast<DataType>(end[0]));
+    DataType temp = end[0];
+    return colonInternal(start, static_cast<DataType>(temp));
   }
 }
 
@@ -173,13 +175,19 @@ inline auto colon(const A &start, O &end) {
   using DataType = std::common_type<DataTypeA, DataTypeO>::type;
   if constexpr (std::is_same_v<DataTypeA, DataType> &&
                 std::is_same_v<DataTypeO, DataType>) {
-    return colonInternal(start[0], end[0]);
+    DataType tempStart = start[0];
+    DataType tempEnd = end[0];
+    return colonInternal(tempStart, tempEnd);
   } else if constexpr (!std::is_same_v<DataTypeA, DataType> &&
                        std::is_same_v<DataTypeO, DataType>) {
-    return colonInternal(static_cast<DataType>(start[0]), end[0]);
+    DataType tempStart = start[0];
+    DataType tempEnd = end[0];
+    return colonInternal(static_cast<DataType>(tempStart), tempEnd);
   } else if constexpr (std::is_same_v<DataTypeA, DataType> &&
                        !std::is_same_v<DataTypeO, DataType>) {
-    return colonInternal(start[0], static_cast<DataType>(end[0]));
+    DataType tempStart = start[0];
+    DataType tempEnd = end[0];
+    return colonInternal(tempStart, static_cast<DataType>(tempEnd));
   }
 }
 
@@ -195,13 +203,16 @@ inline auto colon(A &start, const O &end) {
   using DataType = std::common_type<DataTypeA, DataTypeO>::type;
   if constexpr (std::is_same_v<DataTypeA, DataType> &&
                 std::is_same_v<DataTypeO, DataType>) {
-    return colonInternal(start[0], end[0]);
+    DataType tempEnd = end[0];
+    return colonInternal(start[0], tempEnd);
   } else if constexpr (!std::is_same_v<DataTypeA, DataType> &&
                        std::is_same_v<DataTypeO, DataType>) {
-    return colonInternal(static_cast<DataType>(start[0]), end[0]);
+    DataType tempEnd = end[0];
+    return colonInternal(static_cast<DataType>(start[0]), tempEnd);
   } else if constexpr (std::is_same_v<DataTypeA, DataType> &&
                        !std::is_same_v<DataTypeO, DataType>) {
-    return colonInternal(start[0], static_cast<DataType>(end[0]));
+    DataType tempEnd = end[0];
+    return colonInternal(start[0], static_cast<DataType>(tempEnd));
   }
 }
 
@@ -217,13 +228,19 @@ inline auto colon(const A &start, const O &end) {
   using DataType = std::common_type<DataTypeA, DataTypeO>::type;
   if constexpr (std::is_same_v<DataTypeA, DataType> &&
                 std::is_same_v<DataTypeO, DataType>) {
-    return colonInternal(start[0], end[0]);
+    DataType tempStart = start[0];
+    DataType tempEnd = end[0];
+    return colonInternal(tempStart, tempEnd);
   } else if constexpr (!std::is_same_v<DataTypeA, DataType> &&
                        std::is_same_v<DataTypeO, DataType>) {
-    return colonInternal(static_cast<DataType>(start[0]), end[0]);
+    DataType tempStart = start[0];
+    DataType tempEnd = end[0];
+    return colonInternal(static_cast<DataType>(tempStart), tempEnd);
   } else if constexpr (std::is_same_v<DataTypeA, DataType> &&
                        !std::is_same_v<DataTypeO, DataType>) {
-    return colonInternal(start[0], static_cast<DataType>(end[0]));
+    DataType tempStart = start[0];
+    DataType tempEnd = end[0];
+    return colonInternal(tempStart, static_cast<DataType>(tempEnd));
   }
 }
 
@@ -237,7 +254,7 @@ inline auto colonInternalDerivs(AV &av, T start, T end) {
     Vec<T, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
     std::size_t counter = 0;
     while (start <= end) {
-      ret[counter] = start;
+      av.varConstants[Idx][counter] = start;
       start++;
       counter++;
     }
@@ -248,7 +265,7 @@ inline auto colonInternalDerivs(AV &av, T start, T end) {
   Vec<T, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
   std::size_t counter = 0;
   while (end <= start) {
-    ret[counter] = start;
+    av.varConstants[Idx][counter] = start;
     start--;
     counter++;
   }
@@ -298,13 +315,16 @@ inline auto colon(AV &av, const A &start, O end) {
   using DataType = std::common_type<DataTypeA, O>::type;
   if constexpr (std::is_same_v<DataTypeA, DataType> &&
                 std::is_same_v<O, DataType>) {
-    return colonInternalDerivs<Idx>(av, start[0], end);
+    DataType tempStart = start[0];
+    return colonInternalDerivs<Idx>(av, tempStart, end);
   } else if constexpr (!std::is_same_v<DataTypeA, DataType> &&
                        std::is_same_v<O, DataType>) {
-    return colonInternalDerivs<Idx>(av, static_cast<DataType>(start[0]), end);
+    DataType tempStart = start[0];
+    return colonInternalDerivs<Idx>(av, static_cast<DataType>(tempStart), end);
   } else if constexpr (std::is_same_v<DataTypeA, DataType> &&
                        !std::is_same_v<O, DataType>) {
-    return colonInternalDerivs<Idx>(av, start[0], static_cast<DataType>(end));
+    DataType tempStart = start[0];
+    return colonInternalDerivs<Idx>(av, tempStart, static_cast<DataType>(end));
   }
 }
 
@@ -320,7 +340,7 @@ inline auto colon(AV &av, A start, O &end) {
     return colonInternalDerivs<Idx>(av, start, end[0]);
   } else if constexpr (!std::is_same_v<A, DataType> &&
                        std::is_same_v<DataTypeO, DataType>) {
-    return colonInternalDerivs(static_cast<DataType>(start), end[0]);
+    return colonInternalDerivs<Idx>(av, static_cast<DataType>(start), end[0]);
   } else if constexpr (std::is_same_v<A, DataType> &&
                        !std::is_same_v<DataTypeO, DataType>) {
     return colonInternalDerivs<Idx>(av, start, static_cast<DataType>(end[0]));
@@ -336,13 +356,16 @@ inline auto colon(AV &av, A start, const O &end) {
   using DataType = std::common_type<A, DataTypeO>::type;
   if constexpr (std::is_same_v<A, DataType> &&
                 std::is_same_v<DataTypeO, DataType>) {
-    return colonInternalDerivs<Idx>(av, start, end[0]);
+    DataType tempEnd = end[0];
+    return colonInternalDerivs<Idx>(av, start, tempEnd);
   } else if constexpr (!std::is_same_v<A, DataType> &&
                        std::is_same_v<DataTypeO, DataType>) {
-    return colonInternalDerivs<Idx>(av, static_cast<DataType>(start), end[0]);
+    DataType tempEnd = end[0];
+    return colonInternalDerivs<Idx>(av, static_cast<DataType>(start), tempEnd);
   } else if constexpr (std::is_same_v<A, DataType> &&
                        !std::is_same_v<DataTypeO, DataType>) {
-    return colonInternalDerivs<Idx>(av, start, static_cast<DataType>(end[0]));
+    DataType tempEnd = end[0];
+    return colonInternalDerivs<Idx>(av, start, static_cast<DataType>(tempEnd));
   }
 }
 
@@ -382,14 +405,17 @@ inline auto colon(AV &av, const A &start, O &end) {
   using DataType = std::common_type<DataTypeA, DataTypeO>::type;
   if constexpr (std::is_same_v<DataTypeA, DataType> &&
                 std::is_same_v<DataTypeO, DataType>) {
-    return colonInternalDerivs<Idx>(av, start[0], end[0]);
+    DataType tempStart = start[0];
+    return colonInternalDerivs<Idx>(av, tempStart, end[0]);
   } else if constexpr (!std::is_same_v<DataTypeA, DataType> &&
                        std::is_same_v<DataTypeO, DataType>) {
-    return colonInternalDerivs<Idx>(av, static_cast<DataType>(start[0]),
+    DataType tempStart = start[0];
+    return colonInternalDerivs<Idx>(av, static_cast<DataType>(tempStart),
                                     end[0]);
   } else if constexpr (std::is_same_v<DataTypeA, DataType> &&
                        !std::is_same_v<DataTypeO, DataType>) {
-    return colonInternalDerivs<Idx>(av, start[0],
+    DataType tempStart = start[0];
+    return colonInternalDerivs<Idx>(av, tempStart,
                                     static_cast<DataType>(end[0]));
   }
 }
@@ -406,15 +432,18 @@ inline auto colon(AV &av, A &start, const O &end) {
   using DataType = std::common_type<DataTypeA, DataTypeO>::type;
   if constexpr (std::is_same_v<DataTypeA, DataType> &&
                 std::is_same_v<DataTypeO, DataType>) {
-    return colonInternalDerivs<Idx>(av, start[0], end[0]);
+    DataType tempEnd = end[0];
+    return colonInternalDerivs<Idx>(av, start[0], tempEnd);
   } else if constexpr (!std::is_same_v<DataTypeA, DataType> &&
                        std::is_same_v<DataTypeO, DataType>) {
+    DataType tempEnd = end[0];
     return colonInternalDerivs<Idx>(av, static_cast<DataType>(start[0]),
-                                    end[0]);
+                                    tempEnd);
   } else if constexpr (std::is_same_v<DataTypeA, DataType> &&
                        !std::is_same_v<DataTypeO, DataType>) {
+    DataType tempEnd = end[0];
     return colonInternalDerivs<Idx>(av, start[0],
-                                    static_cast<DataType>(end[0]));
+                                    static_cast<DataType>(tempEnd));
   }
 }
 
@@ -430,15 +459,21 @@ inline auto colon(AV &av, const A &start, const O &end) {
   using DataType = std::common_type<DataTypeA, DataTypeO>::type;
   if constexpr (std::is_same_v<DataTypeA, DataType> &&
                 std::is_same_v<DataTypeO, DataType>) {
-    return colonInternalDerivs<Idx>(av, start[0], end[0]);
+    DataType tempStart = start[0];
+    DataType tempEnd = end[0];
+    return colonInternalDerivs<Idx>(av, tempStart, tempEnd);
   } else if constexpr (!std::is_same_v<DataTypeA, DataType> &&
                        std::is_same_v<DataTypeO, DataType>) {
-    return colonInternalDerivs<Idx>(av, static_cast<DataType>(start[0]),
-                                    end[0]);
+    DataType tempStart = start[0];
+    DataType tempEnd = end[0];
+    return colonInternalDerivs<Idx>(av, static_cast<DataType>(tempStart),
+                                    tempEnd);
   } else if constexpr (std::is_same_v<DataTypeA, DataType> &&
                        !std::is_same_v<DataTypeO, DataType>) {
-    return colonInternalDerivs<Idx>(av, start[0],
-                                    static_cast<DataType>(end[0]));
+    DataType tempStart = start[0];
+    DataType tempEnd = end[0];
+    return colonInternalDerivs<Idx>(av, tempStart,
+                                    static_cast<DataType>(tempEnd));
   }
 }
 
