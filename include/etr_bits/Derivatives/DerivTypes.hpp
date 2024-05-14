@@ -131,6 +131,8 @@ template <typename T, int Idx, typename Trait> struct Constants {
   static constexpr int I = Idx;
 };
 
+// TODO: an additional type is required which encapsulates scalar constants
+
 } // namespace etr
 
 #endif
