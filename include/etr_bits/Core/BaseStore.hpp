@@ -3,6 +3,7 @@
 
 #include "Header.hpp"
 #include "MatrixParameter.hpp"
+#include "Reflection.hpp"
 #include "Types.hpp"
 #include "Utils.hpp"
 
@@ -118,9 +119,35 @@ template <typename T, typename BaseTrait> struct BaseStore {
     return *this;
   }
 
-  void fill(T val) {
-    for (std::size_t i = 0; i < sz; i++) {
-      p[i] = val;
+  template <typename TInp> 
+requires (std::is_arithmetic_v<std::remove_reference_t<TInp>>)
+  void fill(TInp &&val) {
+    if constexpr (std::is_same_v<T, TInp>) {
+      std::fill(p, p + sz, val);
+    } else {
+      auto temp = static_cast<T>(val);
+      std::fill(p, p + sz, temp);
+    }
+  }
+
+  template<typename TInp>
+  void fill(TInp && inp) {
+    ass(inp.size() == sz, "cannot use fill with vectors of different lengths");
+    using DataType = ExtractDataType<std::remove_reference_t<TInp>>::RetType;
+    if constexpr(Operation<TInp>) {
+      for (std::size_t i = 0; i < sz; i++)
+        p[i] = inp[i];
+    } else if constexpr (!std::is_same_v<DataType, T>) {
+      for (std::size_t i = 0; i < sz; i++)
+        p[i] = static_cast<T>(inp[i]);
+    } else if constexpr(IsRVec<TInp>) {
+      delete[] p;
+      DataType *ptr = inp.getPtr();
+      inp.d.p = nullptr; inp.d.allocated = false;
+      p = ptr;
+    } else {
+      DataType *ptr = inp.getPtr();
+      std::copy(ptr, ptr + sz,p);
     }
   }
 

@@ -16,44 +16,44 @@ namespace etr {
 
 /*
 TODO: Matrix missing implementation with 3 args
-       Var1     Var2     Var3
-1       vec      vec      vec
-2     arith      vec      vec
-3  constVec      vec      vec
-4       vec    arith      vec
-5     arith    arith      vec
-6  constVec    arith      vec
-7       vec constVec      vec
-8     arith constVec      vec
-9  constVec constVec      vec
-10      vec      vec    arith
-11    arith      vec    arith
-12 constVec      vec    arith
-13      vec    arith    arith
-14    arith    arith    arith
-15 constVec    arith    arith
-16      vec constVec    arith
-17    arith constVec    arith
-18 constVec constVec    arith
-19      vec      vec constVec
-20    arith      vec constVec
-21 constVec      vec constVec
-22      vec    arith constVec
-23    arith    arith constVec
-24 constVec    arith constVec
-25      vec constVec constVec
-26    arith constVec constVec
-27 constVec constVec constVec
+   Var1  Var2  Var3
+1 arith arith arith done
+2   vec arith arith done
+3 arith   vec arith
+4   vec   vec arith
+5 arith arith   vec
+6   vec arith   vec
+7 arith   vec   vec
+8   vec   vec   vec
 */
 
 template <typename V, typename R, typename C>
-inline Vec<BaseType> matrix(const V &inp, const R &nrows, const C &ncols) {
+  requires(std::is_arithmetic_v<R> && std::is_arithmetic_v<C>)
+inline auto matrix(V &&inp, R &&nrows, C &&ncols) {
+  if constexpr (std::is_arithmetic_v<V>) {
+    Vec<BaseType, Buffer<BaseType, BufferTrait, RBufTrait>, RVecTrait> ret(
+        convertSize(nrows), convertSize(ncols));
+    ret.d.fill(inp);
+    return ret;
+  } else {
+    ass((static_cast<std::size_t>(nrows) * static_cast<std::size_t>(ncols)) ==
+            inp.size(),
+        "data length is not a sub-multiple or multiple of the number of "
+        "rows");
+    Vec<BaseType, Buffer<BaseType, BufferTrait, RBufTrait>, RVecTrait> ret(
+        convertSize(nrows), convertSize(ncols));
+    ret.d.fill(inp);
+    return ret;
+  }
+}
+
+template <typename V, typename R, typename C>
+inline Vec<BaseType> matrix_old(V &&inp, R &&nrows, C &&ncols) {
   if constexpr (std::is_arithmetic_v<R> && std::is_arithmetic_v<C>) {
     if constexpr (std::is_arithmetic_v<V>) {
-      Vec<BaseType> ret(static_cast<std::size_t>(nrows),
-                        static_cast<std::size_t>(ncols));
-      for (std::size_t i = 0; i < ret.size(); i++)
-        ret[i] = static_cast<BaseType>(inp);
+      Vec<BaseType, Buffer<BaseType, BufferTrait, RBufTrait>, RVecTrait> ret(
+          static_cast<std::size_t>(nrows), static_cast<std::size_t>(ncols));
+      ret.d.fill(inp);
       return ret;
     } else {
       ass((static_cast<std::size_t>(nrows) * static_cast<std::size_t>(ncols)) ==
@@ -126,7 +126,6 @@ inline Vec<BaseType> matrix(const V &inp, const R &nrows, const C &ncols) {
     }
   }
 }
-
 } // namespace etr
 
 #endif

@@ -63,6 +63,17 @@ template <typename T, typename R, typename Trait> struct Vec {
       return It<T>{d.p + this->size()};
     }
   }
+
+  T *getPtr() {
+    if constexpr (isVarPointer::value) {
+      T *ptr = nullptr;
+      decltype(d)::getPtr(d.AllVarsRef, &ptr);
+      return ptr;
+    } else {
+      return d.p;
+    }
+  }
+
   T &back() const { return d.p[this->size()]; }
   void fill(T value) { d.fill(value); }
   void resize(std::size_t newSize) { d.resize(newSize); }
