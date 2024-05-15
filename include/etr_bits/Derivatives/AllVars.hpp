@@ -66,6 +66,7 @@ struct AllVars {
         args...);
   }
 
+  // TODO: check whether it is possible to use constexpr here
   std::size_t size(std::size_t Idx, int TypeIdx) const {
     if (TypeIdx == -1) {
       return varConstants[Idx].size();
@@ -79,6 +80,8 @@ struct AllVars {
       return varBorrowSEXP[Idx].size();
 #endif
     }
+    ass(false, "Unsupported type in derivative");
+    return 0; // NOTE: just to please the compiler
   }
 
   bool im(std::size_t Idx, int TypeIdx) const {
@@ -92,6 +95,8 @@ struct AllVars {
       return varBorrowSEXP[Idx].im();
 #endif
     }
+    ass(false, "Unsupported type in derivative");
+    return 0; // NOTE: just to please the compiler
   }
 
   std::size_t nr(std::size_t Idx, int TypeIdx) const {
@@ -105,6 +110,8 @@ struct AllVars {
       return varBorrowSEXP[Idx].nr();
 #endif
     }
+    ass(false, "Unsupported type in derivative");
+    return 0; // NOTE: just to please the compiler
   }
 
   std::size_t nc(std::size_t Idx, int TypeIdx) const {
@@ -118,6 +125,8 @@ struct AllVars {
       return varBorrowSEXP[Idx].nc();
 #endif
     }
+    ass(false, "Unsupported type in derivative");
+    return 0; // NOTE: just to please the compiler
   }
 
   void resize(std::size_t Idx, int TypeIdx, std::size_t newSize) {

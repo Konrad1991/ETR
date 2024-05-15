@@ -33,6 +33,9 @@ Vec &operator=(const TD inp) {
   } else if constexpr (isBorrow::value) {
     d.sz = 1;
     d[0] = static_cast<BaseType>(inp);
+  } else if constexpr (isVarPointer::value) {
+    d.resize(1);
+    d[0] = inp;
   } else {
     d.resize(1);
     d[0] = static_cast<BaseType>(inp);
@@ -302,9 +305,9 @@ Vec &operator<<(const Vec<T2, R2, Trait2> &otherVec) {
   } else if constexpr (!IsVarPointer<tD> && IsVarPointer<DType>) {
     using tDRaw = std::remove_reference<decltype(otherVec)>::type;
     using typeExpr = std::remove_reference<ExtractedTypeD<tDRaw>>::type;
-    printTAST<typeExpr>();
+    /* printTAST<typeExpr>(); */
     constexpr auto res = walkTD<typeExpr>();
-    printTAST<decltype(res)>();
+    /* printTAST<decltype(res)>(); */
     d.resize(otherVec.size());
     for (std::size_t i = 0; i < otherVec.size(); i++) {
       d.AllVarsRef.varBuffer[d.I][i] = otherVec[i];
@@ -321,4 +324,5 @@ Vec &operator<<(const Vec<T2, R2, Trait2> &otherVec) {
       d[i] = otherVec[i];
     }
   }
+  return *this;
 }
