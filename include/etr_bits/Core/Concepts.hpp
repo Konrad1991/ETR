@@ -76,10 +76,7 @@ concept Operation = requires(T t) {
                UnaryTrait>::value ||
                std::is_same<
                    typename std::remove_reference<decltype(t)>::type::CaseTrait,
-                   BinaryTrait>::value ||
-               std::is_same<
-                   typename std::remove_reference<decltype(t)>::type::CaseTrait,
-                   RBufTrait>::value;
+                   BinaryTrait>::value;
 };
 
 template <typename T>
@@ -88,6 +85,14 @@ concept IsRVec = requires(T t) {
   requires std::is_same<
       typename std::remove_reference<decltype(t)>::type::CaseTrait,
       RVecTrait>::value;
+};
+
+template <typename T>
+concept IsSubVec = requires(T t) {
+  typename std::remove_reference<decltype(t)>::type::CaseTrait;
+  requires std::is_same<
+      typename std::remove_reference<decltype(t)>::type::CaseTrait,
+      SubVecTrait>::value;
 };
 
 template <typename T>
@@ -101,7 +106,9 @@ concept IsRBuf = requires(T t) {
 template <typename T>
 concept IsVariable = requires {
   typename T::CaseTrait;
-  requires std::is_same_v<typename T::CaseTrait, VariableTrait>;
+  requires std::is_same_v<typename T::CaseTrait,
+                          VariableTrait>; // TODO: check whether this is true
+                                          // for Borrow and BorrowSEXP
 };
 
 template <typename R>
@@ -111,15 +118,14 @@ concept IsVec = requires {
 };
 
 template <typename R>
-concept IsVecLorRorCalc = requires {
+concept IsVecRorCalc = requires {
   typename R::TypeTrait;
-  requires std::is_same_v<typename R::TypeTrait, VectorTrait> ||
-               std::is_same_v<typename R::TypeTrait, RVecTrait> ||
+  requires std::is_same_v<typename R::TypeTrait, RVecTrait> ||
                std::is_same_v<typename R::TypeTrait, UnaryTrait> ||
                std::is_same_v<typename R::TypeTrait, BinaryTrait>;
 };
 
-// Concepts for Derivs
+// NOTE: Concepts for Derivs
 template <typename T>
 concept IsVariableTypeTrait = requires(T t) {
   typename std::remove_reference<decltype(t)>::type::CaseTrait;
@@ -234,6 +240,13 @@ struct ExtractDType<Vec<T, R, Trait>> {
 };
 
 template <typename T> using ExtractedDType = typename ExtractDType<T>::type;
+
+template <typename T>
+concept OperationVec = requires(T t) {
+  typename ExtractTypeD<std::remove_reference_t<decltype(t)>>::type;
+  requires Operation<
+      typename ExtractTypeD<std::remove_reference_t<decltype(t)>>::type>;
+};
 
 } // namespace etr
 

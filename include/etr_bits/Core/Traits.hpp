@@ -19,6 +19,7 @@ struct SubsetTrait {};
 struct BorrowTrait {};
 struct BorrowSEXPTrait {};
 struct RVecTrait {};
+struct SubVecTrait {};
 struct RBufTrait {};
 
 struct UnaryTrait {
