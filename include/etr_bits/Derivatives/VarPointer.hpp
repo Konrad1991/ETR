@@ -4,7 +4,6 @@
 #include "../BinaryCalculations.hpp"
 #include "../Core.hpp"
 #include "../UnaryCalculations.hpp"
-#include <cstddef>
 
 namespace etr {
 

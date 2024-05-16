@@ -8,6 +8,8 @@
 
 namespace etr {
 
+// TODO: type determination fails for coca(1.1, 2, 3) the deterimed tyoe is int.
+// Needs a fix
 inline auto determine_type(const auto &rest) {
   using restType = std::remove_reference<decltype(rest)>::type;
   if constexpr (std::is_arithmetic_v<restType>) {

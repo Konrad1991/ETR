@@ -22,14 +22,14 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 #ifndef A2A_H
 #define A2A_H
 
-#include "etr_bits/Core.hpp"
-#include "etr_bits/BinaryCalculations.hpp"
 #include "etr_bits/Allocation.hpp"
-#include "etr_bits/SEXPConversions.hpp"
-#include "etr_bits/Printing.hpp"
+#include "etr_bits/BinaryCalculations.hpp"
 #include "etr_bits/Coca.hpp"
+#include "etr_bits/Core.hpp"
 #include "etr_bits/Helper.hpp"
 #include "etr_bits/Interpolation.hpp"
+#include "etr_bits/Printing.hpp"
+#include "etr_bits/SEXPConversions.hpp"
 #include "etr_bits/Subsetting.hpp"
 #include "etr_bits/UnaryCalculations.hpp"
 
@@ -37,10 +37,8 @@ If not see: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html#SEC4
 #else
 #include "etr_bits/Distri.hpp"
 #endif
-// #include "etr_bits/Derivs.hpp"
-#include "etr_bits/Derivatives/Derivs.hpp"
 #include "etr_bits/BufferVector.hpp"
-
+#include "etr_bits/Derivatives/Derivs.hpp"
 
 typedef etr::Vec<etr::BaseType> sexp;
 typedef etr::Vec<etr::BaseType,

@@ -3,7 +3,7 @@
 using namespace etr;
 
 int main(int argc, char *argv[]) {
-  etr::AllVars<2, 0, 0, 2> av(0, 0);
+  etr::AllVars<2, 0, 0, 4> av(0, 0); // deriv with respect tp variable 1 = vp1
   Vec<double, VarPointer<decltype(av), 0, 0>, VariableTypeTrait> vp1(av);
   Vec<double, VarPointer<decltype(av), 1, 0>, VariableTypeTrait> vp2(av);
 
