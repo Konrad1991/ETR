@@ -34,7 +34,8 @@ template <typename T> inline std::size_t convertSize(const T &inp) {
   } else if constexpr (std::is_integral_v<T>) {
     ass(inp >= 1, "invalid times argument");
     return static_cast<std::size_t>(inp);
-  } else if constexpr (IsVecLorRorCalc<T>) {
+  } else if constexpr (IsVecRorCalc<T>) { // TODO: check does this really
+                                             // work for normal l vectors?
     ass(inp.size() == 1 && inp[0] >= 1, "invalid times argument");
     return static_cast<std::size_t>(inp[0]);
   } else {

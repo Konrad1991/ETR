@@ -79,7 +79,7 @@ inline auto colon(A &start, O end) {
 }
 
 template <typename A, typename O>
-  requires IsVecLorRorCalc<A> && std::is_arithmetic_v<O>
+  requires(IsVecRorCalc<A> || IsVec<A>) && std::is_arithmetic_v<O>
 inline auto colon(const A &start, O end) {
   warn(start.size() == 1,
        "expression has more than one element only the first is used");
@@ -120,7 +120,7 @@ inline auto colon(A start, O &end) {
 }
 
 template <typename A, typename O>
-  requires std::is_arithmetic_v<A> && IsVecLorRorCalc<O>
+  requires std::is_arithmetic_v<A> && (IsVecRorCalc<O> || IsVec<O>)
 inline auto colon(A start, const O &end) {
   warn(end.size() == 1,
        "expression has more than one element only the first is used");
@@ -164,7 +164,7 @@ inline auto colon(A &start, O &end) {
 }
 
 template <typename A, typename O>
-  requires IsVecLorRorCalc<A> && IsVec<O>
+  requires(IsVecRorCalc<A> || IsVec<A>) && IsVec<O>
 inline auto colon(const A &start, O &end) {
   warn(end.size() == 1,
        "expression has more than one element only the first is used");
@@ -192,7 +192,7 @@ inline auto colon(const A &start, O &end) {
 }
 
 template <typename A, typename O>
-  requires IsVec<A> && IsVecLorRorCalc<O>
+  requires IsVec<A> && (IsVecRorCalc<O> || IsVec<O>)
 inline auto colon(A &start, const O &end) {
   warn(end.size() == 1,
        "expression has more than one element only the first is used");
@@ -217,7 +217,7 @@ inline auto colon(A &start, const O &end) {
 }
 
 template <typename A, typename O>
-  requires IsVecLorRorCalc<A> && IsVecLorRorCalc<O>
+  requires(IsVec<A> || IsVecRorCalc<A>) && (IsVecRorCalc<O> || IsVec<O>)
 inline auto colon(const A &start, const O &end) {
   warn(end.size() == 1,
        "expression has more than one element only the first is used");
@@ -307,7 +307,7 @@ inline auto colon(AV &av, A &start, O end) {
 }
 
 template <int Idx, typename AV, typename A, typename O>
-  requires IsVecLorRorCalc<A> && std::is_arithmetic_v<O>
+  requires(IsVecRorCalc<A> || IsVec<A>) && std::is_arithmetic_v<O>
 inline auto colon(AV &av, const A &start, O end) {
   warn(start.size() == 1,
        "expression has more than one element only the first is used");
@@ -348,7 +348,7 @@ inline auto colon(AV &av, A start, O &end) {
 }
 
 template <int Idx, typename AV, typename A, typename O>
-  requires std::is_arithmetic_v<A> && IsVecLorRorCalc<O>
+  requires std::is_arithmetic_v<A> && (IsVecRorCalc<O> || IsVec<O>)
 inline auto colon(AV &av, A start, const O &end) {
   warn(end.size() == 1,
        "expression has more than one element only the first is used");
@@ -394,7 +394,7 @@ inline auto colon(AV &av, A &start, O &end) {
 }
 
 template <int Idx, typename AV, typename A, typename O>
-  requires IsVecLorRorCalc<A> && IsVec<O>
+  requires(IsVecRorCalc<A> || IsVec<A>) && IsVec<O>
 inline auto colon(AV &av, const A &start, O &end) {
   warn(end.size() == 1,
        "expression has more than one element only the first is used");
@@ -421,7 +421,7 @@ inline auto colon(AV &av, const A &start, O &end) {
 }
 
 template <int Idx, typename AV, typename A, typename O>
-  requires IsVec<A> && IsVecLorRorCalc<O>
+  requires IsVec<A> && (IsVecRorCalc<O> || IsVec<O>)
 inline auto colon(AV &av, A &start, const O &end) {
   warn(end.size() == 1,
        "expression has more than one element only the first is used");
@@ -448,7 +448,7 @@ inline auto colon(AV &av, A &start, const O &end) {
 }
 
 template <int Idx, typename AV, typename A, typename O>
-  requires IsVecLorRorCalc<A> && IsVecLorRorCalc<O>
+  requires(IsVecRorCalc<A> || IsVec<A>) && (IsVecRorCalc<O> || IsVec<O>)
 inline auto colon(AV &av, const A &start, const O &end) {
   warn(end.size() == 1,
        "expression has more than one element only the first is used");

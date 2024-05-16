@@ -14,7 +14,7 @@ template <typename T> inline auto vector_integer(const T &inp) {
     return createRVec<int>(inp);
   } else if constexpr (std::is_integral_v<T>) {
     return createRVec<int>(inp);
-  } else if constexpr (IsVecLorRorCalc<T>) {
+  } else if constexpr (IsVecRorCalc<T> || IsVec<T>) {
     ass(inp.size() == 1, "invalid length argument");
     return createRVec<int>(inp[0]);
   } else {
@@ -29,7 +29,7 @@ template <typename T> inline auto vector_integer(T &inp) {
     return createRVec<int>(inp);
   } else if constexpr (std::is_integral_v<T>) {
     return createRVec<int>(inp);
-  } else if constexpr (IsVecLorRorCalc<T>) {
+  } else if constexpr (IsVecRorCalc<T> || IsVec<T>) {
     ass(inp.size() == 1, "invalid length argument");
     return createRVec<int>(inp[0]);
   } else {
@@ -44,7 +44,7 @@ template <typename T> inline auto vector_logical(const T &inp) {
     return createRVec<int>(inp);
   } else if constexpr (std::is_integral_v<T>) {
     return createRVec<int>(inp);
-  } else if constexpr (IsVecLorRorCalc<T>) {
+  } else if constexpr (IsVecRorCalc<T> || IsVec<T>) {
     ass(inp.size() == 1, "invalid length argument");
     return createRVec<int>(inp[0]);
   } else {
@@ -59,7 +59,7 @@ template <typename T> inline auto vector_logical(T &inp) {
     return createRVec<bool>(inp);
   } else if constexpr (std::is_integral_v<T>) {
     return createRVec<bool>(inp);
-  } else if constexpr (IsVecLorRorCalc<T>) {
+  } else if constexpr (IsVecRorCalc<T> || IsVec<T>) {
     ass(inp.size() == 1, "invalid length argument");
     return createRVec<bool>(inp[0]);
   } else {
@@ -74,7 +74,7 @@ template <typename T> inline auto vector_numeric(const T &inp) {
     return createRVec<BaseType>(inp);
   } else if constexpr (std::is_integral_v<T>) {
     return createRVec<BaseType>(inp);
-  } else if constexpr (IsVecLorRorCalc<T>) {
+  } else if constexpr (IsVecRorCalc<T> || IsVec<T>) {
     ass(inp.size() == 1, "invalid length argument");
     return createRVec<BaseType>(inp[0]);
   } else {
@@ -89,7 +89,7 @@ template <typename T> inline auto vector_numeric(T &inp) {
     return createRVec<BaseType>(inp);
   } else if constexpr (std::is_integral_v<T>) {
     return createRVec<BaseType>(inp);
-  } else if constexpr (IsVecLorRorCalc<T>) {
+  } else if constexpr (IsVecRorCalc<T> || IsVec<T>) {
     ass(inp.size() == 1, "invalid length argument");
     return createRVec<BaseType>(inp[0]);
   } else {
@@ -113,7 +113,7 @@ inline auto vector_integer(AV &av, const T &inp) {
     av.varConstants[Idx].resize(convertSize(inp));
     Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
     return ret;
-  } else if constexpr (IsVecLorRorCalc<T>) {
+  } else if constexpr (IsVecRorCalc<T> || IsVec<T>) {
     ass(inp.size() == 1, "invalid length argument");
     av.varConstants[Idx].resize(convertSize(inp[0]));
     Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
@@ -139,7 +139,7 @@ inline auto vector_integer(AV &av, T &inp) {
     av.varConstants[Idx].resize(convertSize(inp));
     Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
     return ret;
-  } else if constexpr (IsVecLorRorCalc<T>) {
+  } else if constexpr (IsVecRorCalc<T> || IsVec<T>) {
     ass(inp.size() == 1, "invalid length argument");
     av.varConstants[Idx].resize(convertSize(inp[0]));
     Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
@@ -165,7 +165,7 @@ inline auto vector_logical(AV &av, const T &inp) {
     av.varConstants[Idx].resize(convertSize(inp));
     Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
     return ret;
-  } else if constexpr (IsVecLorRorCalc<T>) {
+  } else if constexpr (IsVecRorCalc<T> || IsVec<T>) {
     ass(inp.size() == 1, "invalid length argument");
     av.varConstants[Idx].resize(convertSize(inp[0]));
     Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
@@ -191,7 +191,7 @@ inline auto vector_logical(AV &av, T &inp) {
     av.varConstants[Idx].resize(convertSize(inp));
     Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
     return ret;
-  } else if constexpr (IsVecLorRorCalc<T>) {
+  } else if constexpr (IsVecRorCalc<T> || IsVec<T>) {
     ass(inp.size() == 1, "invalid length argument");
     av.varConstants[Idx].resize(convertSize(inp[0]));
     Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
@@ -217,7 +217,7 @@ inline auto vector_numeric(AV &av, const T &inp) {
     av.varConstants[Idx].resize(convertSize(inp));
     Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
     return ret;
-  } else if constexpr (IsVecLorRorCalc<T>) {
+  } else if constexpr (IsVecRorCalc<T> || IsVec<T>) {
     ass(inp.size() == 1, "invalid length argument");
     av.varConstants[Idx].resize(convertSize(inp[0]));
     Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
@@ -243,7 +243,7 @@ inline auto vector_numeric(AV &av, T &inp) {
     av.varConstants[Idx].resize(convertSize(inp));
     Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
     return ret;
-  } else if constexpr (IsVecLorRorCalc<T>) {
+  } else if constexpr (IsVecRorCalc<T> || IsVec<T>) {
     ass(inp.size() == 1, "invalid length argument");
     av.varConstants[Idx].resize(convertSize(inp[0]));
     Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
