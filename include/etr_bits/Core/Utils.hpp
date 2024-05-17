@@ -4,6 +4,9 @@
 #include "Header.hpp"
 
 namespace etr {
+template <typename T, typename U> constexpr bool is = std::is_same_v<T, U>;
+template <typename LT, typename LU, typename RT, typename RU>
+constexpr bool isd = std::is_same_v<LT, LU> && std::is_same_v<RT, RU>;
 
 template <typename T1, typename T2>
 typename std::common_type<T1, T2>::type CommonType(T1 arg1, T2 arg2) {

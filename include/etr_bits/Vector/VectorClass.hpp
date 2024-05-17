@@ -37,7 +37,11 @@ template <typename T, typename R, typename Trait> struct Vec {
 
   operator RetType() const {
     if constexpr (std::is_same_v<RetType, bool>) {
-      ass(this->size() == 1, "Error in if: the condition has length > 1");
+      warn(this->size() == 1,
+           "Error in if: the condition has length > 1"); // NOTE: otherwise
+                                                         // subsetting does not
+                                                         // work. Thus, warn
+                                                         // instead of assert
       return d[0];
     } else {
       return d[0];

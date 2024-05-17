@@ -4,6 +4,10 @@
 #include "Header.hpp"
 #include <type_traits>
 
+template <typename T> struct AddConst {
+  using type = const T;
+};
+
 namespace etr {
 template <typename T>
 concept isBID = requires {
@@ -246,6 +250,11 @@ concept OperationVec = requires(T t) {
   typename ExtractTypeD<std::remove_reference_t<decltype(t)>>::type;
   requires Operation<
       typename ExtractTypeD<std::remove_reference_t<decltype(t)>>::type>;
+};
+
+template <typename R> // NOTE: any type of vec
+concept IsAV = requires {
+  requires(IsVec<R> || IsRVec<R> || IsSubVec<R> || OperationVec<R>);
 };
 
 } // namespace etr

@@ -8,18 +8,14 @@
 #include <cstddef>
 
 namespace etr {
-template <typename T, typename R> Subset<R> convertSubset(Vec<T, R> &obj) {
+template <typename T> inline auto convertSubset(T &obj) {
+  using R = ExtractDType<T>::type;
   return Subset<R, SubsetTrait>(obj);
 }
 
-template <typename T, typename R>
-Subset<R> convertSubset(const Vec<T, R> &&obj) {
-  return Subset<R, SubsetTrait>(obj);
-}
-
-template <typename T, typename R>
-Subset<R> convertSubset(const Vec<T, R> &obj) {
-  return Subset<T, SubsetTrait>(obj);
+template <typename T> inline auto convertSubsetConst(const T &obj) {
+  using R = ExtractDType<T>::type;
+  return Subset<const R, SubsetTrait>(obj);
 }
 
 template <typename T> inline std::size_t convertSizeSubsetting(const T &inp) {
