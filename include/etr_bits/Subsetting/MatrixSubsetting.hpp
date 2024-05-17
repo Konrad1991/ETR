@@ -5,6 +5,7 @@
 
 namespace etr {
 
+// TODO: add mode where nothing is printed at all
 /*
       [,1]      [,2]
  [1,] "bool"    "bool"
@@ -38,6 +39,7 @@ template <typename T, typename I, typename R, typename C>
 inline void calcIndMatrix(T &vec, I &ind, MatrixParameter &mp, const R *idxL,
                           const C *idxR) {
   ass(vec.im(), "incorrect number of dimensions");
+  // NOTE: bool + X
   if constexpr (isd<R, bool, C, bool>) {
     if (*idxL && *idxR) {
       ind.resize(vec.size());
@@ -50,7 +52,7 @@ inline void calcIndMatrix(T &vec, I &ind, MatrixParameter &mp, const R *idxL,
       return;
     }
   } else if constexpr (isd<R, bool, C, int>) {
-    if (!*idxL) {
+    if (!(*idxL)) {
       ass(false, "Variable[FALSE, FALSE] subsetting is not supported. Sorry");
       return;
     }
@@ -61,7 +63,7 @@ inline void calcIndMatrix(T &vec, I &ind, MatrixParameter &mp, const R *idxL,
     mp.setMatrix(false, 0, 0);
     return;
   } else if constexpr (isd<R, bool, C, double>) {
-    if (!*idxL) {
+    if (!(*idxL)) {
       ass(false, "Variable[FALSE, FALSE] subsetting is not supported. Sorry");
       return;
     }
@@ -74,7 +76,7 @@ inline void calcIndMatrix(T &vec, I &ind, MatrixParameter &mp, const R *idxL,
   } else if constexpr (is<R, bool> && IsAV<C>) {
     using DataTypeC = ExtractDataType<C>::RetType;
     if constexpr (is<DataTypeC, bool>) {
-      if (!idxL) {
+      if (!(*idxL)) {
         ass(false, "Variable[FALSE, FALSE] subsetting is not supported. Sorry");
         return;
       }
@@ -106,7 +108,7 @@ inline void calcIndMatrix(T &vec, I &ind, MatrixParameter &mp, const R *idxL,
       mp.setMatrix(true, vec.nr(), positions.size());
       return;
     } else if constexpr (is<DataTypeC, double>) {
-      if (!idxL) {
+      if (!(*idxL)) {
         ass(false, "Variable[FALSE, FALSE] subsetting is not supported. Sorry");
         return;
       }
@@ -120,7 +122,7 @@ inline void calcIndMatrix(T &vec, I &ind, MatrixParameter &mp, const R *idxL,
       }
       mp.setMatrix(true, vec.nr(), idxR->size());
     } else if constexpr (is<DataTypeC, int>) {
-      if (!idxL) {
+      if (!(*idxL)) {
         ass(false, "Variable[FALSE, FALSE] subsetting is not supported. Sorry");
         return;
       }
@@ -133,33 +135,440 @@ inline void calcIndMatrix(T &vec, I &ind, MatrixParameter &mp, const R *idxL,
         }
       }
       mp.setMatrix(true, vec.nr(), idxR->size());
+    } else {
+      static_assert(sizeof(T) == 0,
+                    "Only bool, int and double are supported as vector types");
     }
-  } else if constexpr (isd<R, int, C, bool>) {
-    std::cout << "int bool" << std::endl;
+  }
+  // NOTE: int + X
+  else if constexpr (isd<R, int, C, bool>) {
+    std::size_t indexRow = static_cast<std::size_t>(*idxL);
+    if (!(*idxR)) {
+      ass(false, "Variable[FALSE, FALSE] subsetting is not supported. Sorry");
+      return;
+    }
+    ind.resize(vec.nc());
+    for (std::size_t j = 0; j < vec.nc(); j++)
+      ind[j] = j * vec.nr() + (indexRow - 1);
+    mp.setMatrix(false, 0, 0);
+    return;
   } else if constexpr (isd<R, int, C, int>) {
-    std::cout << "int int" << std::endl;
+    std::size_t indexRow = static_cast<std::size_t>(*idxL);
+    indexRow--;
+    ind.resize(1);
+    ind[0] = (*idxR - 1) * vec.nr() + indexRow;
+    return;
   } else if constexpr (isd<R, int, C, double>) {
-    std::cout << "int double" << std::endl;
+    std::size_t indexRow = static_cast<std::size_t>(*idxL);
+    indexRow--;
+    ind.resize(1);
+    ind[0] = (static_cast<std::size_t>(*idxR) - 1) * vec.nr() + indexRow;
+    return;
   } else if constexpr (is<R, int> && IsAV<C>) {
-    std::cout << "int vec" << std::endl;
-  } else if constexpr (isd<R, double, C, bool>) {
-    std::cout << "double bool" << std::endl;
+    using DataTypeC = ExtractDataType<C>::RetType;
+    if constexpr (is<DataTypeC, bool>) {
+      std::size_t indexRow = static_cast<std::size_t>(*idxL);
+      std::size_t counter = 0;
+      ass(idxR->size() <= vec.nc(),
+          "Error in matrix: logical subscript too long");
+      for (std::size_t i = 0; i < vec.nc(); i++) {
+        if ((*idxR)[i % idxR->size()])
+          counter++;
+      }
+      BaseStore<int> positions(counter);
+      counter = 0;
+      std::size_t counter2 = 0;
+      for (std::size_t i = 0; i < vec.nc(); i++) {
+        if (((i % vec.nc()) == 0) && i != 0)
+          counter2++;
+        if ((*idxR)[i % idxR->size()]) {
+          positions[counter] = i - counter2 * vec.nc();
+          counter++;
+        }
+      }
+      ind.resize(positions.size());
+      indexRow--;
+      for (std::size_t j = 0; j < positions.size(); j++) {
+        ind[j] = (d2i(positions[j])) * vec.nr() + indexRow;
+      }
+      mp.setMatrix(false, 0, 0);
+      return;
+    } else if constexpr (is<DataTypeC, int>) {
+      std::size_t indexRow = static_cast<std::size_t>(*idxL);
+      ind.resize(idxR->size());
+      indexRow--;
+      for (std::size_t j = 0; j < idxR->size(); j++)
+        ind[j] = ((*idxR)[j] - 1) * vec.nr() + indexRow;
+      mp.setMatrix(false, 0, 0);
+    } else if constexpr (is<DataTypeC, double>) {
+      std::size_t indexRow = static_cast<std::size_t>(*idxL);
+      ind.resize(idxR->size());
+      indexRow--;
+      for (std::size_t j = 0; j < idxR->size(); j++)
+        ind[j] = (d2i((*idxR)[j]) - 1) * vec.nr() + indexRow;
+      mp.setMatrix(false, 0, 0);
+    } else {
+      static_assert(sizeof(T) == 0,
+                    "Only bool, int and double are supported as vector types");
+    }
+  }
+  // NOTE: double + x
+  else if constexpr (isd<R, double, C, bool>) {
+    std::size_t indexRow = convertSize(*idxL);
+    if (!(*idxR)) {
+      ass(false, "Variable[FALSE, FALSE] subsetting is not supported. Sorry");
+      return;
+    }
+    ind.resize(vec.nc());
+    for (std::size_t j = 0; j < vec.nc(); j++)
+      ind[j] = j * convertSize(vec.nr()) + (indexRow - 1);
+    mp.setMatrix(false, 0, 0);
+    return;
   } else if constexpr (isd<R, double, C, int>) {
-    std::cout << "double int" << std::endl;
+    std::size_t indexRow = convertSize(*idxL);
+    indexRow--;
+    ind.resize(1);
+    ind[0] = (*idxR - 1) * convertSize(vec.nr()) + indexRow;
+    return;
   } else if constexpr (isd<R, double, C, double>) {
-    std::cout << "double double" << std::endl;
+    std::size_t indexRow = convertSize(*idxL);
+    indexRow--;
+    ind.resize(1);
+    ind[0] = convertSize(*idxR) - 1 * vec.nr() + indexRow;
+    return;
   } else if constexpr (is<R, double> && IsAV<C>) {
-    std::cout << "double vec" << std::endl;
-  } else if constexpr (IsAV<R> && is<C, bool>) {
-    std::cout << "vec bool" << std::endl;
-  } else if constexpr (IsAV<R> && is<C, int>) {
-    std::cout << "vec int" << std::endl;
-  } else if constexpr (IsAV<R> && is<C, double>) {
-    std::cout << "vec double" << std::endl;
-  } else if constexpr (IsAV<R> && IsAV<C>) {
-    std::cout << "vec vec" << std::endl;
+    using DataTypeC = ExtractDataType<C>::RetType;
+    if constexpr (is<DataTypeC, bool>) {
+      std::size_t indexRow = convertSize(*idxL);
+      std::size_t counter = 0;
+      ass(idxR->size() <= vec.nc(),
+          "Error in matrix: logical subscript too long");
+      for (std::size_t i = 0; i < vec.nc(); i++) {
+        if ((*idxR)[i % idxR->size()])
+          counter++;
+      }
+      BaseStore<int> positions(counter);
+      counter = 0;
+      std::size_t counter2 = 0;
+      for (std::size_t i = 0; i < vec.nc(); i++) {
+        if (((i % vec.nc()) == 0) && i != 0)
+          counter2++;
+        if ((*idxR)[i % idxR->size()]) {
+          positions[counter] = i - counter2 * vec.nc();
+          counter++;
+        }
+      }
+      ind.resize(positions.size());
+      indexRow--;
+      for (std::size_t j = 0; j < positions.size(); j++) {
+        ind[j] = (d2i(positions[j])) * vec.nr() + indexRow;
+      }
+      mp.setMatrix(false, 0, 0);
+      return;
+    } else if constexpr (is<DataTypeC, int>) {
+      std::size_t indexRow = convertSize(*idxL);
+      ind.resize(idxR->size());
+      indexRow--;
+      for (std::size_t j = 0; j < idxR->size(); j++)
+        ind[j] = ((*idxR)[j] - 1) * vec.nr() + indexRow;
+      mp.setMatrix(false, 0, 0);
+    } else if constexpr (is<DataTypeC, double>) {
+      std::size_t indexRow = convertSize(*idxL);
+      ind.resize(idxR->size());
+      indexRow--;
+      for (std::size_t j = 0; j < idxR->size(); j++)
+        ind[j] = (d2i((*idxR)[j]) - 1) * vec.nr() + indexRow;
+      mp.setMatrix(false, 0, 0);
+    } else {
+      static_assert(sizeof(T) == 0,
+                    "Only bool, int and double are supported as vector types");
+    }
+  }
+  // NOTE: Vec<bool|int|double> + bool
+  else if constexpr (IsAV<R> && is<C, bool>) {
+    using DataTypeR = ExtractDataType<R>::RetType;
+    if constexpr (is<DataTypeR, bool>) {
+      if (!(*idxR)) {
+        ass(false, "Variable[FALSE, FALSE] subsetting is not supported. Sorry");
+        return;
+      }
+      std::size_t counter = 0;
+      for (std::size_t i = 0; i < idxL->size(); i++) {
+        if ((*idxL)[i])
+          counter++;
+      }
+      BaseStore<std::size_t> positions(counter);
+      counter = 0;
+      std::size_t counter2 = 0;
+      for (std::size_t i = 0; i < idxL->size(); i++) {
+        if (((i % vec.nr()) == 0) && i != 0)
+          counter2++;
+        if ((*idxL)[i]) {
+          positions[counter] = i - counter2 * vec.nr();
+          counter++;
+        }
+      }
+      ind.resize(vec.nc() * positions.size());
+      ind.fill(0);
+      counter = 0;
+      for (std::size_t j = 0; j < vec.nc(); j++) {
+        for (std::size_t i = 0; i < positions.size(); i++) {
+          ind[counter] = j * vec.nr() + positions[i];
+          counter++;
+        }
+      }
+      mp.setMatrix(true, positions.size(), vec.nc());
+      return;
+    } else if constexpr (is<DataTypeR, int>) {
+      if (!(*idxR)) {
+        ass(false, "Variable[FALSE, FALSE] subsetting is not supported. Sorry");
+        return;
+      }
+      ind.resize(idxL->size() * vec.nc());
+      std::size_t counter = 0;
+      for (std::size_t i = 0; i < vec.nc(); i++) {
+        for (std::size_t j = 0; j < idxL->size(); j++) {
+          ind[counter] = i * vec.nr() + ((*idxL)[j] - 1);
+          counter++;
+        }
+      }
+      mp.setMatrix(true, idxL->size(), vec.nc());
+      return;
+    } else if constexpr (is<DataTypeR, double>) {
+      if (!(*idxR)) {
+        ass(false, "Variable[FALSE, FALSE] subsetting is not supported. Sorry");
+        return;
+      }
+      ind.resize(idxL->size() * vec.nc());
+      std::size_t counter = 0;
+      for (std::size_t i = 0; i < vec.nc(); i++) {
+        for (std::size_t j = 0; j < idxL->size(); j++) {
+          ind[counter] = i * vec.nr() + (d2i((*idxL)[j]) - 1);
+          counter++;
+        }
+      }
+      mp.setMatrix(true, idxL->size(), vec.nc());
+    } else {
+      static_assert(sizeof(T) == 0,
+                    "Only bool, int and double are supported as vector types");
+    }
+  }
+  // NOTE: Vec<bool|int|double> + int
+  else if constexpr (IsAV<R> && is<C, int>) {
+    using DataTypeR = ExtractDataType<R>::RetType;
+    if constexpr (is<DataTypeR, bool>) {
+      std::size_t counter = 0;
+      for (int i = 0; i < vec.nr(); i++) {
+        if ((*idxL)[i % idxL->size()])
+          counter++;
+      }
+      ass(idxL->size() <= vec.nr(),
+          "Error in matrix: logical subscript too long");
+      BaseStore<int> positions(counter);
+      counter = 0;
+      std::size_t counter2 = 0;
+      for (std::size_t i = 0; i < vec.nr(); i++) {
+        if (((i % vec.nr()) == 0) && i != 0) {
+          counter2++;
+        }
+        if ((*idxL)[i % idxL->size()]) {
+          positions[counter] = i - counter2 * vec.nr();
+          counter++;
+        }
+      }
+      ind.resize(positions.size());
+      for (std::size_t j = 0; j < positions.size(); j++) {
+        ind[j] = ((*idxR) - 1) * vec.nr() + positions[j];
+      }
+      mp.setMatrix(false, 0, 0);
+      return;
+    } else if constexpr (is<DataTypeR, int>) {
+      ind.resize(idxL->size());
+      for (int j = 0; j < idxL->size(); j++) {
+        ind[j] = ((*idxR) - 1) * vec.nr() + ((*idxL)[j] - 1);
+      }
+      return;
+    } else if constexpr (is<DataTypeR, double>) {
+      ind.resize(idxL->size());
+      for (int j = 0; j < idxL->size(); j++) {
+        ind[j] = ((*idxR) - 1) * vec.nr() + (d2i((*idxL)[j]) - 1);
+      }
+      return;
+    } else {
+      static_assert(sizeof(T) == 0,
+                    "Only bool, int and double are supported as vector types");
+    }
+  }
+  // NOTE: Vec<bool|int|double> + double
+  else if constexpr (IsAV<R> && is<C, double>) {
+    using DataTypeR = ExtractDataType<R>::RetType;
+    if constexpr (is<DataTypeR, bool>) {
+      std::size_t counter = 0;
+      for (int i = 0; i < vec.nr(); i++) {
+        if ((*idxL)[i % idxL->size()])
+          counter++;
+      }
+      ass(idxL->size() <= vec.nr(),
+          "Error in matrix: logical subscript too long");
+      BaseStore<int> positions(counter);
+      counter = 0;
+      std::size_t counter2 = 0;
+      for (std::size_t i = 0; i < vec.nr(); i++) {
+        if (((i % vec.nr()) == 0) && i != 0) {
+          counter2++;
+        }
+        if ((*idxL)[i % idxL->size()]) {
+          positions[counter] = i - counter2 * vec.nr();
+          counter++;
+        }
+      }
+      ind.resize(positions.size());
+      for (std::size_t j = 0; j < positions.size(); j++) {
+        ind[j] = (convertSize(*idxR) - 1) * vec.nr() + positions[j];
+      }
+      mp.setMatrix(false, 0, 0);
+      return;
+    } else if constexpr (is<DataTypeR, int>) {
+      ind.resize(idxL->size());
+      for (int j = 0; j < idxL->size(); j++) {
+        ind[j] = (convertSize(*idxR) - 1) * vec.nr() + ((*idxL)[j] - 1);
+      }
+      return;
+    } else if constexpr (is<DataTypeR, double>) {
+      ind.resize(idxL->size());
+      for (int j = 0; j < idxL->size(); j++) {
+        ind[j] = ((*idxR) - 1) * vec.nr() + (d2i((*idxL)[j]) - 1);
+      }
+      return;
+    } else {
+      static_assert(sizeof(T) == 0,
+                    "Only bool, int and double are supported as vector types");
+    }
+  }
+  // NOTE: vec<bool|int|double> + vec<bool|int|double>
+  else if constexpr (IsAV<R> && IsAV<C>) {
+    using DataTypeR = ExtractDataType<R>::RetType;
+    using DataTypeC = ExtractDataType<C>::RetType;
+    if constexpr (is<DataTypeR, bool> && is<DataTypeC, bool>) {
+      std::size_t counter = 0;
+      for (std::size_t i = 0; i < idxL->size(); i++) {
+        if ((*idxL)[i] == true) {
+          counter++;
+        }
+      }
+      BaseStore<int> positions_rows(counter);
+      counter = 0;
+      std::size_t counter2 = 0;
+      for (std::size_t i = 0; i < idxL->size(); i++) {
+        if (((i % vec.nr()) == 0) && i != 0) {
+          counter2++;
+        }
+        if ((*idxL)[i]) {
+          positions_rows[counter] = i - counter2 * vec.nr();
+          counter++;
+        }
+      }
+      counter = 0;
+      for (std::size_t i = 0; i < idxR->size(); i++) {
+        if ((*idxR)[i])
+          counter++;
+      }
+      BaseStore<int> positions_cols(counter);
+      counter = 0;
+      counter2 = 0;
+      for (std::size_t i = 0; i < idxR->size(); i++) {
+        if (((i % vec.nc()) == 0) && i != 0) {
+          counter2++;
+        }
+        if ((*idxR)[i]) {
+          positions_cols[counter] = i - counter2 * vec.nc();
+          counter++;
+        }
+      }
+      ind.resize(positions_rows.size() * positions_cols.size());
+      counter = 0;
+      for (std::size_t j = 0; j < positions_cols.size(); j++) {
+        for (std::size_t i = 0; i < positions_rows.size(); i++) {
+          ind[counter] = positions_cols[j] * vec.nr() + positions_rows[i];
+          counter++;
+        }
+      }
+      mp.setMatrix(true, positions_rows.size(), positions_cols.size());
+      return;
+    } else if constexpr (is<DataTypeR, bool> &&
+                         (is<DataTypeC, int> || is<DataTypeC, double>)) {
+      std::size_t counter = 0;
+      for (std::size_t i = 0; i < idxL->size(); i++)
+        if ((*idxL)[i])
+          counter++;
+      BaseStore<int> positions(counter);
+      counter = 0;
+      std::size_t counter2 = 0;
+      for (std::size_t i = 0; i < idxL->size(); i++) {
+        if (((i % vec.nr()) == 0) && i != 0) {
+          counter2++;
+        }
+        if ((*idxL)[i]) {
+          positions[counter] = i - counter2 * vec.nr();
+          counter++;
+        }
+      }
+      ind.resize(positions.size() * idxR->size());
+      counter = 0;
+      for (std::size_t j = 0; j < idxR->size(); j++) {
+        for (std::size_t i = 0; i < positions.size(); i++) {
+          ind[counter] = (d2i((*idxR)[j]) - 1) * vec.nr() + positions[i];
+          counter++;
+        }
+      }
+      return;
+    } else if constexpr ((is<DataTypeR, int> ||
+                          is<DataTypeR, double>)&&is<DataTypeC, bool>) {
+      std::size_t counter = 0;
+      for (std::size_t i = 0; i < idxR->size(); i++)
+        if ((*idxR)[i])
+          counter++;
+      BaseStore<int> positions(counter);
+      counter = 0;
+      std::size_t counter2 = 0;
+      for (std::size_t i = 0; i < idxR->size(); i++) {
+        if (((i % vec.nc()) == 0) && i != 0) {
+          counter2++;
+        }
+        if ((*idxR)[i]) {
+          positions[counter] = i - counter2 * vec.nc();
+          counter++;
+        }
+      }
+      ind.resize(idxL->size() * positions.size());
+      counter = 0;
+      for (std::size_t j = 0; j < positions.size(); j++) {
+        for (std::size_t i = 0; i < idxL->size(); i++) {
+          ind[counter] = (positions[j]) * vec.nr() + d2i((*idxL)[i]) - 1;
+          counter++;
+        }
+      }
+      mp.setMatrix(true, idxL->size(), positions.size());
+      return;
+    } else if constexpr ((is<DataTypeR, int> || is<DataTypeR, double>)&&(
+                             is<DataTypeR, int> || is<DataTypeR, double>)) {
+      ind.resize(idxL->size() * idxR->size());
+      std::size_t counter = 0;
+      for (std::size_t i = 0; i < idxR->size(); i++) {
+        for (std::size_t j = 0; j < idxL->size(); j++) {
+          ind[counter] =
+              (d2i((*idxR)[i]) - 1) * vec.nr() + (d2i((*idxL)[j]) - 1);
+          counter++;
+        }
+      }
+      mp.setMatrix(true, idxL->size(), idxR->size()); // issue: correct?
+      return;
+    } else {
+      static_assert(sizeof(T) == 0,
+                    "Only bool, int and double are supported as vector types");
+    }
   } else {
-    std::cout << "not found" << std::endl;
+    static_assert(sizeof(T) == 0, "Unsupported argument(s) to indexing");
   }
 }
 
@@ -183,392 +592,6 @@ inline const auto subset(V &&vec, R &&r, C &&c) {
   return Vec<DataType, decltype(convertSubsetConst(vec)), SubVecTrait>(
       std::move(sub));
 }
-
-template <typename L, typename R>
-  requires(std::is_same_v<L, int> || std::is_same_v<L, double>)
-inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
-                    const L &idxL, const R &idxR) {
-  ass(vec.im(), "incorrect number of dimensions");
-  int indexRow = static_cast<std::size_t>(idxL);
-  if constexpr (std::is_same_v<R, bool>) {
-    if (!idxR)
-      return;
-    ind.resize(vec.nc());
-    for (std::size_t j = 0; j < vec.nc(); j++)
-      ind[j] = j * vec.nr() + (indexRow - 1);
-    mp.setMatrix(false, 0, 0);
-    return;
-  } else if constexpr (std::is_same_v<R, int>) {
-    indexRow--;
-    ind.resize(1);
-    ind[0] = (idxR - 1) * vec.nr() + indexRow;
-    return;
-  } else if constexpr (std::is_same_v<R, double>) {
-    indexRow--;
-    ind.resize(1);
-    ind[0] = (static_cast<std::size_t>(idxR) - 1) * vec.nr() + indexRow;
-    return;
-  } else {
-    using vecTrait = std::remove_reference<decltype(idxR)>::type::TypeTrait;
-    using isVec = std::is_same<vecTrait, VectorTrait>;
-    if constexpr (isVec::value) {
-      using whichType = std::remove_reference<decltype(idxR)>::type::Type;
-      using isBool = std::is_same<whichType, bool>;
-      if constexpr (isBool::value) {
-        std::size_t counter = 0;
-        ass(idxR.size() <= vec.nc(),
-            "Error in matrix: logical subscript too long");
-        for (std::size_t i = 0; i < vec.nc(); i++) {
-          if (idxR[i % idxR.size()])
-            counter++;
-        }
-        BaseStore<int> positions(counter);
-        counter = 0;
-        std::size_t counter2 = 0;
-        for (std::size_t i = 0; i < vec.nc(); i++) {
-          if (((i % vec.nc()) == 0) && i != 0)
-            counter2++;
-          if (idxR[i % idxR.size()]) {
-            positions[counter] = i - counter2 * vec.nc();
-            counter++;
-          }
-        }
-        ind.resize(positions.size());
-        indexRow--;
-        for (std::size_t j = 0; j < positions.size(); j++) {
-          ind[j] = (d2i(positions[j])) * vec.nr() + indexRow;
-        }
-        mp.setMatrix(false, 0, 0);
-      } else if constexpr (std::is_same_v<whichType, BaseType>) {
-        ind.resize(idxR.size());
-        indexRow--;
-        for (std::size_t j = 0; j < idxR.size(); j++)
-          ind[j] = (d2i(idxR[j]) - 1) * vec.nr() + indexRow;
-        mp.setMatrix(false, 0, 0);
-      } else {
-        static_assert(!isVec::value || !std::is_same_v<whichType, BaseType>,
-                      "Unknown type of index variable");
-      }
-    } else {
-      static_assert(!isVec::value, "Unknown type of index variable");
-    }
-  }
-}
-
-template <typename L, typename R>
-  requires IsVecDouble<L>
-inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
-                    const L &idxL, const R &idxR) {
-  ass(vec.im(), "incorrect number of dimensions");
-  if constexpr (std::is_same_v<R, bool>) {
-    if (!idxR)
-      return;
-    ind.resize(idxL.size() * vec.nc());
-    std::size_t counter = 0;
-    for (std::size_t i = 0; i < vec.nc(); i++) {
-      for (std::size_t j = 0; j < idxL.size(); j++) {
-        ind[counter] = i * vec.nr() + (d2i(idxL[j]) - 1);
-        counter++;
-      }
-    }
-    mp.setMatrix(true, idxL.size(), vec.nc());
-  } else if constexpr (std::is_same_v<R, int>) {
-    ind.resize(idxL.size());
-    for (int j = 0; j < idxL.size(); j++) {
-      ind[j] = (idxR - 1) * vec.nr() + (d2i(idxL[j]) - 1);
-    }
-    return;
-  } else if constexpr (std::is_same_v<R, double>) {
-    ind.resize(idxL.size());
-    for (int j = 0; j < idxL.size(); j++) {
-      ind[j] = d2i(idxR - 1.0) * vec.nr() + (d2i(idxL[j]) - 1);
-    }
-    return;
-  } else {
-    using vecTrait = std::remove_reference<decltype(idxR)>::type::TypeTrait;
-    using isVec = std::is_same<vecTrait, VectorTrait>;
-    if constexpr (isVec::value) {
-      using whichType = std::remove_reference<decltype(idxR)>::type::Type;
-      using isBool = std::is_same<whichType, bool>;
-      if constexpr (isBool::value) {
-        std::size_t counter = 0;
-        for (std::size_t i = 0; i < idxR.size(); i++)
-          if (idxR[i])
-            counter++;
-        BaseStore<int> positions(counter);
-        counter = 0;
-        std::size_t counter2 = 0;
-        for (std::size_t i = 0; i < idxR.size(); i++) {
-          if (((i % vec.nc()) == 0) && i != 0) {
-            counter2++;
-          }
-          if (idxR[i]) {
-            positions[counter] = i - counter2 * vec.nc();
-            counter++;
-          }
-        }
-        ind.resize(idxL.size() * positions.size());
-        counter = 0;
-        for (std::size_t j = 0; j < positions.size(); j++) {
-          for (std::size_t i = 0; i < idxL.size(); i++) {
-            ind[counter] = (positions[j]) * vec.nr() + d2i(idxL[i]) - 1;
-            counter++;
-          }
-        }
-        mp.setMatrix(true, idxL.size(), positions.size());
-        return;
-      } else if constexpr (std::is_same_v<whichType, BaseType>) {
-        ind.resize(idxL.size() * idxR.size());
-        std::size_t counter = 0;
-        for (std::size_t i = 0; i < idxR.size(); i++) {
-          for (std::size_t j = 0; j < idxL.size(); j++) {
-            ind[counter] = (d2i(idxR[i]) - 1) * vec.nr() + (d2i(idxL[j]) - 1);
-            counter++;
-          }
-        }
-        mp.setMatrix(true, idxL.size(), idxR.size()); // issue: correct?
-        return;
-      } else {
-        static_assert(!isVec::value || !std::is_same_v<whichType, BaseType>,
-                      "Unknown type of index variable");
-      }
-    } else {
-      static_assert(!isVec::value, "Unknown type of index variable");
-    }
-  }
-}
-
-template <typename L, typename R>
-  requires IsVecBool<L>
-inline void calcInd(const Vec<BaseType> &vec, Indices &ind, MatrixParameter &mp,
-                    const L &idxL, const R &idxR) {
-  ass(vec.im(), "incorrect number of dimensions");
-  if constexpr (std::is_same_v<R, bool>) {
-    if (!idxR)
-      return;
-    std::size_t counter = 0;
-    for (std::size_t i = 0; i < idxL.size(); i++) {
-      if (idxL[i])
-        counter++;
-    }
-    BaseStore<std::size_t> positions(counter);
-    counter = 0;
-    std::size_t counter2 = 0;
-    for (std::size_t i = 0; i < idxL.size(); i++) {
-      if (((i % vec.nr()) == 0) && i != 0)
-        counter2++;
-      if (idxL[i]) {
-        positions[counter] = i - counter2 * vec.nr();
-        counter++;
-      }
-    }
-    ind.resize(vec.nc() * positions.size());
-    ind.fill(0);
-    counter = 0;
-    for (std::size_t j = 0; j < vec.nc(); j++) {
-      for (std::size_t i = 0; i < positions.size(); i++) {
-        ind[counter] = j * vec.nr() + positions[i];
-        counter++;
-      }
-    }
-    mp.setMatrix(true, positions.size(), vec.nc());
-  } else if constexpr (std::is_same_v<R, int>) {
-    std::size_t counter = 0;
-    for (int i = 0; i < vec.nr(); i++) {
-      if (idxL[i % idxL.size()])
-        counter++;
-    }
-    ass(idxL.size() <= vec.nr(), "Error in matrix: logical subscript too long");
-    BaseStore<int> positions(counter);
-    counter = 0;
-    std::size_t counter2 = 0;
-    for (std::size_t i = 0; i < vec.nr(); i++) {
-      if (((i % vec.nr()) == 0) && i != 0) {
-        counter2++;
-      }
-      if (idxL[i % idxL.size()]) {
-        positions[counter] = i - counter2 * vec.nr();
-        counter++;
-      }
-    }
-    ind.resize(positions.size());
-    for (std::size_t j = 0; j < positions.size(); j++) {
-      ind[j] = (idxR - 1) * vec.nr() + positions[j];
-    }
-    mp.setMatrix(false, 0, 0);
-  } else if constexpr (std::is_same_v<R, double>) {
-    std::size_t counter = 0;
-    for (int i = 0; i < idxL.size(); i++) {
-      if (idxL[i])
-        counter++;
-    }
-    BaseStore<int> positions(counter);
-    counter = 0;
-    std::size_t counter2 = 0;
-    for (std::size_t i = 0; i < idxL.size(); i++) {
-      if (((i % vec.nr()) == 0) && i != 0) {
-        counter2++;
-      }
-      if (idxL[i]) {
-        positions[counter] = i - counter2 * vec.nr();
-        counter++;
-      }
-    }
-    ind.resize(positions.size());
-    for (std::size_t j = 0; j < positions.size(); j++) {
-      ind[j] = d2i(idxR - 1.0) * vec.nr() + positions[j];
-    }
-    mp.setMatrix(false, 0, 0);
-  } else {
-    using vecTrait = std::remove_reference<decltype(idxR)>::type::TypeTrait;
-    using isVec = std::is_same<vecTrait, VectorTrait>;
-    if constexpr (isVec::value) {
-      using whichType = std::remove_reference<decltype(idxR)>::type::Type;
-      using isBool = std::is_same<whichType, bool>;
-      if constexpr (isBool::value) {
-        std::size_t counter = 0;
-        for (std::size_t i = 0; i < idxL.size(); i++) {
-          if (idxL[i] == true) {
-            counter++;
-          }
-        }
-        BaseStore<int> positions_rows(counter);
-        counter = 0;
-        std::size_t counter2 = 0;
-        for (std::size_t i = 0; i < idxL.size(); i++) {
-          if (((i % vec.nr()) == 0) && i != 0) {
-            counter2++;
-          }
-          if (idxL[i]) {
-            positions_rows[counter] = i - counter2 * vec.nr();
-            counter++;
-          }
-        }
-        counter = 0;
-        for (std::size_t i = 0; i < idxR.size(); i++) {
-          if (idxR[i])
-            counter++;
-        }
-        BaseStore<int> positions_cols(counter);
-        counter = 0;
-        counter2 = 0;
-        for (std::size_t i = 0; i < idxR.size(); i++) {
-          if (((i % vec.nc()) == 0) && i != 0) {
-            counter2++;
-          }
-          if (idxR[i]) {
-            positions_cols[counter] = i - counter2 * vec.nc();
-            counter++;
-          }
-        }
-        ind.resize(positions_rows.size() * positions_cols.size());
-        counter = 0;
-        for (std::size_t j = 0; j < positions_cols.size(); j++) {
-          for (std::size_t i = 0; i < positions_rows.size(); i++) {
-            ind[counter] = positions_cols[j] * vec.nr() + positions_rows[i];
-            counter++;
-          }
-        }
-        mp.setMatrix(true, positions_rows.size(), positions_cols.size());
-        return;
-      } else if constexpr (std::is_same_v<whichType, BaseType>) {
-        std::size_t counter = 0;
-        for (std::size_t i = 0; i < idxL.size(); i++)
-          if (idxL[i])
-            counter++;
-        BaseStore<int> positions(counter);
-        counter = 0;
-        std::size_t counter2 = 0;
-        for (std::size_t i = 0; i < idxL.size(); i++) {
-          if (((i % vec.nr()) == 0) && i != 0) {
-            counter2++;
-          }
-          if (idxL[i]) {
-            positions[counter] = i - counter2 * vec.nr();
-            counter++;
-          }
-        }
-        ind.resize(positions.size() * idxR.size());
-        counter = 0;
-        for (std::size_t j = 0; j < idxR.size(); j++) {
-          for (std::size_t i = 0; i < positions.size(); i++) {
-            ind[counter] = (d2i(idxR[j]) - 1) * vec.nr() + positions[i];
-            counter++;
-          }
-        }
-      } else {
-        static_assert(!isVec::value || !std::is_same_v<whichType, BaseType>,
-                      "Unknown type of index variable");
-      }
-    } else {
-      static_assert(!isVec::value, "Unknown type of index variable");
-    }
-  }
-}
-
-/*
-template <typename IL, typename IR>
-inline auto subset(Vec<BaseType> &vec, const IL &idxL, const IR & idxR)
-    -> Vec<BaseType, Subset<decltype(convert(vec).d), SubsetTrait>> {
-  Subset<decltype(convert(vec).d), SubsetTrait> sub(vec);
-  calcInd(vec, sub.ind, sub.mp,  idxL, idxR);
-  return Vec<BaseType, decltype(convertSubset(vec))>(std::move(sub));
-}
-*/
-
-/*
-template <typename T, typename R, typename IL, typename IR>
-  requires NotOperation<R>
-inline auto subset(Vec<T, R> &vec, const IL &idxL, const IR &idxR)
-    -> Vec<BaseType,
-           Subset<decltype(convert(vec).d),
-                  SubsetTrait>> { // issue: add also NotOperation and
-                                  // UnaryOrBinaryOperation to vector subsetting
-  Subset<decltype(convert(vec).d), SubsetTrait> sub(vec);
-  calcInd(vec, sub.ind, sub.mp, idxL, idxR);
-  return Vec<BaseType, decltype(convertSubset(vec))>(std::move(sub));
-}
-
-template <typename L, typename R, typename Trait, typename IL, typename IR>
-  requires NotOperation<R>
-inline auto subset(Vec<L, R, Trait> &vec, const IL &idxL, const IR &idxR)
-    -> Vec<BaseType, Subset<decltype(convert(vec).d), SubsetTrait>> {
-  Subset<decltype(convert(vec).d), SubsetTrait> sub(vec);
-  calcInd(vec, sub.ind, sub.mp, idxL, idxR);
-  return Vec<BaseType, decltype(convertSubset(vec))>(std::move(sub));
-}
-
-template <typename T, typename R, typename IL, typename IR>
-  requires UnaryOrBinaryOperation<R>
-inline auto subset(const Vec<T, R> &vec, const IL &idxL, const IR &idxR)
-    -> Vec<BaseType> {
-  Indices ind;
-  MatrixParameter mp;
-  calcInd(vec, ind, mp, idxL, idxR);
-  Buffer<BaseType> retBuffer(ind.size());
-  for (std::size_t i = 0; i < retBuffer.size(); i++)
-    retBuffer[i] = vec[ind[i]];
-  retBuffer.setMatrix(mp);
-  Vec<BaseType> ret(retBuffer);
-  return ret;
-}
-
-template <typename L, typename R, typename Trait, typename IL, typename IR>
-  requires UnaryOrBinaryOperation<R>
-inline auto subset(const Vec<L, R, Trait> &vec, const IL &idxL, const IR &idxR)
-    -> Vec<BaseType> {
-  Indices ind;
-  MatrixParameter mp;
-  calcInd(vec, ind, mp, idxL, idxR);
-  Buffer<BaseType> retBuffer(ind.size());
-  for (std::size_t i = 0; i < retBuffer.size(); i++)
-    retBuffer[i] = vec[ind[i]];
-  retBuffer.setMatrix(mp);
-  Vec<BaseType> ret(retBuffer);
-  return ret;
-}
-*/
-
 }; // namespace etr
 
 #endif
