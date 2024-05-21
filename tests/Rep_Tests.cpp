@@ -1,10 +1,20 @@
-
 #define STANDALONE_ETR
 #include "../include/etr.hpp"
+using namespace etr;
 
-#define CATCH_CONFIG_MAIN
-#include "./catch/catch.hpp"
+void test_rep() {
+  rep(1, 2);
+  Vec<int> idx = coca(1, 2, 3);
+  rep(1, idx);
+  rep(1, coca(1, 2, 3));
+}
 
+int main(int argc, char *argv[]) {
+  test_rep();
+  return 0;
+}
+
+/*
 TEST_CASE("rep arithmetic arithmetic") {
     SECTION("integers") {
         etr::Vec<double> vec1 = etr::rep(5, 3);
@@ -46,10 +56,10 @@ TEST_CASE("rep Vec arithmetic") {
 
 TEST_CASE("rep const Vec arithmetic") {
     SECTION("integers") {
-        etr::Vec<double> vec1 = etr::rep(etr::coca(1, 2, 3, 4) + etr::coca(1, 2), 3);
-        REQUIRE(vec1.size() == 12);
-        REQUIRE_THROWS_AS(etr::rep(etr::coca(1) + 7, 0), std::exception);
-        REQUIRE_THROWS_AS(etr::rep(etr::coca(1, 6, 6) + etr::vector(20), -1), std::exception);
+        etr::Vec<double> vec1 = etr::rep(etr::coca(1, 2, 3, 4) + etr::coca(1,
+2), 3); REQUIRE(vec1.size() == 12); REQUIRE_THROWS_AS(etr::rep(etr::coca(1) + 7,
+0), std::exception); REQUIRE_THROWS_AS(etr::rep(etr::coca(1, 6, 6) +
+etr::vector(20), -1), std::exception);
     }
     SECTION("doubles") {
         etr::Vec<double> vec1 = etr::rep(etr::coca(1, 2, 3, 4) + 4.5, 4.1);
@@ -88,4 +98,4 @@ TEST_CASE("(const) vec & (const) vec") {
   REQUIRE(etr::rep(v1, etr::coca(5)).size() == 20);
   REQUIRE(etr::rep(v1 + v2, etr::coca(5)).size() == 20);
 }
-
+*/

@@ -22,7 +22,7 @@ const Vec is an Operation
 namespace etr {
 template <typename L, typename R>
   requires std::is_arithmetic_v<L> && std::is_arithmetic_v<R>
-inline Vec<L, Buffer<L, BufferTrait, RBufTrait>, RVecTrait> rep(L inp, R s) {
+inline auto rep(L inp, R s) {
   std::size_t length = convertSize(s);
   Vec<L> ret(SI{length});
   ret.fill(inp);
@@ -30,7 +30,7 @@ inline Vec<L, Buffer<L, BufferTrait, RBufTrait>, RVecTrait> rep(L inp, R s) {
 }
 
 template <typename L, typename R>
-  requires IsVec<L> && std::is_arithmetic_v<R>
+  requires(IsVec<L> && std::is_arithmetic_v<R>)
 inline auto rep(L &inp, R s) {
   std::size_t length = convertSize(s) * inp.size();
   using DataType = ExtractDataType<L>::RetType;
@@ -47,8 +47,9 @@ inline auto rep(L &inp, R s) {
 }
 
 template <typename L, typename R>
-  requires IsVec<L> && std::is_arithmetic_v<R>
-inline auto rep(const L &inp, R s) {
+  requires(IsRVec<L> || IsSubVec<L> ||
+           OperationVec<L> && std::is_arithmetic_v<R>)
+inline auto rep(const L &&inp, R s) {
   std::size_t length = convertSize(s) * inp.size();
   using DataType = ExtractDataType<L>::RetType;
   Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> ret(
@@ -66,16 +67,33 @@ inline auto rep(const L &inp, R s) {
 template <typename L, typename R>
   requires std::is_arithmetic_v<L> && IsVec<R>
 inline auto rep(L inp, R &s) {
-  std::size_t length = convertSize(s);
-  Vec<L> ret(SI{length});
+  warn(!(s.size() > 1), "times in fct rep has more than one element. Only the "
+                        "first one is used");
+  std::size_t length = convertSize(s[0]);
+  Vec<L, Buffer<L, BufferTrait, RBufTrait>, RVecTrait> ret(SI{length});
   ret.fill(inp);
   return ret;
 }
 
+template <typename L, typename R>
+  requires std::is_arithmetic_v<L> && IsRVec<R> || IsSubVec<R> ||
+               OperationVec<R>
+           inline auto rep(L inp, const R &&s) {
+  warn(!(s.size() > 1), "times in fct rep has more than one element. Only the "
+                        "first one is used");
+  std::size_t length = convertSize(s[0]);
+  Vec<L, Buffer<L, BufferTrait, RBufTrait>, RVecTrait> ret(SI{length});
+  ret.fill(inp);
+  return ret;
+}
+
+// ===============================================================================
 template <typename L, typename R>
   requires IsVec<L> && IsVec<R>
 inline auto rep(L &inp, R &s) {
-  std::size_t length = convertSize(s) * inp.size();
+  warn(!(s.size() > 1), "times in fct rep has more than one element. Only the "
+                        "first one is used");
+  std::size_t length = convertSize(s[0]) * inp.size();
   using DataType = ExtractDataType<L>::RetType;
   Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> ret(
       SI{length});
@@ -90,9 +108,12 @@ inline auto rep(L &inp, R &s) {
 }
 
 template <typename L, typename R>
-  requires IsVec<L> && IsVec<R>
-inline auto rep(const L &inp, R &s) {
-  std::size_t length = convertSize(s) * inp.size();
+  requires IsRVec<L> || IsSubVec<L> ||
+           OperationVec<L> && IsVec<R>
+           inline auto rep(const L &&inp, R &s) {
+  warn(!(s.size() > 1), "times in fct rep has more than one element. Only the "
+                        "first one is used");
+  std::size_t length = convertSize(s[0]) * inp.size();
   using DataType = ExtractDataType<L>::RetType;
   Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> ret(
       SI{length});
@@ -107,18 +128,11 @@ inline auto rep(const L &inp, R &s) {
 }
 
 template <typename L, typename R>
-  requires std::is_arithmetic_v<L> && IsVec<R>
-inline auto rep(L inp, const R &s) {
-  std::size_t length = convertSize(s);
-  Vec<L> ret(SI{length});
-  ret.fill(inp);
-  return ret;
-}
-
-template <typename L, typename R>
-  requires IsVec<L> && IsVec<R>
-inline auto rep(L &inp, const R &s) {
-  std::size_t length = convertSize(s) * inp.size();
+  requires IsVec<L> && IsRVec<R> || IsSubVec<R> || OperationVec<R>
+           inline auto rep(L &inp, const R &&s) {
+  warn(!(s.size() > 1), "times in fct rep has more than one element. Only the "
+                        "first one is used");
+  std::size_t length = convertSize(s[0]) * inp.size();
   using DataType = ExtractDataType<L>::RetType;
   Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> ret(
       SI{length});
@@ -133,9 +147,12 @@ inline auto rep(L &inp, const R &s) {
 }
 
 template <typename L, typename R>
-  requires IsVec<L> && IsVec<R>
-inline auto rep(const L &inp, const R &s) {
-  std::size_t length = convertSize(s) * inp.size();
+  requires IsRVec<L> || IsSubVec<L> || OperationVec<L> && IsRVec<R> ||
+           IsSubVec<R> || OperationVec<R>
+inline auto rep(L &inp, const R &&s) {
+  warn(!(s.size() > 1), "times in fct rep has more than one element. Only the "
+                        "first one is used");
+  std::size_t length = convertSize(s[0]) * inp.size();
   using DataType = ExtractDataType<L>::RetType;
   Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> ret(
       SI{length});
@@ -148,6 +165,7 @@ inline auto rep(const L &inp, const R &s) {
   }
   return ret;
 }
+
 } // namespace etr
 
 #endif
