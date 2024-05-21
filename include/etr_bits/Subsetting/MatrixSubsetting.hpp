@@ -584,7 +584,9 @@ inline auto subset(V &vec, R &&r, C &&c) {
 
 template <typename V, typename R, typename C>
   requires(IsRVec<V> || IsSubVec<V> || OperationVec<V>)
-inline const auto subset(V &&vec, R &&r, C &&c) {
+inline const auto
+subset(V &&vec, R &&r,
+       C &&c) { // TODO: check that calculations can be subsetted
   using DataType = ExtractDataType<V>::RetType;
   Subset<const decltype(convert(vec).d), SubsetTrait> sub(
       vec); // TODO: check whether a new trait SubsetTraitconst is needed

@@ -1,101 +1,56 @@
+#include <stdexcept>
+#include <type_traits>
 #define STANDALONE_ETR
 #include "../include/etr.hpp"
 using namespace etr;
 
 void test_rep() {
-  rep(1, 2);
-  Vec<int> idx = coca(1, 2, 3);
-  rep(1, idx);
-  rep(1, coca(1, 2, 3));
+  // NOTE: arithmetic + arithmetic
+  {
+    std::string s = "RepAriAriTesting: ";
+    ass(rep(1, 2).size() == 2, s + "1, 2");
+    ass(rep(true, 2).size() == 2, s + "true, 2");
+    using DataType1 = ExtractDataType<
+        std::remove_reference_t<decltype(rep(true, 2))>>::RetType;
+    static_assert(is<DataType1, bool>, "bool expected");
+    using DataType2 =
+        ExtractDataType<std::remove_reference_t<decltype(rep(4, 2))>>::RetType;
+    static_assert(is<DataType2, int>, "bool expected");
+    using DataType3 = ExtractDataType<
+        std::remove_reference_t<decltype(rep(4.2, 2))>>::RetType;
+    static_assert(is<DataType3, double>, "bool expected");
+  }
+  // NOTE: arithmetic + vector
+  {
+    std::string s = "RepAriVecTesting: ";
+    ass(rep(1, coca(1, 2, 3)).size() == 1, s + "1, c(1, 2, 3)");
+    ass(rep(1, coca(1, 2, 3) + 1).size() == 2, s + "1, 1+ c(1, 2, 3)");
+    try {
+      rep(1, coca(false));
+    } catch (std::runtime_error &e) {
+      std::string expected = "invalid times argument";
+      ass(e.what() == expected, s + "invalid times argument = false");
+    }
+  }
+  // NOTE: vector + arithmetic
+  {
+    std::string s = "RepVecAriTesting: ";
+    ass(rep(coca(1, 2, 3), 5).size() == 15, "c(1, 2, 3), 5");
+    Vec<double> v = coca(1.1, 2.2, 3.3, 4.4);
+    ass(rep(v, 5).size() == 20, "v, 5");
+    ass(rep(v + v, 5).size() == 20, "v, 5");
+  }
+  // NOTE: vector + vector
+  {
+    std::string s = "RepVecVecTesting: ";
+    ass(rep(coca(1, 2, 3), coca(5, 6, 7)).size() == 15,
+        s + "c(1, 2, 3), c(5, 6, 7)");
+    ass(rep(coca(1, 2, 3) + 1, coca(5, 6, 7) + 1).size() == 18,
+        s + "c(1, 2, 3) + 1, c(5, 6, 7) + 1");
+  }
 }
 
 int main(int argc, char *argv[]) {
   test_rep();
   return 0;
 }
-
-/*
-TEST_CASE("rep arithmetic arithmetic") {
-    SECTION("integers") {
-        etr::Vec<double> vec1 = etr::rep(5, 3);
-        REQUIRE(vec1.size() == 3);
-        REQUIRE_THROWS_AS(etr::rep(-1, 0), std::exception);
-        REQUIRE_THROWS_AS(etr::rep(-1, -1), std::exception);
-    }
-    SECTION("doubles") {
-        etr::Vec<double> vec1 = etr::rep(5.0, 3.1);
-        REQUIRE(vec1.size() == 3);
-    }
-    SECTION("bools") {
-        etr::Vec<double> vec1 = etr::rep(5.0, true);
-        REQUIRE(vec1.size() == 1);
-        REQUIRE_THROWS_AS(etr::rep(0, false), std::exception);
-    }
-}
-
-TEST_CASE("rep Vec arithmetic") {
-    etr::Vec<double> v = etr::coca(1, 2, 3, 4);
-    SECTION("integers") {
-        etr::Vec<double> vec1 = etr::rep(v, 3);
-        REQUIRE(vec1.size() == 12);
-        REQUIRE_THROWS_AS(etr::rep(v, 0), std::exception);
-        REQUIRE_THROWS_AS(etr::rep(v, -1), std::exception);
-    }
-    SECTION("doubles") {
-        etr::Vec<double> vec1 = etr::rep(v, 4.1);
-        REQUIRE(vec1.size() == 16);
-        REQUIRE(vec1[4] == 1);
-    }
-    SECTION("bools") {
-        etr::Vec<double> vec1 = etr::rep(v, true);
-        REQUIRE(vec1.size() == 4);
-        REQUIRE_THROWS_AS(etr::rep(v, false), std::exception);
-    }
-}
-
-
-TEST_CASE("rep const Vec arithmetic") {
-    SECTION("integers") {
-        etr::Vec<double> vec1 = etr::rep(etr::coca(1, 2, 3, 4) + etr::coca(1,
-2), 3); REQUIRE(vec1.size() == 12); REQUIRE_THROWS_AS(etr::rep(etr::coca(1) + 7,
-0), std::exception); REQUIRE_THROWS_AS(etr::rep(etr::coca(1, 6, 6) +
-etr::vector(20), -1), std::exception);
-    }
-    SECTION("doubles") {
-        etr::Vec<double> vec1 = etr::rep(etr::coca(1, 2, 3, 4) + 4.5, 4.1);
-        REQUIRE(vec1.size() == 16);
-        REQUIRE(vec1[4] == 1 + 4.5);
-    }
-    SECTION("bools") {
-        etr::Vec<double> vec1 = etr::rep(1.5 + etr::coca(1, 7, 8, 9), true);
-        REQUIRE(vec1.size() == 4);
-        REQUIRE_THROWS_AS(etr::rep(etr::coca(1) + 6, false), std::exception);
-    }
-}
-
-TEST_CASE("rep (const) arithmetic vec") {
-        etr::Vec<double> v = etr::vector(5);
-        REQUIRE_THROWS_AS(etr::rep(5, v), std::exception);
-        etr::Vec<double> correct = etr::coca(4);
-        REQUIRE(etr::rep(5, correct).size() == 4);
-        REQUIRE_THROWS_AS(etr::rep(5, etr::coca(-1)), std::exception);
-        REQUIRE_THROWS_AS(etr::rep(5, etr::coca(0)), std::exception);
-}
-
-
-TEST_CASE("(const) vec & (const) vec") {
-  etr::Vec<double> v1 = etr::coca(1, 2, 3, 4);
-  etr::Vec<double> v2 = etr::coca(1, 2, 3, 4);
-  etr::Vec<double> v3 = etr::coca(1, 2, 3, 4);
-  etr::Vec<double> correctRepArg = etr::coca(4);
-
-  REQUIRE_THROWS_AS(etr::rep(v1, v2), std::exception);
-  REQUIRE_THROWS_AS(etr::rep(v1, v1 + v2), std::exception);
-  REQUIRE_THROWS_AS(etr::rep(v1 + 3, v1 + v2), std::exception);
-  REQUIRE_THROWS_AS(etr::rep(v1, etr::coca(-1)), std::exception);
-  REQUIRE_THROWS_AS(etr::rep(v1, etr::coca(0)), std::exception);
-  REQUIRE(etr::rep(v1, correctRepArg).size() == 16);
-  REQUIRE(etr::rep(v1, etr::coca(5)).size() == 20);
-  REQUIRE(etr::rep(v1 + v2, etr::coca(5)).size() == 20);
-}
-*/
