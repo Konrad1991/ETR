@@ -185,9 +185,23 @@ void test_vector_subsetting() {
     ass(v(true, 1.1).size() == 4, s + "vec[T, 1.1]");
     ass(v(true, coca(1, 2, 3) + 1).size() == 12, s + "vec[T, c(1, 2, 3) + 1]");
     ass(v(true, idx).size() == 12, s + "vec[T, idx]");
-    /* subset(coca(1, 2, 3), false, false); */ // TODO: can be first tested if
   }
-  // TODO: missing tests for r matrices
+  {
+    std::string s = "MatrixBoolScalarSubsetting: ";
+    Vec<int> idx = coca(1, 5, 8);
+    ass(subset(matrix(colon(1, 16), 4, 4), true, true).size() == 16,
+        s + "vec[T, T]");
+    ass(subset(matrix(colon(1, 16), 4, 4), true, 1).size() == 4,
+        s + "vec[T, 1]");
+    ass(subset(matrix(colon(1, 16), 4, 4), true, 1.1).size() == 4,
+        s + "vec[T,1.1]");
+    /* ass(subset(matrix(colon(1, 16), true, coca(1, 2, 3) + 1)).size() == 12,
+     */
+    /*     s + "vec[T, c(1, 2, 3) + 1]"); */ // TODO: missing matrix
+                                             // implementation
+    ass(subset(matrix(colon(1, 16), 4, 4), true, idx).size() == 12,
+        s + "vec[T, idx]");
+  }
 
   // NOTE:matrix int + bool|int|double
   {
@@ -305,6 +319,48 @@ void test_vector_subsetting() {
     ass(v(coca(1.1, 2.2, 3.3), coca(1.1, 2.2, 3.3) + coca(1.1, 2.2, 3.3, 4.4))
                 .size() == 12,
         s + "vec[d,d]");
+  }
+  // NOTE: at testing
+  {
+    std::string s = "AtSubsetting: ";
+    v.d.setMatrix(true, 4, 4);
+    at(v, 1) = 10.1;
+    ass(at(v, 1) == 10.1, s + "at mutable");
+    try {
+      at(v, 0);
+    } catch (std::runtime_error &e) {
+      std::string expected = "Error: out of boundaries --> value below 1";
+      ass(e.what() == expected, s + "Error out of boundaries");
+    }
+    try {
+      at(v, 2000);
+    } catch (std::runtime_error &e) {
+      std::string expected =
+          "Error: out of boundaries --> value beyond size of vector";
+      ass(e.what() == expected, s + "Error out of boundaries");
+    }
+    at(v, 2, 3) = 20.3;
+    ass(at(v, 2, 3) == 20.3, s + "at mutable matrix");
+    try {
+      at(v, 0, 0);
+    } catch (std::runtime_error &e) {
+      std::string expected =
+          "Error: out of boundaries --> value beyond size of vector";
+      ass(e.what() == expected, s + "Error out of boundaries");
+    }
+    try {
+      at(v, 2000, 1);
+    } catch (std::runtime_error &e) {
+      std::string expected =
+          "Error: out of boundaries --> value beyond size of vector";
+      ass(e.what() == expected, s + "Error out of boundaries");
+    }
+  }
+  {
+    std::string s = "AtSubsetting: ";
+    ass(at(coca(1, 2, 3), 1), s + "at r vec");
+    ass(at(matrix(coca(1, 2, 3, 4), 2, 2), 2) == 3, s + "r matrix");
+    ass(at(matrix(coca(1, 2, 3, 4), 2, 2), 2, 2) == 4, s + "r matrix");
   }
 }
 
