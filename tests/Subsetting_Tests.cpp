@@ -195,10 +195,9 @@ void test_vector_subsetting() {
         s + "vec[T, 1]");
     ass(subset(matrix(colon(1, 16), 4, 4), true, 1.1).size() == 4,
         s + "vec[T,1.1]");
-    /* ass(subset(matrix(colon(1, 16), true, coca(1, 2, 3) + 1)).size() == 12,
-     */
-    /*     s + "vec[T, c(1, 2, 3) + 1]"); */ // TODO: missing matrix
-                                             // implementation
+    ass(subset(matrix(colon(1, 16), 4, 4), true, coca(1, 2, 3) + 1).size() ==
+            12,
+        s + "vec[T, c(1, 2, 3) + 1]");
     ass(subset(matrix(colon(1, 16), 4, 4), true, idx).size() == 12,
         s + "vec[T, idx]");
   }

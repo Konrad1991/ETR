@@ -87,21 +87,28 @@ template <typename T, typename BorrowTrait> struct Borrow {
   template <typename TInp> void fill(TInp &&inp) {
     ass(inp.size() == sz, "cannot use fill with vectors of different lengths");
     using DataType = ExtractDataType<std::remove_reference_t<TInp>>::RetType;
-    if constexpr (Operation<TInp>) {
-      for (std::size_t i = 0; i < sz; i++)
-        p[i] = inp[i];
-    } else if constexpr (!std::is_same_v<DataType, T>) {
-      for (std::size_t i = 0; i < sz; i++)
-        p[i] = static_cast<T>(inp[i]);
-    } else if constexpr (IsRVec<TInp>) {
+    if constexpr (IsVec<TInp>) {
+      if constexpr (!is<DataType, T>) {
+        for (std::size_t i = 0; i < sz; i++)
+          p[i] = static_cast<T>(inp[i]);
+      } else {
+        DataType *ptr = inp.getPtr();
+        std::copy(ptr, ptr + sz, p);
+      }
+    } else if constexpr (IsRVec<TInp> && is<DataType, T>) {
       delete[] p;
       DataType *ptr = inp.getPtr();
       inp.d.p = nullptr;
       inp.d.allocated = false;
       p = ptr;
     } else {
-      DataType *ptr = inp.getPtr();
-      std::copy(ptr, ptr + sz, p);
+      if constexpr (is<DataType, T>) {
+        for (std::size_t i = 0; i < sz; i++)
+          p[i] = inp[i];
+      } else {
+        for (std::size_t i = 0; i < sz; i++)
+          p[i] = static_cast<T>(inp[i]);
+      }
     }
   }
 

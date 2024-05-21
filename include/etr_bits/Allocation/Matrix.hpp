@@ -3,6 +3,7 @@
 
 #include "AllocationUtils.hpp"
 #include <cstddef>
+#include <type_traits>
 
 namespace etr {
 
@@ -28,104 +29,81 @@ TODO: Matrix missing implementation with 3 args
 */
 
 template <typename V, typename R, typename C>
-  requires(std::is_arithmetic_v<R> && std::is_arithmetic_v<C>)
-inline auto matrix(V &&inp, R &&nrows, C &&ncols) {
-  if constexpr (std::is_arithmetic_v<V>) {
-    Vec<BaseType, Buffer<BaseType, BufferTrait, RBufTrait>, RVecTrait> ret(
-        convertSize(nrows), convertSize(ncols));
-    ret.d.fill(inp);
-    return ret;
-  } else {
-    ass((static_cast<std::size_t>(nrows) * static_cast<std::size_t>(ncols)) ==
-            inp.size(),
-        "data length is not a sub-multiple or multiple of the number of "
-        "rows");
-    Vec<BaseType, Buffer<BaseType, BufferTrait, RBufTrait>, RVecTrait> ret(
-        convertSize(nrows), convertSize(ncols));
-    ret.d.fill(inp);
-    return ret;
-  }
-}
-
-template <typename V, typename R, typename C>
-inline Vec<BaseType> matrix_old(V &&inp, R &&nrows, C &&ncols) {
+inline auto matrix(const V &&inp, const R &&nrows, const C &&ncols) {
   if constexpr (std::is_arithmetic_v<R> && std::is_arithmetic_v<C>) {
     if constexpr (std::is_arithmetic_v<V>) {
-      Vec<BaseType, Buffer<BaseType, BufferTrait, RBufTrait>, RVecTrait> ret(
-          static_cast<std::size_t>(nrows), static_cast<std::size_t>(ncols));
+      Vec<V, Buffer<V, BufferTrait, RBufTrait>, RVecTrait> ret(
+          convertSize(nrows), convertSize(ncols));
       ret.d.fill(inp);
       return ret;
     } else {
-      ass((static_cast<std::size_t>(nrows) * static_cast<std::size_t>(ncols)) ==
-              inp.size(),
-          "data length is not a sub-multiple or multiple of the number of "
-          "rows");
-      Vec<BaseType> ret(static_cast<std::size_t>(nrows),
-                        static_cast<std::size_t>(ncols));
-      for (std::size_t i = 0; i < ret.size(); i++)
-        ret[i] = inp[i];
+      using DataType = ExtractDataType<std::remove_reference_t<V>>::RetType;
+      Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> ret(
+          convertSize(nrows), convertSize(ncols));
+      ret.d.fill(inp);
       return ret;
     }
   } else if constexpr (!std::is_arithmetic_v<R> && std::is_arithmetic_v<C>) {
-    ass(nrows.size() == 1, "invalid length argument for rows");
     if constexpr (std::is_arithmetic_v<V>) {
-      Vec<BaseType> ret(static_cast<std::size_t>(nrows[0]),
-                        static_cast<std::size_t>(ncols));
-      for (std::size_t i = 0; i < ret.size(); i++)
-        ret[i] = static_cast<BaseType>(inp);
+      warn(nrows.size() > 1, "nrows in fct matrix has more than one element. "
+                             "Only the first one is used");
+      Vec<V, Buffer<V, BufferTrait, RBufTrait>, RVecTrait> ret(
+          convertSize(nrows[0]), convertSize(ncols));
+      ret.d.fill(inp);
       return ret;
     } else {
-      ass((static_cast<std::size_t>(nrows[0]) *
-           static_cast<std::size_t>(ncols)) == inp.size(),
-          "data length is not a sub-multiple or multiple of the number of "
-          "rows");
-      Vec<BaseType> ret(static_cast<std::size_t>(nrows[0]),
-                        static_cast<std::size_t>(ncols));
-      for (std::size_t i = 0; i < ret.size(); i++)
-        ret[i] = inp[i];
+      using DataType = ExtractDataType<std::remove_reference_t<V>>::RetType;
+      warn(nrows.size() > 1, "nrows in fct matrix has more than one element. "
+                             "Only the first one is used");
+      Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> ret(
+          convertSize(nrows[0]), convertSize(ncols));
+      ret.d.fill(inp);
       return ret;
     }
   } else if constexpr (std::is_arithmetic_v<R> && !std::is_arithmetic_v<C>) {
-    ass(ncols.size() == 1, "invalid length argument for cols");
     if constexpr (std::is_arithmetic_v<V>) {
-      Vec<BaseType> ret(static_cast<std::size_t>(nrows),
-                        static_cast<std::size_t>(ncols[0]));
-      for (std::size_t i = 0; i < ret.size(); i++)
-        ret[i] = static_cast<BaseType>(inp);
+      warn(ncols.size() > 1, "ncols in fct matrix has more than one element. "
+                             "Only the first one is used");
+      Vec<V, Buffer<V, BufferTrait, RBufTrait>, RVecTrait> ret(
+          convertSize(nrows), convertSize(ncols[0]));
+      ret.d.fill(inp);
       return ret;
     } else {
-      ass((static_cast<std::size_t>(nrows) *
-           static_cast<std::size_t>(ncols[0])) == inp.size(),
-          "data length is not a sub-multiple or multiple of the number of "
-          "rows");
-      Vec<BaseType> ret(static_cast<std::size_t>(nrows),
-                        static_cast<std::size_t>(ncols[0]));
-      for (std::size_t i = 0; i < ret.size(); i++)
-        ret[i] = inp[i];
+      using DataType = ExtractDataType<std::remove_reference_t<V>>::RetType;
+      warn(ncols.size() > 1, "ncols in fct matrix has more than one element. "
+                             "Only the first one is used");
+      Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> ret(
+          convertSize(nrows), convertSize(ncols[0]));
+      ret.d.fill(inp);
+      return ret;
+    }
+  } else if constexpr (!std::is_arithmetic_v<R> && !std::is_arithmetic_v<C>) {
+    if constexpr (std::is_arithmetic_v<V>) {
+      warn(ncols.size() > 2, "ncols in fct matrix has more than one element. "
+                             "Only the first one is used");
+      warn(nrows.size() > 1, "nrows in fct matrix has more than one element. "
+                             "Only the first one is used");
+      Vec<V, Buffer<V, BufferTrait, RBufTrait>, RVecTrait> ret(
+          convertSize(nrows[0]), convertSize(ncols[0]));
+      ret.d.fill(inp);
+      return ret;
+    } else {
+      using DataType = ExtractDataType<std::remove_reference_t<V>>::RetType;
+      warn(ncols.size() > 2, "ncols in fct matrix has more than one element. "
+                             "Only the first one is used");
+      warn(nrows.size() > 1, "nrows in fct matrix has more than one element. "
+                             "Only the first one is used");
+      Vec<DataType, Buffer<DataType, BufferTrait, RBufTrait>, RVecTrait> ret(
+          convertSize(nrows[0]), convertSize(ncols[0]));
+      ret.d.fill(inp);
       return ret;
     }
   } else {
-    ass(nrows.size() == 1, "invalid length argument for rows");
-    ass(ncols.size() == 1, "invalid length argument for cols");
-    if constexpr (std::is_arithmetic_v<V>) {
-      Vec<BaseType> ret(static_cast<std::size_t>(nrows[0]),
-                        static_cast<std::size_t>(ncols[0]));
-      for (std::size_t i = 0; i < ret.size(); i++)
-        ret[i] = static_cast<BaseType>(inp);
-      return ret;
-    } else {
-      ass((static_cast<std::size_t>(nrows[0]) *
-           static_cast<std::size_t>(ncols[0])) == inp.size(),
-          "data length is not a sub-multiple or multiple of the number of "
-          "rows");
-      Vec<BaseType> ret(static_cast<std::size_t>(nrows[0]),
-                        static_cast<std::size_t>(ncols[0]));
-      for (std::size_t i = 0; i < ret.size(); i++)
-        ret[i] = inp[i];
-      return ret;
-    }
+    static_assert(sizeof(V) == 0,
+                  "Unknown input for subsetting of matrix found");
   }
 }
+
 } // namespace etr
 
 #endif
