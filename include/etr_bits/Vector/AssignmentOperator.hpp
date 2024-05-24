@@ -7,7 +7,7 @@
 template <typename TD>
   requires is<TD, T>
 Vec &operator=(const T inp) {
-  std::cout << "test1" << std::endl;
+  // std::cout << "test1" << std::endl;
   static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
   static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
   if constexpr (isSubset::value) {
@@ -27,7 +27,7 @@ Vec &operator=(const T inp) {
 template <typename TD>
   requires std::is_same_v<TD, int>
 Vec &operator=(const TD inp) {
-  std::cout << "test2" << std::endl;
+  // std::cout << "test2" << std::endl;
   static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
   static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
   if constexpr (isSubset::value) {
@@ -50,7 +50,7 @@ Vec &operator=(const TD inp) {
 template <typename TD>
   requires std::is_same_v<TD, bool>
 Vec &operator=(const TD inp) {
-  std::cout << "test3" << std::endl;
+  // std::cout << "test3" << std::endl;
   static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
   static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
   if constexpr (isSubset::value) {
@@ -68,7 +68,7 @@ Vec &operator=(const TD inp) {
 }
 
 Vec &operator=(Vec<BaseType> &other) {
-  std::cout << "test4" << std::endl;
+  // std::cout << "test4" << std::endl;
   static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
   static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
   if constexpr (isSubset::value) {
@@ -91,7 +91,7 @@ Vec &operator=(Vec<BaseType> &other) {
 }
 
 Vec &operator=(const Vec<T, R, Trait> &otherVec) {
-  std::cout << "test5" << std::endl;
+  // std::cout << "test5" << std::endl;
   printTAST<decltype(otherVec)>();
   static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
   static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
@@ -137,7 +137,7 @@ Vec &operator=(const Vec<T, R, Trait> &otherVec) {
 
 template <typename T2, typename R2, typename Trait2>
 Vec &operator=(const Vec<T2, R2, Trait2> &otherVec) {
-  std::cout << "test6" << std::endl;
+  // std::cout << "test6" << std::endl;
   static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
   static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
   if constexpr (isBuffer::value) {

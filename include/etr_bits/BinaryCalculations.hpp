@@ -42,6 +42,8 @@ struct BinaryOperation {
   }
   std::size_t nc() const {
     if constexpr (std::is_arithmetic_v<L>) {
+      // TODO: check whether one has to add here the test whether R and L are
+      // matrices. Same is true for nr
       return r.nc();
     } else if constexpr (std::is_arithmetic_v<R>) {
       return l.nc();
