@@ -59,9 +59,10 @@ void test_coca() {
     Vec<double> a = coca(1, 2, 3);
     double d = 3.14;
     int i = 60;
-    auto res = coca(a, d, i);
-    print(res);
-    ass(res.size() == 5, s + "l variables");
+    auto res1 = coca(a, d, i);
+    ass(res1.size() == 5, s + "l variables");
+    auto res2 = coca(a, 1, 2, a);
+    ass(res2.size() == 8, s + "mixed l and r variables");
   }
 }
 

@@ -73,7 +73,6 @@ inline auto determine_type(const auto &first, const auto &...rest) {
 }
 
 // NOTE: isnt it possible to use the function etr::c instead of etr::coca
-
 template <class F, class... Args> inline F forEachArg(F f, Args &&...args) {
   (f(std::forward<Args>(args)), ...);
   return f;
