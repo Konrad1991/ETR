@@ -257,6 +257,19 @@ concept IsAV = requires {
   requires(IsVec<R> || IsRVec<R> || IsSubVec<R> || OperationVec<R>);
 };
 
+// TODO: add the missing ExtractDataType
+template <typename V> struct ExtractDataType;
+template <typename V>
+  requires IsBinary<V>
+struct ExtractDataType<V> {
+  using RetType = std::remove_reference_t<V>::RetType;
+};
+template <typename V>
+  requires IsBinary<V>
+struct ExtractDataType<const V> {
+  using RetType = std::remove_reference_t<V>::RetType const;
+};
+
 } // namespace etr
 
 #endif

@@ -11,7 +11,7 @@ namespace etr {
 
 template <typename T, typename R, typename Trait> struct Vec {
   using Type = T;
-  // using RetType = T;
+  /* using RetType = T; */
   using TypeTrait = Trait;
   using CaseTrait = Trait;
   R d;

@@ -4,6 +4,7 @@
 #include "Header.hpp"
 #include "Traits.hpp"
 #include "Utils.hpp"
+#include <type_traits>
 
 namespace etr {
 template <typename T, typename BaseTrait = BaseStoreTrait> struct BaseStore;
