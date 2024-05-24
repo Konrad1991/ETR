@@ -24,6 +24,13 @@ void test_arithmetic() {
     print(ln(a));       // 0.0000000 0.6931472 1.0986123
     print(sqroot(a));   // 1.000000 1.414214 1.732051
     print(exp(a));      //   2.718282  7.389056 20.085537
+
+    print((a + 1) == coca(2, 3, 4));
+    print(sinus(a) == 3); // TODO: fix
+    print(sinus(a) == a);
+    print((a + a) == a);
+    printTAST<decltype(sinus(a))>();
+    printTAST<decltype(a + a)>();
   }
 }
 

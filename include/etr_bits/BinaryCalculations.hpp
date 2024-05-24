@@ -283,9 +283,7 @@ template <typename L, typename R> auto operator==(const L &l, const R &r) {
         typename std::common_type<typename ExtractDataType<L>::RetType,
                                   typename ExtractDataType<R>::RetType>::type,
         BinaryOperation<decltype(l.d), decltype(r.d), EqualTrait>>(
-        BinaryOperation<decltype(l.d), decltype(r.d),
-
-                        EqualTrait>(l.d, r.d));
+        BinaryOperation<decltype(l.d), decltype(r.d), EqualTrait>(l.d, r.d));
   } else {
     ass(false, "This case should not be reached. Contact author");
   }

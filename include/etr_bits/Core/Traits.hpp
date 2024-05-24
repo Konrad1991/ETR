@@ -113,7 +113,7 @@ struct PowTrait {
 };
 struct EqualTrait {
   template <typename L = BaseType, typename R = BaseType>
-  static bool
+  static inline bool
   f(L a,
     R b) { // issue: add this to documentationion for package authors
     if (fabs(a - b) < 1E-3) {

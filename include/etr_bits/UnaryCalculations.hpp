@@ -2,6 +2,8 @@
 #define UNARYOPERATION
 
 #include "Core.hpp"
+#include "Core/Concepts.hpp"
+#include "Core/Types.hpp"
 
 namespace etr {
 template <typename I, typename Trait, typename CTrait> struct UnaryOperation {
@@ -92,7 +94,9 @@ template <typename T> auto operator-(const T &obj) {
 template <typename T> auto sinus(const T &obj) {
   constexpr bool isDouble = std::is_arithmetic_v<T>;
   if constexpr (!isDouble) {
-    return Vec<T, UnaryOperation<decltype(obj.d), SinusTrait>, UnaryTrait>(
+    // TODO: replace Vec<T with the typename ExtractDataType<T>::RetType
+    return Vec<typename ExtractDataType<T>::RetType,
+               UnaryOperation<decltype(obj.d), SinusTrait>, UnaryTrait>(
         UnaryOperation<decltype(obj.d), SinusTrait>(obj.d));
   } else if constexpr (isDouble) {
     static_assert(std::is_same_v<T, BaseType>, "This should never be called!");
