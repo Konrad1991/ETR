@@ -97,7 +97,25 @@ inline auto length(const T &&inp) {
   return inp.size();
 }
 
-inline Vec<BaseType> dim(const Vec<BaseType> &inp) {
+template <typename T>
+  requires std::is_arithmetic_v<T>
+inline auto dim(T inp) {
+  ass(false, "dim can only be called with matrix");
+}
+
+template <typename T>
+  requires(IsRVec<T> || IsSubVec<T> || OperationVec<T>)
+inline auto dim(const T &inp) {
+  ass(inp.im(), "dim can only be called with matrix");
+  Vec<int> ret(SI{2});
+  ret[0] = inp.nr();
+  ret[1] = inp.nc();
+  return ret;
+}
+
+template <typename T>
+  requires IsVec<T>
+inline auto dim(T &inp) {
   ass(inp.im(), "dim can only be called with matrix");
   Vec<int> ret(SI{2});
   ret[0] = inp.nr();
