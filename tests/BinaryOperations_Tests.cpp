@@ -1,0 +1,43 @@
+#include <stdexcept>
+#include <type_traits>
+#define STANDALONE_ETR
+#include "../include/etr.hpp"
+using namespace etr;
+
+void test_arithmetic() {
+  // NOTE: test arithmetic +, -, * and /
+  {
+    std::string s = "ArithmeticTests: ";
+    Vec<double> a = coca(1, 2, 3);
+    Vec<double> b = coca(4, 5, 6);
+    Vec<double> c;
+    c = a + b;
+    print(c);
+    print(a - b);
+    print(a * b);
+    print(a / b);
+    print(a ^ b);
+  }
+}
+
+void test_comparison() {
+  // NOTE: test comparisons
+  {
+    std::string s = "ComparisonTests: ";
+    Vec<double> a = coca(1, 2, 3);
+    Vec<double> b = coca(4, 5, 6);
+    print(a == b); // TODO: printing is wrong result is handled as double
+    print(a != b);
+    print(a >= b);
+    print(a <= b);
+    print(a < b);
+    print(a > b);
+    print(coca(1, 2, 3, 9) > 5);
+  }
+}
+
+int main(int argc, char *argv[]) {
+  test_arithmetic();
+  test_comparison();
+  return 0;
+}

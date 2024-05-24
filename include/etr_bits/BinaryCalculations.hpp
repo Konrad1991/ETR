@@ -3,7 +3,7 @@
 
 #include "Core.hpp"
 
-// issue: what is needed in order that for loops work with Operations
+// TODO: what is needed in order that for loops work with Operations
 /*
 RetType* p;
 auto begin() const {
@@ -138,8 +138,8 @@ struct BinaryOperation {
                                               // types? Or temporary types?
     using TyL = typename std::remove_reference<typeTraitL>::type;
     using TyR = typename std::remove_reference<typeTraitR>::type;
-    return Trait::f(TyL::template getVal<AV>(av, VecIdx % TyL::getSize(av)),
-                    TyR::template getVal<AV>(av, VecIdx % TyR::getSize(av)));
+    return f(TyL::template getVal<AV>(av, VecIdx % TyL::getSize(av)),
+             TyR::template getVal<AV>(av, VecIdx % TyR::getSize(av)));
   }
 };
 
@@ -171,28 +171,21 @@ template <typename L, typename R> auto operator-(const L &l, const R &r) {
   constexpr bool isDoubleL = std::is_arithmetic_v<L>;
   constexpr bool isDoubleR = std::is_arithmetic_v<R>;
   if constexpr (!isDoubleL && isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<typename std::common_type<typename ExtractDataType<L>::RetType,
                                          R>::type,
                BinaryOperation<decltype(l.d), R, MinusTrait>>(
-        BinaryOperation<decltype(l.d), R, MinusTrait>(l.d, r, mp));
+        BinaryOperation<decltype(l.d), R, MinusTrait>(l.d, r));
   } else if constexpr (isDoubleL && !isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<typename std::common_type<
                    L, typename ExtractDataType<R>::RetType>::type,
                BinaryOperation<L, decltype(r.d), MinusTrait>>(
-        BinaryOperation<L, decltype(r.d), MinusTrait>(l, r.d, mp));
+        BinaryOperation<L, decltype(r.d), MinusTrait>(l, r.d));
   } else if constexpr (!isDoubleL && !isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<
         typename std::common_type<typename ExtractDataType<L>::RetType,
                                   typename ExtractDataType<R>::RetType>::type,
         BinaryOperation<decltype(l.d), decltype(r.d), MinusTrait>>(
-        BinaryOperation<decltype(l.d), decltype(r.d), MinusTrait>(l.d, r.d,
-                                                                  mp));
+        BinaryOperation<decltype(l.d), decltype(r.d), MinusTrait>(l.d, r.d));
   } else {
     ass(false, "This case should not be reached. Contact author");
   }
@@ -226,28 +219,21 @@ template <typename L, typename R> auto operator/(const L &l, const R &r) {
   constexpr bool isDoubleL = std::is_arithmetic_v<L>;
   constexpr bool isDoubleR = std::is_arithmetic_v<R>;
   if constexpr (!isDoubleL && isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<typename std::common_type<typename ExtractDataType<L>::RetType,
                                          R>::type,
                BinaryOperation<decltype(l.d), R, DivideTrait>>(
-        BinaryOperation<decltype(l.d), R, DivideTrait>(l.d, r, mp));
+        BinaryOperation<decltype(l.d), R, DivideTrait>(l.d, r));
   } else if constexpr (isDoubleL && !isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<typename std::common_type<
                    L, typename ExtractDataType<R>::RetType>::type,
                BinaryOperation<L, decltype(r.d), DivideTrait>>(
-        BinaryOperation<L, decltype(r.d), DivideTrait>(l, r.d, mp));
+        BinaryOperation<L, decltype(r.d), DivideTrait>(l, r.d));
   } else if constexpr (!isDoubleL && !isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<
         typename std::common_type<typename ExtractDataType<L>::RetType,
                                   typename ExtractDataType<R>::RetType>::type,
         BinaryOperation<decltype(l.d), decltype(r.d), DivideTrait>>(
-        BinaryOperation<decltype(l.d), decltype(r.d), DivideTrait>(l.d, r.d,
-                                                                   mp));
+        BinaryOperation<decltype(l.d), decltype(r.d), DivideTrait>(l.d, r.d));
   } else {
     ass(false, "This case should not be reached. Contact author");
   }
@@ -257,27 +243,21 @@ template <typename L, typename R> auto operator^(const L &l, const R &r) {
   constexpr bool isDoubleL = std::is_arithmetic_v<L>;
   constexpr bool isDoubleR = std::is_arithmetic_v<R>;
   if constexpr (!isDoubleL && isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<typename std::common_type<typename ExtractDataType<L>::RetType,
                                          R>::type,
                BinaryOperation<decltype(l.d), R, PowTrait>>(
-        BinaryOperation<decltype(l.d), R, PowTrait>(l.d, r, mp));
+        BinaryOperation<decltype(l.d), R, PowTrait>(l.d, r));
   } else if constexpr (isDoubleL && !isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<typename std::common_type<
                    L, typename ExtractDataType<R>::RetType>::type,
                BinaryOperation<L, decltype(r.d), PowTrait>>(
-        BinaryOperation<L, decltype(r.d), PowTrait>(l, r.d, mp));
+        BinaryOperation<L, decltype(r.d), PowTrait>(l, r.d));
   } else if constexpr (!isDoubleL && !isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<
         typename std::common_type<typename ExtractDataType<L>::RetType,
                                   typename ExtractDataType<R>::RetType>::type,
         BinaryOperation<decltype(l.d), decltype(r.d), PowTrait>>(
-        BinaryOperation<decltype(l.d), decltype(r.d), PowTrait>(l.d, r.d, mp));
+        BinaryOperation<decltype(l.d), decltype(r.d), PowTrait>(l.d, r.d));
   } else {
     ass(false, "This case should not be reached. Contact author");
   }
@@ -287,29 +267,23 @@ template <typename L, typename R> auto operator==(const L &l, const R &r) {
   constexpr bool isDoubleL = std::is_arithmetic_v<L>;
   constexpr bool isDoubleR = std::is_arithmetic_v<R>;
   if constexpr (!isDoubleL && isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<typename std::common_type<typename ExtractDataType<L>::RetType,
                                          R>::type,
                BinaryOperation<decltype(l.d), R, EqualTrait>>(
-        BinaryOperation<decltype(l.d), R, EqualTrait>(l.d, r, mp));
+        BinaryOperation<decltype(l.d), R, EqualTrait>(l.d, r));
   } else if constexpr (isDoubleL && !isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<typename std::common_type<
                    L, typename ExtractDataType<R>::RetType>::type,
                BinaryOperation<L, decltype(r.d), EqualTrait>>(
-        BinaryOperation<L, decltype(r.d), EqualTrait>(l, r.d, mp));
+        BinaryOperation<L, decltype(r.d), EqualTrait>(l, r.d));
   } else if constexpr (!isDoubleL && !isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<
         typename std::common_type<typename ExtractDataType<L>::RetType,
                                   typename ExtractDataType<R>::RetType>::type,
         BinaryOperation<decltype(l.d), decltype(r.d), EqualTrait>>(
         BinaryOperation<decltype(l.d), decltype(r.d),
 
-                        EqualTrait>(l.d, r.d, mp));
+                        EqualTrait>(l.d, r.d));
   } else {
     ass(false, "This case should not be reached. Contact author");
   }
@@ -319,29 +293,23 @@ template <typename L, typename R> auto operator!=(const L &l, const R &r) {
   constexpr bool isDoubleL = std::is_arithmetic_v<L>;
   constexpr bool isDoubleR = std::is_arithmetic_v<R>;
   if constexpr (!isDoubleL && isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<typename std::common_type<typename ExtractDataType<L>::RetType,
                                          R>::type,
                BinaryOperation<decltype(l.d), R, UnEqualTrait>>(
-        BinaryOperation<decltype(l.d), R, UnEqualTrait>(l.d, r, mp));
+        BinaryOperation<decltype(l.d), R, UnEqualTrait>(l.d, r));
   } else if constexpr (isDoubleL && !isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<typename std::common_type<
                    L, typename ExtractDataType<R>::RetType>::type,
                BinaryOperation<L, decltype(r.d), UnEqualTrait>>(
-        BinaryOperation<L, decltype(r.d), UnEqualTrait>(l, r.d, mp));
+        BinaryOperation<L, decltype(r.d), UnEqualTrait>(l, r.d));
   } else if constexpr (!isDoubleL && !isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<
         typename std::common_type<typename ExtractDataType<L>::RetType,
                                   typename ExtractDataType<R>::RetType>::type,
         BinaryOperation<decltype(l.d), decltype(r.d), UnEqualTrait>>(
         BinaryOperation<decltype(l.d), decltype(r.d),
 
-                        UnEqualTrait>(l.d, r.d, mp));
+                        UnEqualTrait>(l.d, r.d));
   } else {
     ass(false, "This case should not be reached. Contact author");
   }
@@ -351,29 +319,23 @@ template <typename L, typename R> auto operator>(const L &l, const R &r) {
   constexpr bool isDoubleL = std::is_arithmetic_v<L>;
   constexpr bool isDoubleR = std::is_arithmetic_v<R>;
   if constexpr (!isDoubleL && isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<typename std::common_type<typename ExtractDataType<L>::RetType,
                                          R>::type,
                BinaryOperation<decltype(l.d), R, LargerTrait>>(
-        BinaryOperation<decltype(l.d), R, LargerTrait>(l.d, r, mp));
+        BinaryOperation<decltype(l.d), R, LargerTrait>(l.d, r));
   } else if constexpr (isDoubleL && !isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<typename std::common_type<
                    L, typename ExtractDataType<R>::RetType>::type,
                BinaryOperation<L, decltype(r.d), LargerTrait>>(
-        BinaryOperation<L, decltype(r.d), LargerTrait>(l, r.d, mp));
+        BinaryOperation<L, decltype(r.d), LargerTrait>(l, r.d));
   } else if constexpr (!isDoubleL && !isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<
         typename std::common_type<typename ExtractDataType<L>::RetType,
                                   typename ExtractDataType<R>::RetType>::type,
         BinaryOperation<decltype(l.d), decltype(r.d), LargerTrait>>(
         BinaryOperation<decltype(l.d), decltype(r.d),
 
-                        LargerTrait>(l.d, r.d, mp));
+                        LargerTrait>(l.d, r.d));
   } else {
     ass(false, "This case should not be reached. Contact author");
   }
@@ -383,29 +345,23 @@ template <typename L, typename R> auto operator>=(const L &l, const R &r) {
   constexpr bool isDoubleL = std::is_arithmetic_v<L>;
   constexpr bool isDoubleR = std::is_arithmetic_v<R>;
   if constexpr (!isDoubleL && isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<typename std::common_type<typename ExtractDataType<L>::RetType,
                                          R>::type,
                BinaryOperation<decltype(l.d), R, LargerEqualTrait>>(
-        BinaryOperation<decltype(l.d), R, LargerEqualTrait>(l.d, r, mp));
+        BinaryOperation<decltype(l.d), R, LargerEqualTrait>(l.d, r));
   } else if constexpr (isDoubleL && !isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<typename std::common_type<
                    L, typename ExtractDataType<R>::RetType>::type,
                BinaryOperation<L, decltype(r.d), LargerEqualTrait>>(
-        BinaryOperation<L, decltype(r.d), LargerEqualTrait>(l, r.d, mp));
+        BinaryOperation<L, decltype(r.d), LargerEqualTrait>(l, r.d));
   } else if constexpr (!isDoubleL && !isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<
         typename std::common_type<typename ExtractDataType<L>::RetType,
                                   typename ExtractDataType<R>::RetType>::type,
         BinaryOperation<decltype(l.d), decltype(r.d), LargerEqualTrait>>(
         BinaryOperation<decltype(l.d), decltype(r.d),
 
-                        LargerEqualTrait>(l.d, r.d, mp));
+                        LargerEqualTrait>(l.d, r.d));
   } else {
     ass(false, "This case should not be reached. Contact author");
   }
@@ -415,29 +371,23 @@ template <typename L, typename R> auto operator<(const L &l, const R &r) {
   constexpr bool isDoubleL = std::is_arithmetic_v<L>;
   constexpr bool isDoubleR = std::is_arithmetic_v<R>;
   if constexpr (!isDoubleL && isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<typename std::common_type<typename ExtractDataType<L>::RetType,
                                          R>::type,
                BinaryOperation<decltype(l.d), R, SmallerTrait>>(
-        BinaryOperation<decltype(l.d), R, SmallerTrait>(l.d, r, mp));
+        BinaryOperation<decltype(l.d), R, SmallerTrait>(l.d, r));
   } else if constexpr (isDoubleL && !isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<typename std::common_type<
                    L, typename ExtractDataType<R>::RetType>::type,
                BinaryOperation<L, decltype(r.d), SmallerTrait>>(
-        BinaryOperation<L, decltype(r.d), SmallerTrait>(l, r.d, mp));
+        BinaryOperation<L, decltype(r.d), SmallerTrait>(l, r.d));
   } else if constexpr (!isDoubleL && !isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<
         typename std::common_type<typename ExtractDataType<L>::RetType,
                                   typename ExtractDataType<R>::RetType>::type,
         BinaryOperation<decltype(l.d), decltype(r.d), SmallerTrait>>(
         BinaryOperation<decltype(l.d), decltype(r.d),
 
-                        SmallerTrait>(l.d, r.d, mp));
+                        SmallerTrait>(l.d, r.d));
   } else {
     ass(false, "This case should not be reached. Contact author");
   }
@@ -447,29 +397,23 @@ template <typename L, typename R> auto operator<=(const L &l, const R &r) {
   constexpr bool isDoubleL = std::is_arithmetic_v<L>;
   constexpr bool isDoubleR = std::is_arithmetic_v<R>;
   if constexpr (!isDoubleL && isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<typename std::common_type<typename ExtractDataType<L>::RetType,
                                          R>::type,
                BinaryOperation<decltype(l.d), R, SmallerEqualTrait>>(
-        BinaryOperation<decltype(l.d), R, SmallerEqualTrait>(l.d, r, mp));
+        BinaryOperation<decltype(l.d), R, SmallerEqualTrait>(l.d, r));
   } else if constexpr (isDoubleL && !isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<typename std::common_type<
                    L, typename ExtractDataType<R>::RetType>::type,
                BinaryOperation<L, decltype(r.d), SmallerEqualTrait>>(
-        BinaryOperation<L, decltype(r.d), SmallerEqualTrait>(l, r.d, mp));
+        BinaryOperation<L, decltype(r.d), SmallerEqualTrait>(l, r.d));
   } else if constexpr (!isDoubleL && !isDoubleR) {
-    MatrixParameter mp;
-    defineMatrix(l, r, mp);
     return Vec<
         typename std::common_type<typename ExtractDataType<L>::RetType,
                                   typename ExtractDataType<R>::RetType>::type,
         BinaryOperation<decltype(l.d), decltype(r.d), SmallerEqualTrait>>(
         BinaryOperation<decltype(l.d), decltype(r.d),
 
-                        SmallerEqualTrait>(l.d, r.d, mp));
+                        SmallerEqualTrait>(l.d, r.d));
   } else {
     ass(false, "This case should not be reached. Contact author");
   }
