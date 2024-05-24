@@ -79,7 +79,7 @@ template <class F, class... Args> inline F forEachArg(F f, Args &&...args) {
   return f;
 }
 
-template <typename... Args> inline auto coca(const Args &&...args) {
+template <typename... Args> inline auto coca(Args &&...args) {
   using cType = decltype(determine_type(args...));
   int size = 0;
 

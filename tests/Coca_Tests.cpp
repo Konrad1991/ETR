@@ -56,6 +56,12 @@ void test_coca() {
     ass(coca(matrix(colon(1, 16), 4, 4), 4, 5, coca(1, 2, 3), rep(1, 4))
                 .size() == 25,
         s + "mixed constructign");
+    Vec<double> a = coca(1, 2, 3);
+    double d = 3.14;
+    int i = 60;
+    auto res = coca(a, d, i);
+    print(res);
+    ass(res.size() == 5, s + "l variables");
   }
 }
 
