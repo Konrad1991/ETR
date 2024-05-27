@@ -1,0 +1,23 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: configure
+      run: |
+        cmake -B ./tests/build/ .
+        cmake --build ./tests/build/
+    - name: Run tests
+      run: |
+        cd ./tests/build
+        ./BaseStore_Tests

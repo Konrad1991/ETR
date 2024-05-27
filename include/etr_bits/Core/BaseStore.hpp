@@ -53,6 +53,7 @@ template <typename T, typename BaseTrait> struct BaseStore {
 #ifdef STANDALONE_ETR
 #else
   BaseStore(SEXP s) {
+    // TODO: check if SEXP is REAL or INTEGER or LOGICAL
     if (allocated) {
       ass(p != nullptr, "try to delete nullptr");
       delete[] p;
@@ -75,7 +76,7 @@ template <typename T, typename BaseTrait> struct BaseStore {
     ass(sz_ > 0, "Size has to be larger than 0");
     p = new T[capacity];
     for (std::size_t i = 0; i < capacity; i++) {
-      p[i] = 0.0;
+      p[i] = T();
     }
     allocated = true;
   }
@@ -85,18 +86,13 @@ template <typename T, typename BaseTrait> struct BaseStore {
     ass(sz_ > 0, "Size has to be larger than 0");
     p = new T[capacity];
     for (std::size_t i = 0; i < sz; i++)
-      p[i] = 0.0;
+      p[i] = T();
     allocated = true;
   }
   BaseStore() {
     /*
     // TODO: check why this is called sometimes. Furthermore, add the same
     functionality default size = 0 to other containers sz = 1; capacity = 1; p =
-    new T[capacity]; if constexpr (std::is_same_v<T, BaseType>) { p[0] = 0.0; }
-    else if constexpr (std::is_same_v<T, bool>) { p[0] = false;
-    }
-    allocated = true;
-    mp.setMatrix(false, 0, 0);
     */
   }
   BaseStore(std::size_t r, std::size_t c) = delete;

@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/Coca_Tests.dir/home/konrad/Documents/GitHub/RProjects/etr_supplement/ETR/tests/Coca_Tests.cpp.o -o Coca_Tests 

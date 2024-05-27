@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/Colon_Tests.dir/home/konrad/Documents/GitHub/RProjects/etr_supplement/ETR/tests/Colon_Tests.cpp.o -o Colon_Tests 
