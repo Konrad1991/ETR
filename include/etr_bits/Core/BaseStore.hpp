@@ -90,14 +90,10 @@ template <typename T, typename BaseTrait> struct BaseStore {
   }
   BaseStore() {
     /*
-    // TODO: run all tests to check that everything still works
-    sz = 1;
-    capacity = 1;
-    p = new T[capacity];
-    if constexpr (std::is_same_v<T, BaseType>) {
-      p[0] = 0.0;
-    } else if constexpr (std::is_same_v<T, bool>) {
-      p[0] = false;
+    // TODO: check why this is called sometimes. Furthermore, add the same
+    functionality default size = 0 to other containers sz = 1; capacity = 1; p =
+    new T[capacity]; if constexpr (std::is_same_v<T, BaseType>) { p[0] = 0.0; }
+    else if constexpr (std::is_same_v<T, bool>) { p[0] = false;
     }
     allocated = true;
     mp.setMatrix(false, 0, 0);
