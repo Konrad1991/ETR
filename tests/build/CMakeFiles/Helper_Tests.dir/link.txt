@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/Helper_Tests.dir/home/konrad/Documents/GitHub/RProjects/etr_supplement/ETR/tests/Helper_Tests.cpp.o -o Helper_Tests 

@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/Derivatives_Tests.dir/home/konrad/Documents/GitHub/RProjects/etr_supplement/ETR/tests/Derivatives_Tests.cpp.o -o Derivatives_Tests 
