@@ -32,16 +32,17 @@ template <typename T> inline auto colonInternal(T start, T end) {
       counter++;
     }
     return ret;
+  } else {
+    std::size_t length = convertSize(start - end + 1);
+    Vec<T, Buffer<T, RBufTrait>, RVecTrait> ret(SI{length});
+    std::size_t counter = 0;
+    while (end <= start) {
+      ret[counter] = start;
+      start--;
+      counter++;
+    }
+    return ret;
   }
-  std::size_t length = convertSize(start - end + 1);
-  Vec<T, Buffer<T, RBufTrait>, RVecTrait> ret(SI{length});
-  std::size_t counter = 0;
-  while (end <= start) {
-    ret[counter] = start;
-    start--;
-    counter++;
-  }
-  return ret;
 }
 
 template <typename A, typename O>

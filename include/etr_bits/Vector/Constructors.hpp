@@ -120,6 +120,7 @@ explicit Vec(std::size_t rows, std::size_t cols, const double value)
 // other vector constructors
 template <typename T2, typename R2, typename Trait2>
 Vec(const Vec<T2, R2, Trait2> &other_vec) { // : d()
+  std::cout << "move constructor vec" << std::endl;
   using TypeTrait = Trait2;
   using CaseTrait = Trait2;
   if constexpr (isBorrow::value) { // issue: is this safe???
@@ -216,6 +217,7 @@ Vec(Vec<T2, R2, Trait2> &&other_vec) {
     }
   } else {
     std::size_t temp = other_vec.size();
+    d.allocated = other_vec.d.allocated;
     other_vec.d.sz = this->size();
     d.sz = temp;
     T *tempP = other_vec.d.p;
@@ -253,6 +255,7 @@ explicit Vec(const Vec<T2> &other_vec) : d() {
   if (other_vec.d.im()) {
     d.setMatrix(true, other_vec.nr(), other_vec.nc());
   }
+  // TODO: maybe allocated has to be set here. check!
 }
 
 #endif

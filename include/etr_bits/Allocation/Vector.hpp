@@ -97,6 +97,8 @@ template <typename T> inline auto vector_numeric(T &inp) {
   }
 }
 
+// TODO: remove typename AV. Instead use the AllVarsRef variable stored in inp
+// THis has to be done for all functions where a constant is created
 template <int Idx, typename AV, typename T>
 inline auto vector_integer(AV &av, const T &inp) {
   using VecType = int;

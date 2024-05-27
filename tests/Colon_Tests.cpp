@@ -1,4 +1,5 @@
 
+#include <stdexcept>
 #define STANDALONE_ETR
 #include "../include/etr.hpp"
 using namespace etr;
@@ -81,7 +82,6 @@ void test_colon() {
     ass(etr::colon(etr::coca(0, 2, 3) + 0, 0).size() == 1, "vec size = 1");
     ass(etr::colon(etr::coca(0) + 0, 0).size() == 1, "vec size == 1");
   }
-
   // NOTE: arithmetic & vector
   {
 
@@ -94,12 +94,14 @@ void test_colon() {
     ass(vec1[9] == 1, "vec[9] == 1");
   }
   {
-    etr::Vec<double> v; // TODO: this is a fundamental difference to R. One
-                        // cannot create an empty vector!
-    etr::Vec<double> vec1 = etr::colon(10, v);
-    ass(vec1.size() == 11, "vec size == 11");
+    try {
+      etr::Vec<double> v;
+      etr::colon(10, v);
+    } catch (std::runtime_error &e) {
+      std::string expected = "No memory was allocated";
+      ass(e.what() == expected, "usage of empty vec");
+    }
   }
-
   // NOTE: single element vector
   {
     etr::Vec<double> v = etr::coca(5);
@@ -266,12 +268,6 @@ void test_colon_AllVars() {
     ass(av.varConstants[1][1] == 9, "vec[1] == 9");
     ass(av.varConstants[1][2] == 8, "vec[2] == 8");
     ass(av.varConstants[1][9] == 1, "vec[9] == 1");
-  }
-  {
-    etr::Vec<double> v; // TODO: this is a fundamental difference to R. One
-                        // cannot create an empty vector!
-    etr::colon<1>(av, 10, v);
-    ass(av.varConstants[1].size() == 11, "vec size == 11");
   }
 
   // NOTE: single element vector

@@ -13,8 +13,8 @@ template <typename T, typename BaseTrait> struct BaseStore {
   using Type = T;
   using TypeTrait = BaseTrait;
   T *p = nullptr;
-  std::size_t sz = 1;
-  std::size_t capacity = 1;
+  std::size_t sz = 0;
+  std::size_t capacity = 0;
   bool allocated = false;
   MatrixParameter mp;
 
@@ -74,8 +74,9 @@ template <typename T, typename BaseTrait> struct BaseStore {
       : sz(sz_), capacity(static_cast<std::size_t>(sz_ * 1.15)) {
     ass(sz_ > 0, "Size has to be larger than 0");
     p = new T[capacity];
-    for (std::size_t i = 0; i < capacity; i++)
+    for (std::size_t i = 0; i < capacity; i++) {
       p[i] = 0.0;
+    }
     allocated = true;
   }
   BaseStore(int sz_)
@@ -88,6 +89,8 @@ template <typename T, typename BaseTrait> struct BaseStore {
     allocated = true;
   }
   BaseStore() {
+    /*
+    // TODO: run all tests to check that everything still works
     sz = 1;
     capacity = 1;
     p = new T[capacity];
@@ -98,6 +101,7 @@ template <typename T, typename BaseTrait> struct BaseStore {
     }
     allocated = true;
     mp.setMatrix(false, 0, 0);
+    */
   }
   BaseStore(std::size_t r, std::size_t c) = delete;
   BaseStore(std::size_t r, std::size_t c, const double value) = delete;
