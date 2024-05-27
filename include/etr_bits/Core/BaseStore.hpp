@@ -266,22 +266,20 @@ template <typename T, typename BaseTrait> struct BaseStore {
 
   void realloc(std::size_t new_size) {
     T *temp;
-    temp = new T[sz];
+    capacity = static_cast<int>(new_size * 1.15);
+    temp = new T[capacity];
     for (std::size_t i = 0; i < sz; i++)
       temp[i] = p[i];
-    if (p != nullptr && allocated)
-      delete[] p;
-    p = new T[new_size];
-    for (std::size_t i = 0; i < sz; i++)
-      p[i] = temp[i];
-    ass(temp != nullptr, "try to delete nullptr");
-    delete[] temp;
+
     for (std::size_t i = sz; i < new_size; i++)
-      p[i] = 0.0;
+      temp[i] = T();
+
+    delete[] p;
+    p = temp;
+
     sz = new_size;
-    capacity = sz;
-    temp = nullptr;
     allocated = true;
+    temp = nullptr;
   }
 
   void push_back(T input) {
@@ -298,7 +296,7 @@ template <typename T, typename BaseTrait> struct BaseStore {
       p[szOld] = input;
       sz = szOld + 1;
     } else if (sz < capacity) {
-      p[sz] = input; // p starts counting at 0!!!
+      p[sz] = input;
       sz++;
     }
   }

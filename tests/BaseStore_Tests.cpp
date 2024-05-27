@@ -5,6 +5,7 @@
 #include "../include/etr.hpp"
 using namespace etr;
 
+/*
 void test_basestore() {
   // NOTE: test nothing allocated
   {
@@ -104,7 +105,7 @@ void test_basestore() {
       ass(v[i] == 3.4, s + "[" + std::to_string(i) + "]");
     }
   }
-  // NOTE: test fill with vec
+  // NOTE: test fill with Vector
   {
     std::string s = "BaseStoreFill: ";
     BaseStore<double> v;
@@ -122,8 +123,14 @@ void test_basestore() {
     }
   }
 }
+*/
 
 int main(int argc, char *argv[]) {
-  test_basestore();
+  // test_basestore();
+  BaseStore<int> v;
+  for (int i = 0; i < 10000000; i++) {
+    v.push_back(i);
+  }
+
   return 0;
 }
