@@ -18,7 +18,7 @@ jobs:
         cd ./tests/
         g++ BaseStore_Tests.cpp -std=c++20 -o BaseStore_Tests
         g++ BinaryOperations_Tests.cpp -std=c++20 -o BinaryOperations_Tests
-        g++ CocaTests.cpp -std=c++20 -o CocaTests
+        g++ Coca_Tests.cpp -std=c++20 -o CocaTests
         g++ Colon_Tests.cpp -std=c++20 -o Colon_Tests
         g++ Concepts_Test.cpp -std=c++20 -o Concepts_Tests
         g++ Derivatives_Tests.cpp -std=c++20 -o Derivatives_Tests
