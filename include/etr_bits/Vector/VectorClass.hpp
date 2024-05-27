@@ -1,9 +1,11 @@
 #ifndef BUFFER_VECTOR_H
 #define BUFFER_VECTOR_H
 
+#include "../Core.hpp"
+
 #include "../Allocation.hpp"
 #include "../BinaryCalculations.hpp"
-#include "../Core.hpp"
+
 #include "../SEXPConversions.hpp"
 #include "../UnaryCalculations.hpp"
 

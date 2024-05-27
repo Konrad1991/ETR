@@ -246,7 +246,6 @@ inline auto colon(const A &start, const O &end) {
 }
 
 // NOTE: here starts colon with saving in AllVars
-
 template <int Idx, typename AV, typename T>
 inline auto colonInternalDerivs(AV &av, T start, T end) {
   if (start < end) {

@@ -286,10 +286,20 @@ template <typename T, typename BaseTrait> struct BaseStore {
 
   void push_back(T input) {
     if (sz == capacity) {
-      realloc(sz * 2);
+      int szOld = sz;
+      if (sz == 0) {
+        realloc(1);
+      } else if (sz > 0) {
+        realloc(sz * 2);
+      } else {
+        ass(false, "negative size found.");
+      }
       capacity = sz;
+      p[szOld] = input;
+      sz = szOld + 1;
     } else if (sz < capacity) {
       p[sz] = input; // p starts counting at 0!!!
+      sz++;
     }
   }
   friend std::ostream &operator<<(std::ostream &os, const BaseStore &b) {

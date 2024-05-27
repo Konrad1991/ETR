@@ -15,9 +15,7 @@
 
 In Operation also Rvecs are included
 */
-#include "../BufferVector.hpp"
 #include "../Core.hpp"
-#include "availableHeapSize.hpp"
 
 namespace etr {
 
@@ -35,7 +33,7 @@ template <typename T> inline std::size_t convertSize(const T &inp) {
     ass(inp >= 1, "invalid times argument");
     return static_cast<std::size_t>(inp);
   } else if constexpr (IsVecRorCalc<T>) { // TODO: check does this really
-                                             // work for normal l vectors?
+                                          // work for normal l vectors?
     ass(inp.size() == 1 && inp[0] >= 1, "invalid times argument");
     return static_cast<std::size_t>(inp[0]);
   } else {
