@@ -19,5 +19,5 @@ jobs:
         g++ BaseStore_Tests.cpp -std=c++20
     - name: Run tests
       run: |
-        cd ./tests/build
+        cd ./tests/
         ./a.out
