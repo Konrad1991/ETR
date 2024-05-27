@@ -16,8 +16,32 @@ jobs:
     - name: configure
       run: |
         cd ./tests/
-        g++ BaseStore_Tests.cpp -std=c++20
+        g++ BaseStore_Tests.cpp -std=c++20 -o BaseStore_Tests
+        g++ BinaryOperations_Tests.cpp -std=c++20 -o BinaryOperations_Tests
+        g++ CocaTests.cpp -std=c++20 -o CocaTests
+        g++ Colon_Tests.cpp -std=c++20 -o Colon_Tests
+        g++ Concepts_Test.cpp -std=c++20 -o Concepts_Tests
+        g++ Derivatives_Tests.cpp -std=c++20 -o Derivatives_Tests
+        g++ Helper_Tests.cpp -std=c++20 -o Helper_Tests
+        g++ Matrix_Tests.cpp -std=c++20 -o Matrix_Tests
+        g++ Rep_Tests.cpp -std=c++20 -o Rep_Tests
+        g++ Subsetting_Tests.cpp -std=c++20 -o Subsetting_Tests
+        g++ Unary_Tests.cpp -std=c++20 -o Unary_Tests
+        g++ Vector_Tests.cpp -std=c++20 -o Vector_Tests
+
+
     - name: Run tests
       run: |
         cd ./tests/
-        ./a.out
+        ./BaseStore_Tests
+        ./BinaryOperations_Tests
+        ./CocaTests
+        ./Colon_Tests
+        ./Concepts_Tests
+        ./Derivatives_Tests
+        ./Helper_Tests
+        ./Matrix_Tests
+        ./Rep_Tests
+        ./Subsetting_Tests
+        ./Unary_Tests
+        ./Vector_Tests
