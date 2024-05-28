@@ -37,14 +37,37 @@ template <typename T, typename BorrowSEXPSEXPTrait> struct BorrowSEXP {
       delete[] p;
       this->p = nullptr;
     }
-    p = REAL(inp);
-    sz = Rf_length(inp);
-    capacity = Rf_length(inp);
-    if (Rf_isMatrix(inp) == true) {
-      mp.setMatrix(true, Rf_nrows(inp), Rf_ncols(inp));
+    if constexpr (is<RetType, double>) {
+      ass(Rf_isReal(inp), "R object is not of type numeric");
+      p = REAL(inp);
+      sz = Rf_length(inp);
+      capacity = Rf_length(inp);
+      if (Rf_isMatrix(inp) == true) {
+        mp.setMatrix(true, Rf_nrows(inp), Rf_ncols(inp));
+      }
+      todelete = false;
+      allocated = true;
+    } else if constexpr (is<RetType, int>) {
+      ass(Rf_isInteger(inp), "R object is not of type numeric");
+      p = INTEGER(inp);
+      sz = Rf_length(inp);
+      capacity = Rf_length(inp);
+      if (Rf_isMatrix(inp) == true) {
+        mp.setMatrix(true, Rf_nrows(inp), Rf_ncols(inp));
+      }
+      todelete = false;
+      allocated = true;
+    } else if constexpr (is<RetType, bool>) {
+      ass(Rf_IsLogical(inp), "R object is not of type numeric");
+      p = LOGICAL(inp);
+      sz = Rf_length(inp);
+      capacity = Rf_length(inp);
+      if (Rf_isMatrix(inp) == true) {
+        mp.setMatrix(true, Rf_nrows(inp), Rf_ncols(inp));
+      }
+      todelete = false;
+      allocated = true;
     }
-    todelete = false;
-    allocated = true;
   }
   BorrowSEXP(std::size_t i) = delete;
   BorrowSEXP(int i) = delete;
@@ -55,10 +78,13 @@ template <typename T, typename BorrowSEXPSEXPTrait> struct BorrowSEXP {
   ~BorrowSEXP() {
     if (todelete) {
       delete[] p;
+      p = nullptr;
     }
   }
 
   BorrowSEXP &operator=(const BorrowSEXP<T> &other) {
+    if (this == &other)
+      return *this;
     resize(other.size());
     for (std::size_t i = 0; i < sz; i++)
       p[i] = other[i];
@@ -67,19 +93,44 @@ template <typename T, typename BorrowSEXPSEXPTrait> struct BorrowSEXP {
   }
 
   BorrowSEXP &operator=(SEXP inp) {
-    if (allocated) {
+    if (allocated == true) {
       ass(p != nullptr, "try to delete nullptr");
       delete[] p;
       this->p = nullptr;
     }
-    p = REAL(inp);
-    sz = static_cast<std::size_t>(Rf_length(inp));
-    capacity = sz;
-    if (Rf_isMatrix(inp) == true) {
-      mp.setMatrix(true, Rf_nrows(inp), Rf_ncols(inp));
+    if constexpr (is<RetType, double>) {
+      ass(Rf_isReal(inp), "R object is not of type numeric");
+      p = REAL(inp);
+      sz = Rf_length(inp);
+      capacity = Rf_length(inp);
+      if (Rf_isMatrix(inp) == true) {
+        mp.setMatrix(true, Rf_nrows(inp), Rf_ncols(inp));
+      }
+      todelete = false;
+      allocated = true;
+    } else if constexpr (is<RetType, int>) {
+      ass(Rf_isInteger(inp), "R object is not of type numeric");
+      p = INTEGER(inp);
+      sz = Rf_length(inp);
+      capacity = Rf_length(inp);
+      if (Rf_isMatrix(inp) == true) {
+        mp.setMatrix(true, Rf_nrows(inp), Rf_ncols(inp));
+      }
+      todelete = false;
+      allocated = true;
+    } else if constexpr (is<RetType, bool>) {
+      ass(Rf_IsLogical(inp), "R object is not of type numeric");
+      p = LOGICAL(inp);
+      sz = Rf_length(inp);
+      capacity = Rf_length(inp);
+      if (Rf_isMatrix(inp) == true) {
+        mp.setMatrix(true, Rf_nrows(inp), Rf_ncols(inp));
+      }
+      todelete = false;
+      allocated = true;
+    } else {
+      static_assert(sizeof(T) == 0, "Unsupported type found");
     }
-    todelete = false;
-    allocated = false;
     return *this;
   }
 
@@ -114,11 +165,7 @@ template <typename T, typename BorrowSEXPSEXPTrait> struct BorrowSEXP {
     ass(newSize >= 1, "Size has to be larger than 0");
     if (!allocated) {
       init(newSize);
-      if constexpr (std::is_same_v<T, BaseType>) {
-        fill(0.0);
-      } else if constexpr (std::is_same_v<T, bool>) {
-        fill(false);
-      }
+      fill(T());
       return;
     } else {
       if (newSize > capacity) {
@@ -130,11 +177,7 @@ template <typename T, typename BorrowSEXPSEXPTrait> struct BorrowSEXP {
         allocated = true;
         todelete = true;
         sz = newSize;
-        if constexpr (std::is_same_v<T, BaseType>) {
-          fill(0.0);
-        } else if constexpr (std::is_same_v<T, bool>) {
-          fill(false);
-        }
+        fill(T());
       } else {
         sz = newSize;
         return;
@@ -173,51 +216,41 @@ template <typename T, typename BorrowSEXPSEXPTrait> struct BorrowSEXP {
   T &back() { return p[sz]; }
   T *data() const { return p; }
   void realloc(int new_size) {
-    if (new_size <= sz)
+    if (new_size <= sz) {
       return;
+    }
+    capacity = static_cast<int>(new_size * 1.15);
+    T *temp = new T[capacity];
+    for (std::size_t i = 0; i < sz; i++)
+      temp[i] = p[i];
+    for (std::size_t i = sz; i < new_size; i++)
+      temp[i] = T();
+    sz = new_size;
+    delete[] p;
+    p = temp;
+    allocated = true;
+    temp = nullptr;
+
     if (!todelete) {
-      T *temp;
-      temp = new T[sz];
-      for (std::size_t i = 0; i < sz; i++)
-        temp[i] = p[i];
-      p = new T[new_size];
-      for (std::size_t i = 0; i < sz; i++)
-        p[i] = temp[i];
-      ass(temp != nullptr, "try to delete nullptr");
-      delete[] temp;
-      temp = nullptr;
-      allocated = true;
       todelete = true;
-      for (std::size_t i = sz; i < new_size; i++)
-        p[i] = 0.0;
-      sz = new_size;
-      capacity = sz;
-    } else {
-      T *temp;
-      temp = new T[sz];
-      for (std::size_t i = 0; i < sz; i++)
-        temp[i] = p[i];
-      ass(p != nullptr, "try to delete nullptr");
-      delete[] p;
-      p = new T[new_size];
-      for (std::size_t i = 0; i < sz; i++)
-        p[i] = temp[i];
-      ass(temp != nullptr, "try to delete nullptr");
-      delete[] temp;
-      temp = nullptr;
-      allocated = true;
-      for (std::size_t i = sz; i < new_size; i++)
-        p[i] = 0.0;
-      sz = new_size;
-      capacity = sz;
     }
   }
   void push_back(T input) {
     if (sz == capacity) {
-      realloc(sz * 2);
+      int szOld = sz;
+      if (sz == 0) {
+        realloc(1);
+      } else if (sz > 0) {
+        realloc(sz * 2);
+      } else {
+        ass(false, "negative size found.");
+      }
       capacity = sz;
+      p[szOld] = input;
+      sz = szOld + 1;
     } else if (sz < capacity) {
-      p[sz] = input; // p starts counting at 0!!!
+      p[sz] = input;
+      sz++;
     }
   }
   friend std::ostream &operator<<(std::ostream &os, const BorrowSEXP &b) {

@@ -9,8 +9,8 @@ template <typename T, typename BorrowTrait> struct Borrow {
   using TypeTrait = BorrowTrait;
   using CaseTrait = BorrowTrait;
   T *p = nullptr;
-  std::size_t sz = 1;
-  std::size_t capacity = 1;
+  std::size_t sz = 0;
+  std::size_t capacity = 0;
   bool allocated = false;
   MatrixParameter mp;
 
@@ -27,10 +27,10 @@ template <typename T, typename BorrowTrait> struct Borrow {
   }
 
   Borrow(const Borrow<T> &other)
-      : sz(other.sz), capacity(other.capacity), allocated(false) {
+      : sz(other.sz), capacity(other.capacity), allocated(other.allocated) {
     p = other.p;
     mp.setMatrix(other.mp);
-  } // issue: deep copy required?
+  }
   Borrow(Borrow<T> &&other) noexcept
       : sz(other.sz), capacity(other.capacity), allocated(other.allocated),
         p(other.p) {
@@ -45,30 +45,38 @@ template <typename T, typename BorrowTrait> struct Borrow {
   Borrow(SEXP s) = delete;
 #endif
 
-  Borrow(std::size_t i){};
+  Borrow(std::size_t i) {
+    sz = 0;
+    capacity = 0;
+    allocated = false;
+  };
   Borrow(int i) = delete;
-  Borrow(){};
+  Borrow() {
+    sz = 0;
+    capacity = 0;
+    allocated = false;
+  };
   Borrow(std::size_t r, std::size_t c) = delete;
   Borrow(std::size_t r, std::size_t c, const double value) = delete;
   Borrow(T *p, std::size_t sz) {
     this->p = p;
     this->sz = sz;
     capacity = sz;
-    this->allocated = false;
+    this->allocated = true;
   }
 
   void init(T *p, std::size_t sz) {
     this->p = p;
     this->sz = sz;
     capacity = sz;
-    this->allocated = false;
+    this->allocated = true;
   }
 
   Borrow &operator=(const Borrow<T> &other) {
     p = other.p;
     sz = other.sz;
     capacity = other.capacity;
-    allocated = false;
+    allocated = other.allocated;
     mp.setMatrix(other.mp);
     return *this;
   }
@@ -120,7 +128,7 @@ template <typename T, typename BorrowTrait> struct Borrow {
     if (newSize <= capacity) {
       sz = newSize;
     } else {
-      ass(false, "Cannot resize Borrow element");
+      ass(false, "Cannot resize Borrow element above size of borrowed object");
     }
   };
   void set(std::size_t idx, T val) {
@@ -130,12 +138,14 @@ template <typename T, typename BorrowTrait> struct Borrow {
   }
 
   RetType operator[](std::size_t idx) const {
+    ass(allocated, "No memory was allocated");
     ass(idx >= 0, "Error: out of boundaries --> value below 1");
     ass(idx < sz, "Error: out of boundaries --> value beyond size of vector");
     return p[idx];
   }
 
   RetType &operator[](std::size_t idx) {
+    ass(allocated, "No memory was allocated");
     ass(idx >= 0, "Error: out of boundaries --> value below 1");
     ass(idx < sz, "Error: out of boundaries --> value beyond size of vector");
     return p[idx];

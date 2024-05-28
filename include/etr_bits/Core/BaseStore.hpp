@@ -36,7 +36,7 @@ template <typename T, typename BaseTrait> struct BaseStore {
   BaseStore(const BaseStore<T> &other)
       : sz(other.sz), capacity(other.capacity), allocated(other.allocated) {
     if (other.allocated) {
-      p = new T[capacity]; // issue: new (use std.:align_val_t(16)) T[capacity]
+      p = new T[capacity];
       std::copy(other.p, other.p + capacity, p);
     } else {
       p = nullptr;
@@ -53,22 +53,51 @@ template <typename T, typename BaseTrait> struct BaseStore {
 #ifdef STANDALONE_ETR
 #else
   BaseStore(SEXP s) {
-    // TODO: check if SEXP is REAL or INTEGER or LOGICAL
     if (allocated) {
       ass(p != nullptr, "try to delete nullptr");
       delete[] p;
       this->p = nullptr;
     }
-    p = REAL(s);
-    sz = static_cast<std::size_t>(Rf_length(s));
-    capacity = static_cast<std::size_t>(sz * 1.15);
-    if (Rf_isMatrix(s) == true) {
-      mp.setMatrix(true, Rf_nrows(s), Rf_ncols(s));
+
+    if constexpr (is<RetRetType, double>) {
+      ass(Rf_isReal(s), "R object is not of type numeric");
+      sz = static_cast<std::size_t>(Rf_length(s));
+      capacity = static_cast<std::size_t>(sz);
+      p = new T[capacity];
+      if (Rf_isMatrix(s) == true) {
+        mp.setMatrix(true, Rf_nrows(s), Rf_ncols(s));
+      }
+      for (int i = 0; i < sz; i++) {
+        p[i] = REAL(s)[i];
+      }
+      allocated = true;
+    } else if constexpr (is<RetRetType, int>) {
+      ass(Rf_isInteger(s), "R object is not of type integer");
+      sz = static_cast<std::size_t>(Rf_length(s));
+      capacity = static_cast<std::size_t>(sz);
+      p = new T[capacity];
+      if (Rf_isMatrix(s) == true) {
+        mp.setMatrix(true, Rf_nrows(s), Rf_ncols(s));
+      }
+      for (int i = 0; i < sz; i++) {
+        p[i] = INTEGER(s)[i];
+      }
+      allocated = true;
+    } else if constexpr (is<RetRetType, bool>) {
+      ass(Rf_isLogical(s), "R object is not of type logical");
+      sz = static_cast<std::size_t>(Rf_length(s));
+      capacity = static_cast<std::size_t>(sz);
+      p = new T[capacity];
+      if (Rf_isMatrix(s) == true) {
+        mp.setMatrix(true, Rf_nrows(s), Rf_ncols(s));
+      }
+      for (int i = 0; i < sz; i++) {
+        p[i] = LOGICAL(s)[i];
+      }
+      allocated = true;
+    } else {
+      static_assert(sizeof(T) == 0, "Unsupported type found");
     }
-    for (int i = 0; i < sz; i++) {
-      p[i] = REAL(s)[i];
-    }
-    allocated = true;
   };
 #endif
   BaseStore(std::size_t sz_)
@@ -162,16 +191,45 @@ template <typename T, typename BaseTrait> struct BaseStore {
       delete[] p;
       this->p = nullptr;
     }
-    sz = static_cast<std::size_t>(Rf_length(s));
-    capacity = static_cast<std::size_t>(sz * 1.15);
-    p = new T[capacity];
-    if (Rf_isMatrix(s) == true) {
-      mp.setMatrix(true, Rf_nrows(s), Rf_ncols(s));
+    if constexpr (is<RetRetType, double>) {
+      ass(Rf_isReal(s), "R object is not of type numeric");
+      sz = static_cast<std::size_t>(Rf_length(s));
+      capacity = static_cast<std::size_t>(sz);
+      p = new T[capacity];
+      if (Rf_isMatrix(s) == true) {
+        mp.setMatrix(true, Rf_nrows(s), Rf_ncols(s));
+      }
+      for (int i = 0; i < sz; i++) {
+        p[i] = REAL(s)[i];
+      }
+      allocated = true;
+    } else if constexpr (is<RetRetType, int>) {
+      ass(Rf_isInteger(s), "R object is not of type integer");
+      sz = static_cast<std::size_t>(Rf_length(s));
+      capacity = static_cast<std::size_t>(sz);
+      p = new T[capacity];
+      if (Rf_isMatrix(s) == true) {
+        mp.setMatrix(true, Rf_nrows(s), Rf_ncols(s));
+      }
+      for (int i = 0; i < sz; i++) {
+        p[i] = INTEGER(s)[i];
+      }
+      allocated = true;
+    } else if constexpr (is<RetRetType, bool>) {
+      ass(Rf_isLogical(s), "R object is not of type logical");
+      sz = static_cast<std::size_t>(Rf_length(s));
+      capacity = static_cast<std::size_t>(sz);
+      p = new T[capacity];
+      if (Rf_isMatrix(s) == true) {
+        mp.setMatrix(true, Rf_nrows(s), Rf_ncols(s));
+      }
+      for (int i = 0; i < sz; i++) {
+        p[i] = LOGICAL(s)[i];
+      }
+      allocated = true;
+    } else {
+      static_assert(sizeof(T) == 0, "Unsupported type found");
     }
-    for (int i = 0; i < sz; i++) {
-      p[i] = REAL(s)[i];
-    }
-    allocated = true;
   }
 #endif
 
@@ -202,11 +260,7 @@ template <typename T, typename BaseTrait> struct BaseStore {
     ass(newSize >= 1, "Size has to be larger than 0");
     if (!allocated) {
       init(newSize);
-      if constexpr (std::is_same_v<T, BaseType>) {
-        fill(0.0);
-      } else if constexpr (std::is_same_v<T, bool>) {
-        fill(false);
-      }
+      fill(T());
       return;
     } else {
       if (newSize > capacity) {
@@ -216,11 +270,7 @@ template <typename T, typename BaseTrait> struct BaseStore {
         p = new T[capacity];
         sz = newSize;
         allocated = true;
-        if constexpr (std::is_same_v<T, BaseType>) {
-          fill(0.0);
-        } else if constexpr (std::is_same_v<T, bool>) {
-          fill(false);
-        }
+        fill(T());
       } else {
         sz = newSize;
         return;

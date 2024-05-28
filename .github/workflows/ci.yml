@@ -28,6 +28,7 @@ jobs:
         g++ Subsetting_Tests.cpp -std=c++20 -o Subsetting_Tests
         g++ Unary_Tests.cpp -std=c++20 -o Unary_Tests
         g++ Vector_Tests.cpp -std=c++20 -o Vector_Tests
+        g++ Borrow_Tests.cpp -std=c++20 -o Borrow_Tests
 
 
     - name: Run tests
@@ -45,3 +46,4 @@ jobs:
         ./Subsetting_Tests
         ./Unary_Tests
         ./Vector_Tests
+        ./Borrow_Tests
