@@ -5,7 +5,6 @@
 #include "../include/etr.hpp"
 using namespace etr;
 
-/*
 void test_basestore() {
   // NOTE: test nothing allocated
   {
@@ -123,13 +122,8 @@ void test_basestore() {
     }
   }
 }
-*/
 
 int main(int argc, char *argv[]) {
-  // test_basestore();
-  BaseStore<int> v;
-  for (int i = 0; i < 10000000; i++) {
-    v.push_back(i);
-  }
+  test_basestore();
   return 0;
 }
