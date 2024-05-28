@@ -2,6 +2,8 @@
 #define INTERPOLATION_H
 
 #include "BufferVector.hpp"
+#include "Core/Types.hpp"
+#include <type_traits>
 
 namespace etr {
 
@@ -75,23 +77,9 @@ inline double li(const A &t_, const B &timeVec, const C &parVec) {
 }
 
 template <typename A, typename B, typename C>
-inline double cmrInternal(const A &tInp, const B &timeVec, const C &parVec) {
-  using typeTraitA = std::remove_reference<decltype(tInp)>::type::TypeTrait;
-  using typeTraitB = std::remove_reference<decltype(timeVec)>::type::TypeTrait;
-  using typeTraitC = std::remove_reference<decltype(parVec)>::type::TypeTrait;
-  using isVecA = std::is_same<typeTraitA, VectorTrait>;
-  using isVecB = std::is_same<typeTraitB, VectorTrait>;
-  using isVecC = std::is_same<typeTraitC, VectorTrait>;
+inline double cmrInternal(const A *tInp, const B *timeVec, const C *parVec) {
 
-  double t = 0.0;
-  if constexpr (isVecA::value && isVecB::value && isVecC::value) {
-    t = tInp[0];
-  } else if constexpr (!isVecA::value && isVecB::value && isVecC::value) {
-    t = static_cast<BaseType>(tInp);
-  } else {
-    ass(false, "Input for interpolation has to be scalar, vec, vec");
-  }
-
+  double t = *tInp;
   int idx0, idx1, idx2, idx3;
   double t0, t1, t2, t3;
   double y0, y1, y2, y3;
@@ -101,58 +89,59 @@ inline double cmrInternal(const A &tInp, const B &timeVec, const C &parVec) {
   idx3 = 0;
   t0 = t1 = t2 = t3 = 0.;
   y0 = y1 = y2 = y3 = 0.;
-  ass(timeVec.size() == parVec.size(), "x and y differ in length");
-  if (t < timeVec[0]) {
-    return parVec[0];
-  } else if (t > timeVec[timeVec.size() - 1]) {
-    return parVec[parVec.size() - 1];
+  ass(timeVec->size() == parVec->size(), "x and y differ in length");
+  ass(timeVec->size() >= 4, "time and parameter require at least 4 elements");
+  if (t < (*timeVec)[0]) {
+    return (*parVec)[0];
+  } else if (t > (*timeVec)[timeVec->size() - 1]) {
+    return (*parVec)[parVec->size() - 1];
   }
-  for (std::size_t i = 0; i <= timeVec.size(); i++) {
-    if (i == (timeVec.size() - 1)) {
-      idx0 = timeVec.size() - 2;
-      t0 = timeVec[idx0];
-      y0 = parVec[idx0];
-      idx1 = timeVec.size() - 1;
-      t1 = timeVec[idx1];
-      y1 = parVec[idx1];
-      idx2 = timeVec.size() - timeVec.size();
-      t2 = timeVec[idx2];
-      y2 = parVec[idx2];
-      idx3 = timeVec.size() + 1 - timeVec.size();
-      t3 = timeVec[idx3];
-      y3 = parVec[idx3];
+  for (std::size_t i = 0; i <= timeVec->size(); i++) {
+    if (i == (timeVec->size() - 1)) {
+      idx0 = timeVec->size() - 2;
+      t0 = (*timeVec)[idx0];
+      y0 = (*parVec)[idx0];
+      idx1 = timeVec->size() - 1;
+      t1 = (*timeVec)[idx1];
+      y1 = (*parVec)[idx1];
+      idx2 = timeVec->size() - timeVec->size();
+      t2 = (*timeVec)[idx2];
+      y2 = (*parVec)[idx2];
+      idx3 = timeVec->size() + 1 - timeVec->size();
+      t3 = (*timeVec)[idx3];
+      y3 = (*parVec)[idx3];
       break;
-    } else if (t >= timeVec[i] && t < timeVec[i + 1]) {
+    } else if (t >= (*timeVec)[i] && t < (*timeVec)[i + 1]) {
       if (i == 0) {
-        idx0 = timeVec.size() - 1;
-        t0 = timeVec[idx0];
+        idx0 = timeVec->size() - 1;
+        t0 = (*timeVec)[idx0];
       } else {
         idx0 = i - 1;
-        t0 = timeVec[idx0];
+        t0 = (*timeVec)[idx0];
       }
-      y0 = parVec[idx0];
+      y0 = (*parVec)[idx0];
       idx1 = i;
-      t1 = timeVec[idx1];
-      y1 = parVec[idx1];
-      if (i == timeVec.size() - 1) {
+      t1 = (*timeVec)[idx1];
+      y1 = (*parVec)[idx1];
+      if (i == timeVec->size() - 1) {
         idx2 = 0;
-        t2 = timeVec[idx2] + timeVec.back();
+        t2 = (*timeVec)[idx2] + timeVec->back();
       } else {
         idx2 = i + 1;
-        t2 = timeVec[idx2];
+        t2 = (*timeVec)[idx2];
       }
-      y2 = parVec[idx2];
-      if (i == timeVec.size() - 2) {
+      y2 = (*parVec)[idx2];
+      if (i == timeVec->size() - 2) {
         idx3 = 0;
-        t3 = timeVec[idx3] + timeVec.back();
-      } else if (i == timeVec.size() - 1) {
+        t3 = (*timeVec)[idx3] + timeVec->back();
+      } else if (i == timeVec->size() - 1) {
         idx3 = 1;
-        t3 = timeVec[idx3] + timeVec.back();
+        t3 = (*timeVec)[idx3] + timeVec->back();
       } else {
         idx3 = i + 2;
-        t3 = timeVec[idx3];
+        t3 = (*timeVec)[idx3];
       }
-      y3 = parVec[idx3];
+      y3 = (*parVec)[idx3];
       break;
     }
   }
@@ -168,13 +157,46 @@ inline double cmrInternal(const A &tInp, const B &timeVec, const C &parVec) {
 }
 
 template <typename A, typename B, typename C>
+  requires(IsRVec<A> || IsSubVec<A> || OperationVec<A> || IsVec<A>)
 inline double cmr(const A &tInp, const B &timeVec, const C &parVec) {
-  if constexpr (std::is_arithmetic_v<A>) {
-    return cmrInternal(
-        Vec<BaseType>(tInp), timeVec,
-        parVec); // issue: check why Vec<BaseType>(tInp) and not tInp[0]
+  static_assert(IsRVec<B> || IsSubVec<B> || OperationVec<B> || IsVec<B>,
+                "time vector has to be a vector");
+  static_assert(IsRVec<C> || IsSubVec<C> || OperationVec<C> || IsVec<C>,
+                "parameter vector has to be a vector");
+  using DataTypeTime = ExtractDataType<std::remove_reference_t<B>>::RetType;
+  static_assert(is<DataTypeTime, double>,
+                "time vector does not include doubles");
+  using DataTypeParams = ExtractDataType<std::remove_reference_t<C>>::RetType;
+  static_assert(is<DataTypeParams, double>,
+                "parameter vector does not include doubles");
+  using DataTypeTInp = ExtractDataType<std::remove_reference_t<A>>::RetType;
+  static_assert(is<DataTypeTInp, double>,
+                "time input vector does not include doubles");
+  warn(tInp.size() > 1,
+       "time point has more than one element only the first one is used");
+  return cmrInternal(&tInp, &timeVec, &parVec);
+}
+
+template <typename A, typename B, typename C>
+  requires std::is_arithmetic_v<A>
+inline double cmr(A tInp, const B &timeVec, const C &parVec) {
+  static_assert(IsRVec<B> || IsSubVec<B> || OperationVec<B> || IsVec<B>,
+                "time vector has to be a vector");
+  static_assert(IsRVec<C> || IsSubVec<C> || OperationVec<C> || IsVec<C>,
+                "parameter vector has to be a vector");
+  using DataTypeTime = ExtractDataType<std::remove_reference_t<B>>::RetType;
+  static_assert(is<DataTypeTime, double>,
+                "time vector does not include doubles");
+  using DataTypeParams = ExtractDataType<std::remove_reference_t<C>>::RetType;
+  static_assert(is<DataTypeParams, double>,
+                "parameter vector does not include doubles");
+  if constexpr (!is<A, double>) {
+    double val = static_cast<double>(tInp);
+    const double *ptr = &val;
+    return cmrInternal(ptr, &timeVec, &parVec);
   } else {
-    return cmrInternal(tInp, timeVec, parVec);
+    const double *ptr = &tInp;
+    return cmrInternal(ptr, &timeVec, &parVec);
   }
 }
 

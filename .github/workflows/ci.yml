@@ -29,6 +29,7 @@ jobs:
         g++ Unary_Tests.cpp -std=c++20 -o Unary_Tests
         g++ Vector_Tests.cpp -std=c++20 -o Vector_Tests
         g++ Borrow_Tests.cpp -std=c++20 -o Borrow_Tests
+        g++ CMR_Tests.cpp -std=c++20 -o CMR_Tests
 
 
     - name: Run tests
@@ -47,3 +48,4 @@ jobs:
         ./Unary_Tests
         ./Vector_Tests
         ./Borrow_Tests
+        ./CMR_Tests
