@@ -17,7 +17,7 @@ namespace etr {
 template <typename T, typename R>
   requires(IsRVec<T> || IsSubVec<T> ||
            OperationVec<T> && std::is_arithmetic_v<R>)
-inline auto at(T &&inp, R i) {
+inline auto at(const T &inp, R i) {
   if constexpr (std::is_integral_v<R>) {
     return inp[i];
   } else if constexpr (std::is_floating_point_v<R>) {
@@ -95,7 +95,7 @@ template <typename T, typename R, typename C>
   requires(IsRVec<T> || IsSubVec<T> ||
            OperationVec<T> && std::is_arithmetic_v<R> &&
                std::is_arithmetic_v<C>)
-inline auto at(T &&inp, R r, C c) {
+inline auto at(const T &inp, R r, C c) {
   ass(inp.im() == true, "Input is not a matrix!");
   if constexpr (std::is_integral_v<R> && std::is_integral_v<C>) {
     r--;

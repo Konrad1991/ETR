@@ -49,6 +49,14 @@ struct ExtractDataType<const Buffer<T, R, Trait>> {
   using RetType = T const;
 };
 
+template <typename T, typename Trait> struct ExtractDataType<Borrow<T, Trait>> {
+  using RetType = T;
+};
+template <typename T, typename Trait>
+struct ExtractDataType<const Borrow<T, Trait>> {
+  using RetType = T const;
+};
+
 template <typename Trait = DoubleTrait> struct doubleWrapper {
   using TypeTrait = Trait;
   using Type = DoubleTrait;

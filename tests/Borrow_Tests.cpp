@@ -110,9 +110,30 @@ void test_borrow() {
     }
     delete[] ptr;
   }
+  // NOTE: test Borrow with other functions
+  {
+    // TODO: add more tests
+    std::string s = "BorrowWithOtherFcts: ";
+    double *ptr = new double[10];
+    BorrowPtr bp(ptr, 10);
+    Vec<double> res = coca(1, 2, 3, bp);
+    ass(res.size() == 13, s + "coca");
+    delete[] ptr;
+  }
 }
 
 int main(int argc, char *argv[]) {
   test_borrow();
+  Vec<double> ret;
+  ret = etr::vector_numeric(etr::i2d(20));
+  printTAST<decltype(subset(ret, 1))>();
+  ret(1) =
+      1; // TODO: int works. Implement the same call stack for double and bool
+  ret(coca(6, 2, 3)) = coca(1.2, 1.2, 1.2);
+  // ret(1) = 1.2;
+  // etr::subset(ret, 1) = etr::i2d(1);
+  // TODO: this is a problam. Check that each class: Buffer, Borrow,
+  // BorrowSEXP etc. can be assigned with the result of anither class
+  print(ret);
   return 0;
 }

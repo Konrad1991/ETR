@@ -87,13 +87,13 @@ inline std::size_t length(T inp) {
 
 template <typename T>
   requires IsVec<T>
-inline auto length(T &inp) {
+inline int length(T &inp) {
   return inp.size();
 }
 
 template <typename T>
   requires IsVec<T>
-inline auto length(const T &&inp) {
+inline int length(const T &&inp) {
   return inp.size();
 }
 
@@ -105,7 +105,7 @@ inline auto dim(T inp) {
 
 template <typename T>
   requires(IsRVec<T> || IsSubVec<T> || OperationVec<T>)
-inline auto dim(const T &inp) {
+inline const auto dim(const T &inp) {
   ass(inp.im(), "dim can only be called with matrix");
   Vec<int> ret(SI{2});
   ret[0] = inp.nr();
@@ -115,7 +115,7 @@ inline auto dim(const T &inp) {
 
 template <typename T>
   requires IsVec<T>
-inline auto dim(T &inp) {
+inline const auto dim(T &inp) {
   ass(inp.im(), "dim can only be called with matrix");
   Vec<int> ret(SI{2});
   ret[0] = inp.nr();
