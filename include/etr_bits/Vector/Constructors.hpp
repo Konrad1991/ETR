@@ -5,12 +5,17 @@
 
 template <typename T2> Vec(T2 n) = delete;
 // internally used
-explicit Vec(SI &sz) : d(sz.sz) {}
-explicit Vec(SI &&sz) : d(sz.sz) {}
+explicit Vec(SI &sz) : d(sz.sz) {  
+  std::cout << "constructor test1" << std::endl;
+}
+explicit Vec(SI &&sz) : d(sz.sz) {
+    std::cout << "constructor test2" << std::endl;
+}
 
 // move constructors
 template <typename L2> explicit Vec(const Subset<L2> &&inp) : d(inp) {
   d.setMatrix(inp.mp);
+  std::cout << "constructor test3" << std::endl;
 }
 template <typename L2> explicit Vec(const Buffer<L2> &&inp) : d(inp) {
   d.setMatrix(inp.mp);
@@ -100,7 +105,7 @@ explicit Vec(int sz) : d(1) {
   d[0] = static_cast<T>(sz);
 }
 explicit Vec(std::size_t sz) : d(1) { d[0] = sz; }
-Vec(double sz) : d(1) { d[0] = sz; }
+explicit Vec(double sz) : d(1) { d[0] = sz; }
 
 #ifdef STANDALONE_ETR
 Vec(bool b) : d(1) { d[0] = static_cast<T>(b); }
@@ -108,7 +113,8 @@ Vec(bool b) : d(1) { d[0] = static_cast<T>(b); }
 Vec(Rboolean b) : d(1) { d[0] = static_cast<T>(b); }
 #endif
 
-explicit Vec() : d() {}
+explicit Vec() : d() {      std::cout << "constructor test4" << std::endl;
+}
 explicit Vec(std::size_t rows, std::size_t cols) : d(rows * cols) {
   d.setMatrix(true, rows, cols);
 }
@@ -120,7 +126,6 @@ explicit Vec(std::size_t rows, std::size_t cols, const double value)
 // other vector constructors
 template <typename T2, typename R2, typename Trait2>
 Vec(const Vec<T2, R2, Trait2> &other_vec) { // : d()
-  std::cout << "move constructor vec" << std::endl;
   using TypeTrait = Trait2;
   using CaseTrait = Trait2;
   if constexpr (isBorrow::value) { // issue: is this safe???

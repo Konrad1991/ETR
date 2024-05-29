@@ -5,8 +5,8 @@
 #include <type_traits>
 
 template <typename TD>
-  requires is<TD, T>
-Vec &operator=(const T inp) {
+  requires std::is_same_v<TD, T>
+Vec &operator=(const TD inp) {
   // std::cout << "test1" << std::endl;
   static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
   static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
@@ -27,7 +27,7 @@ Vec &operator=(const T inp) {
 template <typename TD>
   requires std::is_same_v<TD, int>
 Vec &operator=(const TD inp) {
-  // std::cout << "test2" << std::endl;
+   std::cout << "operator= test2" << std::endl;
   static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
   static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
   if constexpr (isSubset::value) {
@@ -50,7 +50,7 @@ Vec &operator=(const TD inp) {
 template <typename TD>
   requires std::is_same_v<TD, bool>
 Vec &operator=(const TD inp) {
-  // std::cout << "test3" << std::endl;
+  std::cout << "operator= test3" << std::endl;
   static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
   static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
   if constexpr (isSubset::value) {
