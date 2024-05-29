@@ -84,13 +84,13 @@ void test_vector_subsetting() {
       ass(expect == e.what(), s + "Invalid index argument");
     }
     ass(subset(coca(1, 2, 3), 1).size() == 1, s + "vec(1).size() == 1");
-    ass(subset(coca(1, 2, 3), 2)[0] == 2, s + "vec[2] == 2");
-    ass(subset(coca(1, 2, 3), 3)[0] == 3, s + "vec[3] == 3");
+    ass(subset(coca(1, 2, 3), 2) == 2, s + "vec[2] == 2");
+    ass(subset(coca(1, 2, 3), 3) == 3, s + "vec[3] == 3");
     int i = 1;
     ass(subset(coca(1, 2, 3), i).size() == 1, s + "vec(1).size() == 1");
-    ass(subset(coca(1, 2, 3), i)[0] == 1, s + "vec[1] == 1");
+    ass(subset(coca(1, 2, 3), i) == 1, s + "vec[1] == 1");
     i = 16;
-    ass(subset(colon(1, 16), i)[0] == 16, s + "vec[16] == 16");
+    ass(subset(colon(1, 16), i) == 16, s + "vec[16] == 16");
   }
 
   // NOTE: double subsetting
