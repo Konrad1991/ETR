@@ -92,7 +92,7 @@ Vec &operator=(Vec<BaseType> &other) {
 
 Vec &operator=(const Vec<T, R, Trait> &otherVec) {
   // std::cout << "test5" << std::endl;
-  printTAST<decltype(otherVec)>();
+  // printTAST<decltype(otherVec)>();
   static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
   static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
   if constexpr (isBuffer::value) {

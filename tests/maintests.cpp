@@ -150,7 +150,7 @@ sexp testall(BorrowPtr a, double type_test) {
     a = etr::i2d(1);
     a = etr::i2d(1) + etr::i2d(4);
     return (a);
-  } else if (type_test == 3.1) {
+  } else if (type_test == 3.10) {
     ;
     a = a + a;
     return (a);
@@ -1950,10 +1950,107 @@ sexp testall(BorrowPtr a, double type_test) {
   return (ret);
 }
 
-int main() {
-  int size = 100;
+void evaluate() {
+  using namespace etr;
+  int size = 5;
   double *ptr = new double[size];
   BorrowPtr bp(ptr, size);
-  testall(bp, 1.0);
+  bp = coca(10, 20, 40, 1, -10);
+  Vec<double> res;
+  Vec<double> expected;
+  // NOTE: bubblesort
+  {
+    res = testall(bp, 0);
+    ass(res[0] == -10, "0, bubblesort");
+    ass(res[1] == 1, "0, bubblesort");
+    ass(res[2] == 10, "0, bubblesort");
+    ass(res[3] == 20, "0, bubblesort");
+    ass(res[4] == 40, "0, bubblesort");
+  }
+  delete[] ptr;
+
+  // NOTE: fibonacci sequence
+  {
+    Vec<int> resInt = testall(bp, 1);
+    expected = coca(1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610,
+                    987, 1597, 2584, 4181, 6765);
+    for (auto &i : colon(1, length(res))) {
+      ass(resInt(i) == expected(i), "1, fibonacci sequence");
+    }
+  }
+  // NOTE: mixed stuff
+  {
+    res = testall(bp, 2.1);
+    ass(length(res) == 12, "2.1, mixed stuff");
+    ass(res(1) == 50, "2.1, mixed stuff");
+    ass(res(12) == 61, "2.1, mixed stuff");
+  }
+
+  size = 100;
+  ptr = new double[size];
+  BorrowPtr a(ptr, size);
+
+  // NOTE: stuff
+  {
+    testall(a, 2.2);
+    ass(a(11) == 20, "2.2, stuff");
+    ass(ptr[10] == 20, "2.2, stuff");
+    try {
+      testall(a, 2.3);
+    } catch (std::runtime_error &e) {
+      std::string expected =
+          "Error: out of boundaries --> value beyond size of vector";
+      ass(e.what() == expected, "2.3, stuff");
+    }
+    a(1) = 10.1;
+    res = testall(a, 3.1);
+    ass(res.size() == a.size(), "3.1, binary calc");
+    ass(res(1) == 13.1, "3.1, binary calc");
+
+    res = testall(a, 3.2);
+    ass(res(1) == 16.24, "3.2, binary calc");
+
+    res = testall(a, 3.3);
+    ass(res.im(), "3.3, binary calc");
+    ass(res(1) == 19.24, "3.3, binary calc");
+
+    res = testall(a, 3.4);
+    ass(res(1) == 4.14, "3.4, binary calc");
+    ass(a(1) == 4.14, "3.4, binary calc");
+
+    res = testall(a, 3.5);
+    ass(res(1) == 4, "3.5, binary calc");
+    ass(a(1) == 4, "3.5, binary calc");
+
+    res = testall(a, 3.6);
+    ass(res(1) == 104, "3.6, binary calc");
+    ass(res(2) == 204, "3.6, binary calc");
+
+    a(colon(1, 9)) = coca(1, 2, 3, 4, 5, 6, 7, 8, 9);
+    res = testall(a, 3.7);
+    ass(res(1) == 101, "3.7, subsetting");
+    ass(res(2) == 202, "3.7, subsetting");
+    ass(res(3) == 303, "3.7, subsetting");
+    ass(res(4) == 404, "3.7, subsetting");
+    ass(res(5) == 505, "3.7, subsetting");
+    ass(res(6) == 606, "3.7, subsetting");
+    ass(res(7) == 707, "3.7, subsetting");
+    ass(res(8) == 808, "3.7, subsetting");
+    ass(res(9) == 909, "3.7, subsetting");
+
+    res = testall(a, 3.9);
+    ass(res == 5, "3.9");
+
+    res = testall(a, 3.10);
+    ass(res(1) == 8, "3.10");
+
+    res = testall(a, 3.11);
+    ass(res(1) == 9, "3.11");
+
+    res = testall(a, 3.12);
+    ass(res(1) == 13, "3.12");
+  }
   delete[] ptr;
 }
+
+int main() { evaluate(); }

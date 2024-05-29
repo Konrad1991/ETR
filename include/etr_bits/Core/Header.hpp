@@ -1,21 +1,18 @@
 #ifndef HEADER_ETR_H
 #define HEADER_ETR_H
 
-#include <cmath>
-#include <cstddef>
+// #include <cmath>
+// #include <cstddef>
+#include "stddef.h"
 #include <cxxabi.h>
-#include <iostream>
-#include <type_traits>
 
 #ifdef STANDALONE_ETR
 #else
 // [[Rcpp::depends(RcppArmadillo)]]
 #include "RcppArmadillo.h"
-
 #endif
 
 #include <array>
-#include <cstddef>
 #include <ios>
 #include <iostream>
 #include <iterator>
