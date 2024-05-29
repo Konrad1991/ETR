@@ -270,7 +270,7 @@ template <typename T> auto ln(const T &obj) {
 template <typename T>
   requires std::is_same_v<T, BaseType>
 auto ln(const T &obj) -> BaseType {
-  return Log(obj);
+  return log(obj);
 }
 
 template <typename T> auto sqroot(const T &obj) {
