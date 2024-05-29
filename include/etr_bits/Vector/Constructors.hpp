@@ -5,11 +5,11 @@
 
 template <typename T2> Vec(T2 n) = delete;
 // internally used
-explicit Vec(SI &sz) : d(sz.sz) {  
+explicit Vec(SI &sz) : d(sz.sz) {
   std::cout << "constructor test1" << std::endl;
 }
 explicit Vec(SI &&sz) : d(sz.sz) {
-    std::cout << "constructor test2" << std::endl;
+  std::cout << "constructor test2" << std::endl;
 }
 
 // move constructors
@@ -105,7 +105,7 @@ explicit Vec(int sz) : d(1) {
   d[0] = static_cast<T>(sz);
 }
 explicit Vec(std::size_t sz) : d(1) { d[0] = sz; }
-explicit Vec(double sz) : d(1) { d[0] = sz; }
+Vec(double sz) : d(1) { d[0] = sz; }
 
 #ifdef STANDALONE_ETR
 Vec(bool b) : d(1) { d[0] = static_cast<T>(b); }
@@ -113,8 +113,7 @@ Vec(bool b) : d(1) { d[0] = static_cast<T>(b); }
 Vec(Rboolean b) : d(1) { d[0] = static_cast<T>(b); }
 #endif
 
-explicit Vec() : d() {      std::cout << "constructor test4" << std::endl;
-}
+explicit Vec() : d() { std::cout << "constructor test4" << std::endl; }
 explicit Vec(std::size_t rows, std::size_t cols) : d(rows * cols) {
   d.setMatrix(true, rows, cols);
 }

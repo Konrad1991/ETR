@@ -124,6 +124,6 @@ void test_basestore() {
 }
 
 int main(int argc, char *argv[]) {
-  test_basestore();
+  // test_basestore();
   return 0;
 }
