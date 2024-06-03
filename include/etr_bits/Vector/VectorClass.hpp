@@ -29,6 +29,7 @@ template <typename T, typename R, typename Trait> struct Vec {
   using isUnaryOP = std::is_same<caseTraitD, UnaryTrait>;
   using isBinaryOP = std::is_same<caseTraitD, BinaryTrait>;
   using isRVec = std::is_same<CaseTrait, RVecTrait>;
+  using isVariableType = std::is_same<CaseTrait, VariableTypeTrait>;
 
   RetType getRetType() const { return RetType{}; }
 

@@ -70,6 +70,15 @@ static constexpr auto walkTD() {
 }
 
 template <typename TD>
+  requires IsSubtraction<TD>
+static constexpr auto walkTD() {
+  constexpr auto LDeriv = walkTD<typename TD::typeTraitL>();
+  constexpr auto RDeriv = walkTD<typename TD::typeTraitR>();
+  return produceBinaryType<decltype(LDeriv), decltype(RDeriv), BinaryTrait,
+                           etr::MinusDerivTrait>();
+}
+
+template <typename TD>
   requires IsSinus<TD>
 static constexpr auto walkTD() {
   constexpr auto obj = walkTD<typename TD::typeTraitObj>();

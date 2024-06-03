@@ -175,7 +175,8 @@ inline auto coca(AV &av, Args &&...args) {
       },
       args...);
 
-  Vec<double, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
+  Vec<double, VarPointer<decltype(av), Idx, -1>, ConstantTypeTrait> ret(
+      av); // TODO: ConstantTypeTrait has to be added to all functions
   return ret;
 }
 

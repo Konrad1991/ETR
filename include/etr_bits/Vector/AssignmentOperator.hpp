@@ -7,7 +7,6 @@
 template <typename TD>
   requires std::is_arithmetic_v<TD>
 Vec &operator=(const TD inp) {
-  // std::cout << "test1" << std::endl;
   static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
   static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
   static_assert(!isRVec::value,
@@ -42,7 +41,6 @@ Vec &operator=(const TD inp) {
 }
 
 Vec &operator=(const Vec<T, R, Trait> &otherVec) {
-  // std::cout << "test2" << std::endl;
   static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
   static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
   static_assert(!isRVec::value,
@@ -113,7 +111,6 @@ Vec &operator=(const Vec<T, R, Trait> &otherVec) {
 
 template <typename T2, typename R2, typename Trait2>
 Vec &operator=(const Vec<T2, R2, Trait2> &otherVec) {
-  // std::cout << "test3" << std::endl;
   static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
   static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
   static_assert(!isRVec::value,
@@ -141,6 +138,8 @@ Vec &operator=(const Vec<T2, R2, Trait2> &otherVec) {
         temp[i] = static_cast<T>(otherVec[i]);
       }
     }
+    ass(d.sz <= otherVec.size(),
+        "size cannot be increased above the size of the borrowed object");
     d.sz = otherVec.size();
     for (std::size_t i = 0; i < otherVec.size(); i++)
       d[i] = temp[i];
@@ -170,9 +169,44 @@ Vec &operator=(const Vec<T2, R2, Trait2> &otherVec) {
     for (std::size_t i = 0; i < d.ind.size(); i++) {
       d[i % d.ind.size()] = temp[i];
     }
+  } else if constexpr (isVariableType::value) {
+    // TODO: temp has to be used instead of writing directly in d
+    using tD = decltype(otherVec.d);
+    using tDRaw = std::remove_reference<decltype(otherVec)>::type;
+    using typeExpr = std::remove_reference<ExtractedTypeD<tDRaw>>::type;
+    if constexpr (!IsVarPointer<tD>) {
+      constexpr auto res = walkTD<typeExpr>();
+      d.resize(otherVec.size());
+      for (std::size_t i = 0; i < otherVec.size(); i++) {
+        d.AllVarsRef.varBuffer[d.I][i] = otherVec[i];
+      }
+      d.AllVarsRef.resizeDerivs(R::I, R::TIdx, otherVec.size());
+      for (std::size_t i = 0; i < res.getSize(d.AllVarsRef); i++) {
+        d.setDeriv(d.AllVarsRef, i, res.getDeriv(d.AllVarsRef, i));
+      }
+    } else {
+
+      d.resize(otherVec.size());
+      for (std::size_t i = 0; i < d.size(); i++) {
+        d.setVal(otherVec.d.AllVarsRef, i,
+                 tD::getVal(otherVec.d.AllVarsRef, i));
+      }
+      if constexpr (is<Trait2, VariableTypeTrait>) {
+        for (std::size_t i = 0; i < d.size(); i++) {
+          d.setDeriv(d.AllVarsRef, i,
+                     otherVec.d.getDeriv(otherVec.d.AllVarsRef, i));
+        }
+      }
+    }
   }
-  if (otherVec.d.im()) {
-    d.setMatrix(true, otherVec.d.nr(), otherVec.d.nc());
+  if constexpr (isVariableType::value) {
+    if (otherVec.d.im()) {
+      d.setMatrix(d.AllVarsRef, true, otherVec.d.nr(), otherVec.d.nc());
+    }
+  } else {
+    if (otherVec.d.im()) {
+      d.setMatrix(true, otherVec.d.nr(), otherVec.d.nc());
+    }
   }
   return *this;
 }
