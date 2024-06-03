@@ -73,45 +73,6 @@ inline constexpr auto walkT() {
   return res;
 }
 
-template <typename T, typename AV, typename V, typename... Args>
-  requires(IsVec<T> && !IsVariable<T>)
-inline void assign(AV &av, V &var, Args &&...args) {
-  using tD = ExtractedTypeD<T>;
-  constexpr auto res = walkT<tD>();
-  ass(res.getSize(av) == var.d.getSize(av),
-      "Size of dependent variable does not match size of to be evaluated "
-      "expression");
-  for (std::size_t i = 0; i < res.getSize(av); i++) {
-    var.d.setDeriv(av, i, res.getDeriv(av, i));
-  }
-
-  if (var.d.size() < res.getSize(av))
-    var.resize(res.getSize(av));
-  for (std::size_t i = 0; i < res.getSize(av); i++) {
-    var.d.setVal(av, i, res.getVal(av, i));
-  }
-}
-
-// TODO: add correct requires for only a variable or constant
-template <typename T, typename AV, typename V, typename... Args>
-inline void assign(AV &av, V &var, Args &&...args) {
-  using tD = ExtractedTypeD<T>;
-  /*
-  ass(tD::getSize(av) == var.d.getSize(av),
-      "Size of dependent variable does not match size of to be evaluated "
-      "expression");
-
-  for (std::size_t i = 0; i < tD::getSize(av); i++) {
-    var.d.setDeriv(av, i, 0.0); // TODO: check if this is correct!!!
-  }
-  */
-  if (var.d.size() < tD::getSize(av))
-    var.resize(tD::getSize(av));
-  for (std::size_t i = 0; i < tD::getSize(av); i++) {
-    var.d.setVal(av, i, tD::getVal(av, i));
-  }
-}
-
 } // namespace etr
 
 #endif

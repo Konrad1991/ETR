@@ -28,6 +28,7 @@ struct BinaryOperation {
   using typeTraitR = R;
   MatrixParameter mp;
   bool mpCalculated = false;
+
   bool im() const {
     if constexpr (std::is_arithmetic_v<L>) {
       return r.im();
