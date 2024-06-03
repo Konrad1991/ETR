@@ -41,82 +41,8 @@ Vec &operator=(const TD inp) {
   }
 }
 
-/*
-template <typename TD>
-  requires std::is_same_v<TD, int>
-Vec &operator=(const TD inp) {
-  // std::cout << "operator= test2" << std::endl;
-  static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
-  static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
-  static_assert(!isRVec::value,
-                "Cannot assign to an r value. E.g. c(1, 2, 3) <- 1");
-  if constexpr (isSubset::value) {
-    for (std::size_t i = 0; i < d.ind.size(); i++) {
-      d[i] = static_cast<T>(inp);
-    }
-  } else if constexpr (isBorrow::value) {
-    d.sz = 1;
-    d[0] = static_cast<T>(inp);
-  } else if constexpr (isVarPointer::value) {
-    d.resize(1);
-    d[0] = inp;
-  } else {
-    d.resize(1);
-    d[0] = static_cast<T>(inp);
-  }
-  return *this;
-}
-
-template <typename TD>
-  requires std::is_same_v<TD, bool>
-Vec &operator=(const TD inp) {
-  // std::cout << "operator= test3" << std::endl;
-  static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
-  static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
-  static_assert(!isRVec::value,
-                "Cannot assign to an r value. E.g. c(1, 2, 3) <- 1");
-  if constexpr (isSubset::value) {
-    for (std::size_t i = 0; i < d.ind.size(); i++) {
-      d[i] = static_cast<T>(inp);
-    }
-  } else if constexpr (isBorrow::value) {
-    d.sz = 1;
-    d[0] = static_cast<T>(inp);
-  } else {
-    d.resize(1);
-    d[0] = static_cast<T>(inp);
-  }
-  return *this;
-}
-*/
-
-Vec &operator=(Vec<BaseType> &other) {
-  // std::cout << "test4" << std::endl;
-  static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
-  static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
-  static_assert(!isRVec::value,
-                "Cannot assign to an r value. E.g. c(1, 2, 3) <- 1");
-  if constexpr (isSubset::value) {
-    ass(other.size() == d.ind.size(),
-        "number of items to replace is not a multiple of replacement length");
-    for (std::size_t i = 0; i < d.ind.size(); i++) {
-      d[i] = other[i];
-    }
-  } else {
-    if (size() != other.size()) {
-      resize(other.size());
-      for (std::size_t i = 0; i < other.size(); i++)
-        d[i] = other[i];
-    }
-  }
-  if (other.d.im()) {
-    d.setMatrix(true, other.d.nr(), other.d.nc()); // issue: correct?
-  }
-  return *this;
-}
-
 Vec &operator=(const Vec<T, R, Trait> &otherVec) {
-  // std::cout << "test5" << std::endl;
+  // std::cout << "test3" << std::endl;
   // printTAST<decltype(otherVec)>();
   static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
   static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
@@ -164,7 +90,7 @@ Vec &operator=(const Vec<T, R, Trait> &otherVec) {
 
 template <typename T2, typename R2, typename Trait2>
 Vec &operator=(const Vec<T2, R2, Trait2> &otherVec) {
-  // std::cout << "test6" << std::endl;
+  // std::cout << "test4" << std::endl;
   static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
   static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
   static_assert(!isRVec::value,
