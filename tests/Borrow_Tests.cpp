@@ -123,11 +123,12 @@ void test_borrow() {
 }
 
 int main(int argc, char *argv[]) {
-  //test_borrow();
-  Vec<double> ret; // TODO: check that a subset is only made using an allocated object
+  test_borrow();
+  Vec<double>
+      ret; // TODO: check that a subset is only made using an allocated object
   ret = etr::vector_numeric(etr::i2d(20));
-  //printTAST<decltype(subset(ret, 1))>();
-  ret(1) = 2; 
+  // printTAST<decltype(subset(ret, 1))>();
+  ret(1) = 2;
   ret(2) = true;
   ret(3) = 3.14;
 
@@ -135,20 +136,16 @@ int main(int argc, char *argv[]) {
   // TODO: this is a problam. Check that each class: Buffer, Borrow,
   // BorrowSEXP etc. can be assigned with the result of anither class
   print(ret);
-
+  std::cout << std::boolalpha << (matrix(colon(1, 25), 5, 5)).im() << std::endl;
+  return 0;
   sexp b;
   b = coca(i2d(1), i2d(5));
   auto test = subset(colon(1, 6) + 0, b);
-  printTAST<decltype(test)>();
-  printTAST<decltype(test.d)>();
-
   sexp c;
-  c = subset(matrix(colon(1, 25), 5, 5), b, b);
-  print(c);
-  b = subset((colon(i2d(1), i2d(6)) + i2d(0)), b);
-  print(b);
 
-   b = subset((colon(i2d(1), i2d(6)) + i2d(1)),b + b);
+  c = subset(matrix(colon(1, 25), 5, 5), b, b);
+  b = subset((colon(i2d(1), i2d(6)) + i2d(0)), b);
+  b = subset((colon(i2d(1), i2d(6)) + i2d(1)), b + b);
 
   return 0;
 }

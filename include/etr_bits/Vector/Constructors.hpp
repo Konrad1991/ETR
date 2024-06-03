@@ -31,7 +31,7 @@ explicit Vec(const BinaryOperation<L2, R2, OperationTrait> &&inp) : d(inp) {
   d.setMatrix(inp.mp);
 }
 template <typename L2, typename R2, typename OperationTrait,
-          typename DetailTrait> // only for comparison!
+          typename DetailTrait> // NOTE: only for comparison!
 explicit Vec(const BinaryOperation<L2, R2, OperationTrait, DetailTrait> &&inp)
     : d(inp) {
   using TypeTrait = OperationTrait;
@@ -125,6 +125,7 @@ explicit Vec(std::size_t rows, std::size_t cols, const double value)
 // other vector constructors
 template <typename T2, typename R2, typename Trait2>
 Vec(const Vec<T2, R2, Trait2> &other_vec) { // : d()
+  // std::cout << "constructor test 5" << std::endl;
   using TypeTrait = Trait2;
   using CaseTrait = Trait2;
   if constexpr (isBorrow::value) { // issue: is this safe???
@@ -150,6 +151,8 @@ template <typename T2, typename R2, typename Trait2>
   requires IsVec<const Vec<T2, R2, Trait2>>
 Vec(const Vec<T2, R2, Trait2>
         &&other_vec) { // issue: improve. Use move her : d()
+  // std::cout << "constructor test 6" << std::endl;
+
   using TypeTrait = Trait2;
   using CaseTrait = Trait2;
   if constexpr (isBorrow::value) { // issue: is this safe???
@@ -179,6 +182,8 @@ Vec(const Vec<T2, R2, Trait2>
 template <typename T2, typename R2, typename Trait2>
   requires(IsRVec<const Vec<T2, R2, Trait2>> && !std::is_same_v<T, T2>)
 Vec(const Vec<T2, R2, Trait2> &&other_vec) {
+  // std::cout << "constructor test 7" << std::endl;
+
   using TypeTrait = Trait2;
   using CaseTrait = Trait2;
   if constexpr (isBorrow::value) {
@@ -208,6 +213,8 @@ Vec(const Vec<T2, R2, Trait2> &&other_vec) {
 template <typename T2, typename R2, typename Trait2>
   requires(IsRVec<const Vec<T2, R2, Trait2>> && std::is_same_v<T, T2>)
 Vec(Vec<T2, R2, Trait2> &&other_vec) {
+  // std::cout << "constructor test 8" << std::endl;
+
   using TypeTrait = Trait2;
   using CaseTrait = Trait2;
   if constexpr (isBorrow::value) {
@@ -253,6 +260,7 @@ Vec(BaseType *ptr, std::size_t rows, std::size_t cols) : d(rows * cols) {
 template <typename T2>
   requires std::is_same_v<T2, bool>
 explicit Vec(const Vec<T2> &other_vec) : d() {
+  // std::cout << "constructor test 5" << std::endl;
   d.resize(other_vec.size());
   for (std::size_t i = 0; i < d.size(); i++)
     d[i] = other_vec[i];

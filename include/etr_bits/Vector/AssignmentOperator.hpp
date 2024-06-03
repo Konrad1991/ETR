@@ -4,6 +4,108 @@
 #include "VectorClass.hpp"
 #include <type_traits>
 
+/*
+template <typename TD> Vec &operator=(const TD &&otherVec) {
+  static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
+  static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
+  static_assert(!isRVec::value,
+                "Cannot assign to a r value. E.g. c(1, 2, 3) <- 3");
+  // NOTE: arithmetic otherVecut
+  if constexpr (std::is_arithmetic_v<TD>) {
+    if constexpr (is<T, TD>) {
+      // NOTE: T == TD
+      if constexpr (isSubset::value) {
+        for (std::size_t i = 0; i < d.ind.size(); i++) {
+          d[i] = otherVec;
+        }
+      } else if constexpr (isBorrow::value) {
+        d.sz = 1;
+        d[0] = otherVec;
+      } else {
+        d.resize(1);
+        d[0] = otherVec;
+      }
+      // NOTE: T != TD
+    } else {
+
+      if constexpr (isSubset::value) {
+        for (std::size_t i = 0; i < d.ind.size(); i++) {
+          d[i] = static_cast<T>(otherVec);
+        }
+      } else if constexpr (isBorrow::value) {
+        d.sz = 1;
+        d[0] = static_cast<T>(otherVec);
+      } else {
+        d.resize(1);
+        d[0] = static_cast<T>(otherVec);
+      }
+    }
+  } else { // NOTE: vector otherVecut
+    using RetTypeOtherVec =
+        std::remove_reference<decltype(otherVec.d)>::type::RetType;
+    using isT = std::is_same<RetTypeOtherVec, T>;
+
+    if constexpr (isBuffer::value) {
+      temp.resize(otherVec.size());
+      if constexpr (isT::value) {
+        for (std::size_t i = 0; i < otherVec.size(); i++) {
+          temp[i] = otherVec[i];
+        }
+      } else {
+        for (std::size_t i = 0; i < otherVec.size(); i++) {
+          temp[i] = static_cast<T>(otherVec[i]);
+        }
+      }
+      d.moveit(temp);
+    } else if constexpr (isBorrow::value) {
+      ass(otherVec.size() <= d.capacity,
+          "number of items to replace is not a multiple of replacement length");
+      temp.resize(otherVec.size());
+      for (std::size_t i = 0; i < otherVec.size(); i++)
+        temp[i] = otherVec[i];
+      d.sz = otherVec.size();
+      for (std::size_t i = 0; i < otherVec.size(); i++)
+        d[i] = temp[i];
+    } else if constexpr (isBorrowSEXP::value) {
+      temp.resize(otherVec.size());
+      if constexpr (isT::value) {
+        for (std::size_t i = 0; i < otherVec.size(); i++) {
+          temp[i] = otherVec[i];
+        }
+      } else {
+        for (std::size_t i = 0; i < otherVec.size(); i++) {
+          temp[i] = static_cast<T>(otherVec[i]);
+        }
+      }
+      if (otherVec.size() > this->size())
+        d.resize(otherVec.size());
+      d.moveit(temp);
+    } else if constexpr (isSubset::value) {
+      ass(otherVec.size() == d.ind.size(),
+          "number of items to replace is not a multiple of replacement length");
+      temp.resize(otherVec.size());
+      if constexpr (isT::value) {
+        for (std::size_t i = 0; i < otherVec.size(); i++) {
+          temp[i] = otherVec[i];
+        }
+      } else {
+        for (std::size_t i = 0; i < otherVec.size(); i++) {
+          temp[i] = static_cast<T>(otherVec[i]);
+        }
+      }
+      for (std::size_t i = 0; i < d.ind.size(); i++) {
+        d[i % d.ind.size()] = temp[i];
+      }
+    }
+    if (otherVec.d.im()) {
+      d.setMatrix(true, otherVec.d.nr(), otherVec.d.nc());
+    }
+  }
+
+  return *this;
+}
+*/
+
 template <typename TD>
   requires std::is_same_v<TD, T>
 Vec &operator=(const TD inp) {

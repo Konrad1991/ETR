@@ -15,7 +15,7 @@ vecbool
 
 template <typename T, typename I>
 inline void calcIndVector(T &vec, Indices &ind, const I *idx) {
-  if constexpr(is<I, bool>) {
+  if constexpr (is<I, bool>) {
     if (*idx) {
       ind.resize(vec.size());
       for (std::size_t i = 0; i < vec.size(); i++)
@@ -25,19 +25,19 @@ inline void calcIndVector(T &vec, Indices &ind, const I *idx) {
       ass(false, "Variable[FALSE] subsetting is not supported. Sorry");
       return;
     }
-  } else if constexpr(is<I, int>) {
+  } else if constexpr (is<I, int>) {
     ind.resize(1);
     ind[0] = *idx - 1;
     ass(ind[0] >= 0, "invalid index argument");
     return;
-  } else if constexpr(is<I, double>) {
+  } else if constexpr (is<I, double>) {
     ind.resize(1);
     ind[0] = convertSizeSubsetting(*idx) - 1;
     return;
-  } else if constexpr(IsAV<I>) {
+  } else if constexpr (IsAV<I>) {
 
     using IndexType = ExtractDataType<I>::RetType;
-    if constexpr(is<IndexType, bool>) {
+    if constexpr (is<IndexType, bool>) {
       std::size_t sizeTrue = 0;
       for (std::size_t i = 0; i < vec.size(); i++)
         if ((*idx)[i % idx->size()])
@@ -50,22 +50,21 @@ inline void calcIndVector(T &vec, Indices &ind, const I *idx) {
           counter++;
         }
       }
-    } else if constexpr(is<IndexType, int>) {
+    } else if constexpr (is<IndexType, int>) {
       ind.resize(idx->size());
       for (std::size_t i = 0; i < idx->size(); i++) {
         std::size_t sizeTIdx = (*idx)[i] - 1;
         ind[i] = sizeTIdx;
       }
-    } else if constexpr(is<IndexType, double>) {
+    } else if constexpr (is<IndexType, double>) {
       ind.resize(idx->size());
       for (std::size_t i = 0; i < idx->size(); i++) {
         std::size_t sizeTIdx = static_cast<std::size_t>((*idx)[i]) - 1;
         ind[i] = sizeTIdx;
       }
-    }   else {
+    } else {
       static_assert(sizeof(T) == 0, "Unknown type of index variable");
     }
-
   }
 }
 
@@ -76,7 +75,7 @@ inline auto subset(V &vec, I &&idx) {
   Subset<decltype(convert(vec).d), SubsetTrait> sub(vec);
   calcIndVector(vec, sub.ind, &idx);
   return Vec<DataType, decltype(convertSubset(vec)), SubVecTrait>(
-    std::move(sub));
+      std::move(sub));
 }
 
 template <typename V, typename I>
@@ -85,8 +84,8 @@ inline auto subset(V &&vec, I &&idx) {
   using DataType = ExtractDataType<V>::RetType;
   Subset<const decltype(convert(vec).d), SubsetTrait> sub(vec);
   calcIndVector(vec, sub.ind, &idx);
-   return Vec<DataType, decltype(convertSubsetConst(vec)), SubVecTrait>(
-       std::move(sub));
+  return Vec<DataType, decltype(convertSubsetConst(vec)), SubVecTrait>(
+      std::move(sub));
 }
 
 /*

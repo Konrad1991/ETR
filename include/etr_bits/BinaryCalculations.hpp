@@ -90,7 +90,7 @@ struct BinaryOperation {
   BinaryOperation(const L &l_, const R &r_) : l(l_), r(r_) {}
   template <typename LType, typename RType, typename TraitOther>
   BinaryOperation(const BinaryOperation<LType, RType, TraitOther>
-                      &other) // issue: needs move constructor
+                      &other) // TODO: needs move constructor
       : l(other.l), r(other.r) {}
 
   auto operator[](std::size_t i) const {

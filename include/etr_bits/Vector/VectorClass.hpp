@@ -13,10 +13,10 @@ namespace etr {
 
 template <typename T, typename R, typename Trait> struct Vec {
   using Type = T;
-  /* using RetType = T; */
   using TypeTrait = Trait;
   using CaseTrait = Trait;
   R d;
+  Buffer<T> temp;
   using DType = R;
   using RetType = std::remove_reference<decltype(d)>::type::RetType;
   using typeTraitD = std::remove_reference<decltype(d)>::type::TypeTrait;
@@ -28,6 +28,7 @@ template <typename T, typename R, typename Trait> struct Vec {
   using caseTraitD = std::remove_reference<decltype(d)>::type::CaseTrait;
   using isUnaryOP = std::is_same<caseTraitD, UnaryTrait>;
   using isBinaryOP = std::is_same<caseTraitD, BinaryTrait>;
+  using isRVec = std::is_same<CaseTrait, RVecTrait>;
 
   RetType getRetType() const { return RetType{}; }
 
