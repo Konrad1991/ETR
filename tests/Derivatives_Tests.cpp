@@ -66,5 +66,13 @@ int main() {
     print(b, av);
     print(get_derivs(a));
     print(get_derivs(b));
+
+    std::cout << "\n"
+              << "a = a / b" << std::endl;
+    a = a / b;
+    print(a, av);
+    print(b, av);
+    print(get_derivs(a));
+    print(get_derivs(b));
   }
 }

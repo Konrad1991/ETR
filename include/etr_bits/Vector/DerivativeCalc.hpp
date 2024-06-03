@@ -60,6 +60,19 @@ static constexpr auto walkTD() {
                               TimesDerivTrait>();
 }
 
+template <typename TRaw>
+  requires IsDivide<TRaw>
+static constexpr auto walkTD() {
+  using TDDivision = std::remove_const_t<std::remove_reference_t<TRaw>>;
+  constexpr auto LT = produceVariableType<typename TDDivision::typeTraitL>();
+  constexpr auto RT = produceVariableType<typename TDDivision::typeTraitR>();
+  constexpr auto LDeriv = walkTD<typename TDDivision::typeTraitL>();
+  constexpr auto RDeriv = walkTD<typename TDDivision::typeTraitR>();
+  return produceQuarternyType<decltype(LT), decltype(RT), decltype(LDeriv),
+                              decltype(RDeriv), QuarternaryTrait,
+                              DivideDerivTrait>();
+}
+
 template <typename TD>
   requires IsAddition<TD>
 static constexpr auto walkTD() {
