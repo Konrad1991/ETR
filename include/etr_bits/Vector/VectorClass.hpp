@@ -34,6 +34,7 @@ template <typename T, typename R, typename Trait> struct Vec {
 
 #include "AssignmentOperator.hpp"
 #include "Constructors.hpp"
+#include "DerivativeCalc.hpp"
 
   RetType &operator[](std::size_t idx) { return d[idx]; }
   RetType operator[](std::size_t idx) const { return d[idx]; }
