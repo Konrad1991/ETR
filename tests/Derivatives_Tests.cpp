@@ -66,6 +66,7 @@ int main() {
   }
   // NOTE: Derivatives Test Nr.2
   {
+    std::cout << "block Nr. 2" << std::endl;
     etr::AllVars<2, 0, 0, 4> av(0, 0); // deriv with respect tp variable 1 = vp1
     Vec<double, VarPointer<decltype(av), 0, 0>, VariableTypeTrait> vp1(av);
     Vec<double, VarPointer<decltype(av), 1, 0>, VariableTypeTrait> vp2(av);

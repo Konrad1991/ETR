@@ -2,46 +2,67 @@
 #define ASSING2VEC_ETR_H
 
 #include "VectorClass.hpp"
+#include <type_traits>
 
 template <typename TD>
-  requires std::is_same_v<TD, T>
+  requires std::is_arithmetic_v<TD>
 Vec &operator=(const TD inp) {
   // std::cout << "test1" << std::endl;
   static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
   static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
-  if constexpr (isSubset::value) {
-    for (std::size_t i = 0; i < d.ind.size(); i++) {
-      d[i] = inp;
+  static_assert(!isRVec::value,
+                "Cannot assign to an r value. E.g. c(1, 2, 3) <- 1");
+  if constexpr (is<TD, T>) {
+    if constexpr (isSubset::value) {
+      for (std::size_t i = 0; i < d.ind.size(); i++) {
+        d[i] = inp;
+      }
+    } else if constexpr (isBorrow::value) {
+      d.sz = 1;
+      d[0] = inp;
+    } else {
+      d.resize(1);
+      d[0] = inp;
     }
-  } else if constexpr (isBorrow::value) {
-    d.sz = 1;
-    d[0] = inp;
+    return *this;
   } else {
-    d.resize(1);
-    d[0] = inp;
+    if constexpr (isSubset::value) {
+      for (std::size_t i = 0; i < d.ind.size(); i++) {
+        d[i] = static_cast<T>(inp);
+      }
+    } else if constexpr (isBorrow::value) {
+      d.sz = 1;
+      d[0] = static_cast<T>(inp);
+    } else {
+      d.resize(1);
+      d[0] = static_cast<T>(inp);
+    }
+    return *this;
   }
-  return *this;
 }
 
+/*
 template <typename TD>
   requires std::is_same_v<TD, int>
 Vec &operator=(const TD inp) {
   // std::cout << "operator= test2" << std::endl;
   static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
   static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
+  static_assert(!isRVec::value,
+                "Cannot assign to an r value. E.g. c(1, 2, 3) <- 1");
   if constexpr (isSubset::value) {
     for (std::size_t i = 0; i < d.ind.size(); i++) {
-      d[i] = static_cast<BaseType>(inp);
+      d[i] = static_cast<T>(inp);
     }
   } else if constexpr (isBorrow::value) {
     d.sz = 1;
-    d[0] = static_cast<BaseType>(inp);
+    d[0] = static_cast<T>(inp);
   } else if constexpr (isVarPointer::value) {
     d.resize(1);
     d[0] = inp;
   } else {
     d.resize(1);
-    d[0] = static_cast<BaseType>(inp);
+    d[0] = static_cast<T>(inp);
   }
   return *this;
 }
@@ -52,24 +73,29 @@ Vec &operator=(const TD inp) {
   // std::cout << "operator= test3" << std::endl;
   static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
   static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
+  static_assert(!isRVec::value,
+                "Cannot assign to an r value. E.g. c(1, 2, 3) <- 1");
   if constexpr (isSubset::value) {
     for (std::size_t i = 0; i < d.ind.size(); i++) {
-      d[i] = static_cast<BaseType>(inp);
+      d[i] = static_cast<T>(inp);
     }
   } else if constexpr (isBorrow::value) {
     d.sz = 1;
-    d[0] = static_cast<BaseType>(inp);
+    d[0] = static_cast<T>(inp);
   } else {
     d.resize(1);
-    d[0] = static_cast<BaseType>(inp);
+    d[0] = static_cast<T>(inp);
   }
   return *this;
 }
+*/
 
 Vec &operator=(Vec<BaseType> &other) {
   // std::cout << "test4" << std::endl;
   static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
   static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
+  static_assert(!isRVec::value,
+                "Cannot assign to an r value. E.g. c(1, 2, 3) <- 1");
   if constexpr (isSubset::value) {
     ass(other.size() == d.ind.size(),
         "number of items to replace is not a multiple of replacement length");
@@ -94,6 +120,8 @@ Vec &operator=(const Vec<T, R, Trait> &otherVec) {
   // printTAST<decltype(otherVec)>();
   static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
   static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
+  static_assert(!isRVec::value,
+                "Cannot assign to an r value. E.g. c(1, 2, 3) <- 1");
   if constexpr (isBuffer::value) {
     Buffer<T> temp(otherVec.size()); // issue: create Buffer<T> as attribute
     for (std::size_t i = 0; i < otherVec.size(); i++)
@@ -139,6 +167,8 @@ Vec &operator=(const Vec<T2, R2, Trait2> &otherVec) {
   // std::cout << "test6" << std::endl;
   static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
   static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
+  static_assert(!isRVec::value,
+                "Cannot assign to an r value. E.g. c(1, 2, 3) <- 1");
   if constexpr (isBuffer::value) {
     Buffer<T> temp(otherVec.size()); // issue: define temp as own attribute!
     using RetTypeOtherVec =
