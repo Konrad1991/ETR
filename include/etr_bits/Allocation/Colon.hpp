@@ -251,7 +251,7 @@ inline auto colonInternalDerivs(AV &av, T start, T end) {
   if (start < end) {
     std::size_t length = convertSize(end - start + 1);
     av.varConstants[Idx].resize(convertSize(length));
-    Vec<T, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
+    Vec<T, VarPointer<decltype(av), Idx, -1>, ConstantTypeTrait> ret(av);
     std::size_t counter = 0;
     while (start <= end) {
       av.varConstants[Idx][counter] = start;
@@ -262,7 +262,7 @@ inline auto colonInternalDerivs(AV &av, T start, T end) {
   }
   std::size_t length = convertSize(start - end + 1);
   av.varConstants[Idx].resize(convertSize(length));
-  Vec<T, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
+  Vec<T, VarPointer<decltype(av), Idx, -1>, ConstantTypeTrait> ret(av);
   std::size_t counter = 0;
   while (end <= start) {
     av.varConstants[Idx][counter] = start;

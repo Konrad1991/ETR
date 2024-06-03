@@ -104,21 +104,21 @@ inline auto vector_integer(AV &av, const T &inp) {
   using VecType = int;
   if constexpr (std::is_same_v<T, std::size_t>) {
     av.varConstants[Idx].resize(convertSize(inp));
-    Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
+    Vec<VecType, VarPointer<decltype(av), Idx, -1>, ConstantTypeTrait> ret(av);
     return ret;
   } else if constexpr (std::is_floating_point_v<T>) {
     av.varConstants[Idx].resize(convertSize(inp));
     av.varConstants[Idx].resize(convertSize(inp));
-    Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
+    Vec<VecType, VarPointer<decltype(av), Idx, -1>, ConstantTypeTrait> ret(av);
     return ret;
   } else if constexpr (std::is_integral_v<T>) {
     av.varConstants[Idx].resize(convertSize(inp));
-    Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
+    Vec<VecType, VarPointer<decltype(av), Idx, -1>, ConstantTypeTrait> ret(av);
     return ret;
   } else if constexpr (IsVecRorCalc<T> || IsVec<T>) {
     ass(inp.size() == 1, "invalid length argument");
     av.varConstants[Idx].resize(convertSize(inp[0]));
-    Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
+    Vec<VecType, VarPointer<decltype(av), Idx, -1>, ConstantTypeTrait> ret(av);
     return ret;
   } else {
     static_assert(sizeof(T) == 0, "Unsupported type in vector");
@@ -130,21 +130,21 @@ inline auto vector_integer(AV &av, T &inp) {
   using VecType = int;
   if constexpr (std::is_same_v<T, std::size_t>) {
     av.varConstants[Idx].resize(convertSize(inp));
-    Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
+    Vec<VecType, VarPointer<decltype(av), Idx, -1>, ConstantTypeTrait> ret(av);
     return ret;
   } else if constexpr (std::is_floating_point_v<T>) {
     av.varConstants[Idx].resize(convertSize(inp));
     av.varConstants[Idx].resize(convertSize(inp));
-    Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
+    Vec<VecType, VarPointer<decltype(av), Idx, -1>, ConstantTypeTrait> ret(av);
     return ret;
   } else if constexpr (std::is_integral_v<T>) {
     av.varConstants[Idx].resize(convertSize(inp));
-    Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
+    Vec<VecType, VarPointer<decltype(av), Idx, -1>, ConstantTypeTrait> ret(av);
     return ret;
   } else if constexpr (IsVecRorCalc<T> || IsVec<T>) {
     ass(inp.size() == 1, "invalid length argument");
     av.varConstants[Idx].resize(convertSize(inp[0]));
-    Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
+    Vec<VecType, VarPointer<decltype(av), Idx, -1>, ConstantTypeTrait> ret(av);
     return ret;
   } else {
     static_assert(sizeof(T) == 0, "Unsupported type in vector");
@@ -156,21 +156,21 @@ inline auto vector_logical(AV &av, const T &inp) {
   using VecType = bool;
   if constexpr (std::is_same_v<T, std::size_t>) {
     av.varConstants[Idx].resize(convertSize(inp));
-    Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
+    Vec<VecType, VarPointer<decltype(av), Idx, -1>, ConstantTypeTrait> ret(av);
     return ret;
   } else if constexpr (std::is_floating_point_v<T>) {
     av.varConstants[Idx].resize(convertSize(inp));
     av.varConstants[Idx].resize(convertSize(inp));
-    Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
+    Vec<VecType, VarPointer<decltype(av), Idx, -1>, ConstantTypeTrait> ret(av);
     return ret;
   } else if constexpr (std::is_integral_v<T>) {
     av.varConstants[Idx].resize(convertSize(inp));
-    Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
+    Vec<VecType, VarPointer<decltype(av), Idx, -1>, ConstantTypeTrait> ret(av);
     return ret;
   } else if constexpr (IsVecRorCalc<T> || IsVec<T>) {
     ass(inp.size() == 1, "invalid length argument");
     av.varConstants[Idx].resize(convertSize(inp[0]));
-    Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
+    Vec<VecType, VarPointer<decltype(av), Idx, -1>, ConstantTypeTrait> ret(av);
     return ret;
   } else {
     static_assert(sizeof(T) == 0, "Unsupported type in vector");
@@ -182,21 +182,21 @@ inline auto vector_logical(AV &av, T &inp) {
   using VecType = bool;
   if constexpr (std::is_same_v<T, std::size_t>) {
     av.varConstants[Idx].resize(convertSize(inp));
-    Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
+    Vec<VecType, VarPointer<decltype(av), Idx, -1>, ConstantTypeTrait> ret(av);
     return ret;
   } else if constexpr (std::is_floating_point_v<T>) {
     av.varConstants[Idx].resize(convertSize(inp));
     av.varConstants[Idx].resize(convertSize(inp));
-    Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
+    Vec<VecType, VarPointer<decltype(av), Idx, -1>, ConstantTypeTrait> ret(av);
     return ret;
   } else if constexpr (std::is_integral_v<T>) {
     av.varConstants[Idx].resize(convertSize(inp));
-    Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
+    Vec<VecType, VarPointer<decltype(av), Idx, -1>, ConstantTypeTrait> ret(av);
     return ret;
   } else if constexpr (IsVecRorCalc<T> || IsVec<T>) {
     ass(inp.size() == 1, "invalid length argument");
     av.varConstants[Idx].resize(convertSize(inp[0]));
-    Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
+    Vec<VecType, VarPointer<decltype(av), Idx, -1>, ConstantTypeTrait> ret(av);
     return ret;
   } else {
     static_assert(sizeof(T) == 0, "Unsupported type in vector");
@@ -208,21 +208,21 @@ inline auto vector_numeric(AV &av, const T &inp) {
   using VecType = BaseType;
   if constexpr (std::is_same_v<T, std::size_t>) {
     av.varConstants[Idx].resize(convertSize(inp));
-    Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
+    Vec<VecType, VarPointer<decltype(av), Idx, -1>, ConstantTypeTrait> ret(av);
     return ret;
   } else if constexpr (std::is_floating_point_v<T>) {
     av.varConstants[Idx].resize(convertSize(inp));
     av.varConstants[Idx].resize(convertSize(inp));
-    Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
+    Vec<VecType, VarPointer<decltype(av), Idx, -1>, ConstantTypeTrait> ret(av);
     return ret;
   } else if constexpr (std::is_integral_v<T>) {
     av.varConstants[Idx].resize(convertSize(inp));
-    Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
+    Vec<VecType, VarPointer<decltype(av), Idx, -1>, ConstantTypeTrait> ret(av);
     return ret;
   } else if constexpr (IsVecRorCalc<T> || IsVec<T>) {
     ass(inp.size() == 1, "invalid length argument");
     av.varConstants[Idx].resize(convertSize(inp[0]));
-    Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
+    Vec<VecType, VarPointer<decltype(av), Idx, -1>, ConstantTypeTrait> ret(av);
     return ret;
   } else {
     static_assert(sizeof(T) == 0, "Unsupported type in vector");
@@ -234,21 +234,21 @@ inline auto vector_numeric(AV &av, T &inp) {
   using VecType = BaseType;
   if constexpr (std::is_same_v<T, std::size_t>) {
     av.varConstants[Idx].resize(convertSize(inp));
-    Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
+    Vec<VecType, VarPointer<decltype(av), Idx, -1>, ConstantTypeTrait> ret(av);
     return ret;
   } else if constexpr (std::is_floating_point_v<T>) {
     av.varConstants[Idx].resize(convertSize(inp));
     av.varConstants[Idx].resize(convertSize(inp));
-    Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
+    Vec<VecType, VarPointer<decltype(av), Idx, -1>, ConstantTypeTrait> ret(av);
     return ret;
   } else if constexpr (std::is_integral_v<T>) {
     av.varConstants[Idx].resize(convertSize(inp));
-    Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
+    Vec<VecType, VarPointer<decltype(av), Idx, -1>, ConstantTypeTrait> ret(av);
     return ret;
   } else if constexpr (IsVecRorCalc<T> || IsVec<T>) {
     ass(inp.size() == 1, "invalid length argument");
     av.varConstants[Idx].resize(convertSize(inp[0]));
-    Vec<VecType, VarPointer<decltype(av), Idx, -1>, VariableTypeTrait> ret(av);
+    Vec<VecType, VarPointer<decltype(av), Idx, -1>, ConstantTypeTrait> ret(av);
     return ret;
   } else {
     static_assert(sizeof(T) == 0, "Unsupported type in vector");
