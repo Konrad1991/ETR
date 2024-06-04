@@ -95,31 +95,93 @@ int main() {
     print(get_derivs(b));
   }
 
-  /*
-  std::cout << "\n"
-            << "a = a - b" << "\n"
-            << "b = a * a" << std::endl;
-  a = a - b;
-  b = a * a;
-  print(a, av);
-  print(b, av);
-  print(get_derivs(a));
-  print(get_derivs(b));
+  // NOTE: test comparisons
+  {
+    std::cout << "test equal" << std::endl;
+    AllVars<2, 0, 0, 3> av(0, 0);
+    Vec<double, VarPointer<decltype(av), 0, 0>, VariableTypeTrait> a(av);
+    Vec<double, VarPointer<decltype(av), 1, 0>, VariableTypeTrait> b(av);
+    a = coca<0>(av, 3, 6, 9, 12);
+    b = coca<1>(av, 4, 5, 6, 7);
+    b = a == b;
+    print(a, av);
+    print(b, av);
+    print(get_derivs(a));
+    print(get_derivs(b));
+  }
 
-  std::cout << "\n"
-            << "a = b" << std::endl;
-  a = b;
-  print(a, av);
-  print(b, av);
-  print(get_derivs(a));
-  print(get_derivs(b));
+  // NOTE: test unequal
+  {
+    std::cout << "test unequal" << std::endl;
+    AllVars<2, 0, 0, 3> av(0, 0);
+    Vec<double, VarPointer<decltype(av), 0, 0>, VariableTypeTrait> a(av);
+    Vec<double, VarPointer<decltype(av), 1, 0>, VariableTypeTrait> b(av);
+    a = coca<0>(av, 3, 6, 9, 12);
+    b = coca<1>(av, 4, 5, 6, 7);
+    b = a != b;
+    print(a, av);
+    print(b, av);
+    print(get_derivs(a));
+    print(get_derivs(b));
+  }
 
-  std::cout << "\n"
-            << "a = a / b" << std::endl;
-  a = a / scalarDeriv<3>(av, 3.14);
-  print(a, av);
-  print(b, av);
-  print(get_derivs(a));
-  print(get_derivs(b));
-  */
+  // NOTE: test smaller
+  {
+    std::cout << "test smaller" << std::endl;
+    AllVars<2, 0, 0, 3> av(0, 0);
+    Vec<double, VarPointer<decltype(av), 0, 0>, VariableTypeTrait> a(av);
+    Vec<double, VarPointer<decltype(av), 1, 0>, VariableTypeTrait> b(av);
+    a = coca<0>(av, 3, 6, 9, 12);
+    b = coca<1>(av, 4, 5, 6, 7);
+    b = a < b;
+    print(a, av);
+    print(b, av);
+    print(get_derivs(a));
+    print(get_derivs(b));
+  }
+
+  // NOTE: test larger
+  {
+    std::cout << "test larger" << std::endl;
+    AllVars<2, 0, 0, 3> av(0, 0);
+    Vec<double, VarPointer<decltype(av), 0, 0>, VariableTypeTrait> a(av);
+    Vec<double, VarPointer<decltype(av), 1, 0>, VariableTypeTrait> b(av);
+    a = coca<0>(av, 3, 6, 9, 12);
+    b = coca<1>(av, 4, 5, 6, 7);
+    b = a > b;
+    print(a, av);
+    print(b, av);
+    print(get_derivs(a));
+    print(get_derivs(b));
+  }
+
+  // NOTE: test larger equal
+  {
+    std::cout << "test larger equal" << std::endl;
+    AllVars<2, 0, 0, 3> av(0, 0);
+    Vec<double, VarPointer<decltype(av), 0, 0>, VariableTypeTrait> a(av);
+    Vec<double, VarPointer<decltype(av), 1, 0>, VariableTypeTrait> b(av);
+    a = coca<0>(av, 3, 6, 9, 12);
+    b = coca<1>(av, 4, 5, 6, 7);
+    b = a >= b;
+    print(a, av);
+    print(b, av);
+    print(get_derivs(a));
+    print(get_derivs(b));
+  }
+
+  // NOTE: test smaller equal
+  {
+    std::cout << "test smaller equal" << std::endl;
+    AllVars<2, 0, 0, 3> av(0, 0);
+    Vec<double, VarPointer<decltype(av), 0, 0>, VariableTypeTrait> a(av);
+    Vec<double, VarPointer<decltype(av), 1, 0>, VariableTypeTrait> b(av);
+    a = coca<0>(av, 3, 6, 9, 12);
+    b = coca<1>(av, 4, 5, 6, 7);
+    b = a <= b;
+    print(a, av);
+    print(b, av);
+    print(get_derivs(a));
+    print(get_derivs(b));
+  }
 }

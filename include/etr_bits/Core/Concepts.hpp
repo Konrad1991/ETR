@@ -200,6 +200,78 @@ concept IsTimes = requires(T t) {
 };
 
 template <typename T>
+concept IsEqual = requires(T t) {
+  typename std::remove_reference<decltype(t)>::type::CaseTrait;
+  typename std::remove_reference<decltype(t)>::type::TypeTrait;
+  requires std::is_same<
+      typename std::remove_reference<decltype(t)>::type::CaseTrait,
+      BinaryTrait>::value;
+  requires std::is_same<
+      typename std::remove_reference<decltype(t)>::type::TypeTrait,
+      EqualTrait>::value;
+};
+
+template <typename T>
+concept IsSmaller = requires(T t) {
+  typename std::remove_reference<decltype(t)>::type::CaseTrait;
+  typename std::remove_reference<decltype(t)>::type::TypeTrait;
+  requires std::is_same<
+      typename std::remove_reference<decltype(t)>::type::CaseTrait,
+      BinaryTrait>::value;
+  requires std::is_same<
+      typename std::remove_reference<decltype(t)>::type::TypeTrait,
+      SmallerTrait>::value;
+};
+
+template <typename T>
+concept IsLarger = requires(T t) {
+  typename std::remove_reference<decltype(t)>::type::CaseTrait;
+  typename std::remove_reference<decltype(t)>::type::TypeTrait;
+  requires std::is_same<
+      typename std::remove_reference<decltype(t)>::type::CaseTrait,
+      BinaryTrait>::value;
+  requires std::is_same<
+      typename std::remove_reference<decltype(t)>::type::TypeTrait,
+      LargerTrait>::value;
+};
+
+template <typename T>
+concept IsLargerEqual = requires(T t) {
+  typename std::remove_reference<decltype(t)>::type::CaseTrait;
+  typename std::remove_reference<decltype(t)>::type::TypeTrait;
+  requires std::is_same<
+      typename std::remove_reference<decltype(t)>::type::CaseTrait,
+      BinaryTrait>::value;
+  requires std::is_same<
+      typename std::remove_reference<decltype(t)>::type::TypeTrait,
+      LargerEqualTrait>::value;
+};
+
+template <typename T>
+concept IsSmallerEqual = requires(T t) {
+  typename std::remove_reference<decltype(t)>::type::CaseTrait;
+  typename std::remove_reference<decltype(t)>::type::TypeTrait;
+  requires std::is_same<
+      typename std::remove_reference<decltype(t)>::type::CaseTrait,
+      BinaryTrait>::value;
+  requires std::is_same<
+      typename std::remove_reference<decltype(t)>::type::TypeTrait,
+      SmallerEqualTrait>::value;
+};
+
+template <typename T>
+concept IsUnequal = requires(T t) {
+  typename std::remove_reference<decltype(t)>::type::CaseTrait;
+  typename std::remove_reference<decltype(t)>::type::TypeTrait;
+  requires std::is_same<
+      typename std::remove_reference<decltype(t)>::type::CaseTrait,
+      BinaryTrait>::value;
+  requires std::is_same<
+      typename std::remove_reference<decltype(t)>::type::TypeTrait,
+      UnEqualTrait>::value;
+};
+
+template <typename T>
 concept IsSinus = requires(T t) {
   typename std::remove_reference<decltype(t)>::type::CaseTrait;
   typename std::remove_reference<decltype(t)>::type::TypeTrait;

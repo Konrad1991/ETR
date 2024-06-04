@@ -73,7 +73,7 @@ static constexpr auto walkTD() {
     return produceQuarternyType<decltype(LT), decltype(RT), decltype(LDeriv),
                                 decltype(RDeriv), QuarternaryTrait,
                                 DivideByConstantDerivTrait>();
-
+    // TODO: add case if L is a constant. This has to be added to all constants
   } else {
     return produceQuarternyType<decltype(LT), decltype(RT), decltype(LDeriv),
                                 decltype(RDeriv), QuarternaryTrait,
@@ -97,6 +97,60 @@ static constexpr auto walkTD() {
   constexpr auto RDeriv = walkTD<typename TD::typeTraitR>();
   return produceBinaryType<decltype(LDeriv), decltype(RDeriv), BinaryTrait,
                            etr::MinusDerivTrait>();
+}
+
+template <typename TD>
+  requires IsEqual<TD>
+static constexpr auto walkTD() {
+  constexpr auto LDeriv = walkTD<typename TD::typeTraitL>();
+  constexpr auto RDeriv = walkTD<typename TD::typeTraitR>();
+  return produceBinaryType<decltype(LDeriv), decltype(RDeriv), BinaryTrait,
+                           EqualDerivTrait>();
+}
+
+template <typename TD>
+  requires IsUnequal<TD>
+static constexpr auto walkTD() {
+  constexpr auto LDeriv = walkTD<typename TD::typeTraitL>();
+  constexpr auto RDeriv = walkTD<typename TD::typeTraitR>();
+  return produceBinaryType<decltype(LDeriv), decltype(RDeriv), BinaryTrait,
+                           UnEqualDerivTrait>();
+}
+
+template <typename TD>
+  requires IsSmaller<TD>
+static constexpr auto walkTD() {
+  constexpr auto LDeriv = walkTD<typename TD::typeTraitL>();
+  constexpr auto RDeriv = walkTD<typename TD::typeTraitR>();
+  return produceBinaryType<decltype(LDeriv), decltype(RDeriv), BinaryTrait,
+                           SmallerDerivTrait>();
+}
+
+template <typename TD>
+  requires IsLarger<TD>
+static constexpr auto walkTD() {
+  constexpr auto LDeriv = walkTD<typename TD::typeTraitL>();
+  constexpr auto RDeriv = walkTD<typename TD::typeTraitR>();
+  return produceBinaryType<decltype(LDeriv), decltype(RDeriv), BinaryTrait,
+                           LargerDerivTrait>();
+}
+
+template <typename TD>
+  requires IsSmallerEqual<TD>
+static constexpr auto walkTD() {
+  constexpr auto LDeriv = walkTD<typename TD::typeTraitL>();
+  constexpr auto RDeriv = walkTD<typename TD::typeTraitR>();
+  return produceBinaryType<decltype(LDeriv), decltype(RDeriv), BinaryTrait,
+                           SmallerEqualDerivTrait>();
+}
+
+template <typename TD>
+  requires IsLargerEqual<TD>
+static constexpr auto walkTD() {
+  constexpr auto LDeriv = walkTD<typename TD::typeTraitL>();
+  constexpr auto RDeriv = walkTD<typename TD::typeTraitR>();
+  return produceBinaryType<decltype(LDeriv), decltype(RDeriv), BinaryTrait,
+                           LargerEqualDerivTrait>();
 }
 
 template <typename TD>

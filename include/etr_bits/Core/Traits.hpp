@@ -143,7 +143,7 @@ struct EqualDerivTrait {
   template <typename L = BaseType, typename R = BaseType>
   static inline bool
   f(L a,
-    R b) { // issue: add this to documentationion for package authors
+    R b) { // TODO: add this to documentationion for package authors
     if (fabs(a - b) < 1E-3) {
       return true;
     } else {
@@ -151,7 +151,10 @@ struct EqualDerivTrait {
     }
   }
 
-  static inline bool fDeriv() { return false; }
+  template <typename L = BaseType, typename R = BaseType>
+  static inline std::common_type<L, R>::type fDeriv(L l, R r) {
+    return false;
+  }
 };
 struct SmallerDerivTrait {
   template <typename L = BaseType, typename R = BaseType>
@@ -162,7 +165,10 @@ struct SmallerDerivTrait {
       return false;
     }
   }
-  static inline bool fDeriv() { return false; }
+  template <typename L = BaseType, typename R = BaseType>
+  static inline std::common_type<L, R>::type fDeriv(L l, R r) {
+    return false;
+  }
 };
 struct SmallerEqualDerivTrait {
   template <typename L = BaseType, typename R = BaseType>
@@ -173,7 +179,10 @@ struct SmallerEqualDerivTrait {
       return false;
     }
   }
-  static inline bool fDeriv() { return false; }
+  template <typename L = BaseType, typename R = BaseType>
+  static inline std::common_type<L, R>::type fDeriv(L l, R r) {
+    return false;
+  }
 };
 struct LargerDerivTrait {
   template <typename L = BaseType, typename R = BaseType>
@@ -184,7 +193,10 @@ struct LargerDerivTrait {
       return false;
     }
   }
-  static inline bool fDeriv() { return false; }
+  template <typename L = BaseType, typename R = BaseType>
+  static inline std::common_type<L, R>::type fDeriv(L l, R r) {
+    return false;
+  }
 };
 struct LargerEqualDerivTrait {
   template <typename L = BaseType, typename R = BaseType>
@@ -194,6 +206,10 @@ struct LargerEqualDerivTrait {
     } else {
       return false;
     }
+  }
+  template <typename L = BaseType, typename R = BaseType>
+  static inline std::common_type<L, R>::type fDeriv(L l, R r) {
+    return false;
   }
 };
 struct UnEqualDerivTrait {
@@ -205,7 +221,10 @@ struct UnEqualDerivTrait {
       return false;
     }
   }
-  static inline bool fDeriv() { return false; }
+  template <typename L = BaseType, typename R = BaseType>
+  static inline std::common_type<L, R>::type fDeriv(L l, R r) {
+    return false;
+  }
 };
 
 struct SinusDerivTrait {
