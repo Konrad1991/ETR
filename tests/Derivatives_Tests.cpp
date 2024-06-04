@@ -1,3 +1,4 @@
+#include <ios>
 #define STANDALONE_ETR
 
 // -O2 speed up!
@@ -8,6 +9,7 @@ using namespace etr;
 int main() {
   // NOTE: block Nr.1
   {
+    /*
     std::cout << "general tests" << std::endl;
     etr::AllVars<2, 0, 0, 2> av(0, 0); // deriv with respect tp variable 1 = vp1
     Vec<double, VarPointer<decltype(av), 0, 0>, VariableTypeTrait> vp1(av);
@@ -29,8 +31,9 @@ int main() {
     vp1 = 100; // TODO: the scalar value 100 has to be encapsulated into a
                // specific class
     print(vp1, av);
+    */
   }
-  // NOTE: test minus
+  // NOTE: further tests
   {
     std::cout << "test minus" << std::endl;
     AllVars<2, 0, 0, 3> av(0, 0);
@@ -38,8 +41,7 @@ int main() {
     Vec<double, VarPointer<decltype(av), 1, 0>, VariableTypeTrait> b(av);
 
     std::cout << "\n"
-              << "a = c(1, 2, 3, 4)"
-              << "\n"
+              << "a = c(1, 2, 3, 4)" << "\n"
               << "b = c(4, 5, 6, 7)" << std::endl;
     a = coca<0>(av, 1, 2, 3, 4);
     b = coca<1>(av, 4, 5, 6, 7);
@@ -47,32 +49,77 @@ int main() {
     print(b, av);
     print(get_derivs(a));
     print(get_derivs(b));
-
-    std::cout << "\n"
-              << "a = a - b"
-              << "\n"
-              << "b = a * a" << std::endl;
-    a = a - b;
-    b = a * a;
-    print(a, av);
-    print(b, av);
-    print(get_derivs(a));
-    print(get_derivs(b));
-
-    std::cout << "\n"
-              << "a = b" << std::endl;
-    a = b;
-    print(a, av);
-    print(b, av);
-    print(get_derivs(a));
-    print(get_derivs(b));
-
-    std::cout << "\n"
-              << "a = a / b" << std::endl;
-    a = a / scalarDeriv<3>(av, 3.14);
+  }
+  // NOTE: test constants
+  {
+    std::cout << "test constants" << std::endl;
+    AllVars<2, 0, 0, 3> av(0, 0);
+    Vec<double, VarPointer<decltype(av), 0, 0>, VariableTypeTrait> a(av);
+    Vec<double, VarPointer<decltype(av), 1, 0>, VariableTypeTrait> b(av);
+    a = coca<0>(av, 1, 2, 3, 4);
+    b = coca<1>(av, 4, 5, 6, 7);
+    a = scalarDeriv<2>(av, 3.14);
     print(a, av);
     print(b, av);
     print(get_derivs(a));
     print(get_derivs(b));
   }
+
+  // NOTE: test constants
+  {
+    std::cout << "test constants" << std::endl;
+    AllVars<2, 0, 0, 3> av(0, 0);
+    Vec<double, VarPointer<decltype(av), 0, 0>, VariableTypeTrait> a(av);
+    Vec<double, VarPointer<decltype(av), 1, 0>, VariableTypeTrait> b(av);
+    a = coca<0>(av, 3, 6, 9, 12);
+    b = coca<1>(av, 4, 5, 6, 7);
+    b = a / scalarDeriv<2>(av, 3);
+    print(a, av);
+    print(b, av);
+    print(get_derivs(a));
+    print(get_derivs(b));
+  }
+
+  // NOTE: test constants
+  {
+    std::cout << "test constants" << std::endl;
+    AllVars<2, 0, 0, 3> av(0, 0);
+    Vec<double, VarPointer<decltype(av), 0, 0>, VariableTypeTrait> a(av);
+    Vec<double, VarPointer<decltype(av), 1, 0>, VariableTypeTrait> b(av);
+    a = coca<0>(av, 3, 6, 9, 12);
+    b = coca<1>(av, 4, 5, 6, 7);
+    b = (a / scalarDeriv<2>(av, 3)) + a * b * b;
+    print(a, av);
+    print(b, av);
+    print(get_derivs(a));
+    print(get_derivs(b));
+  }
+
+  /*
+  std::cout << "\n"
+            << "a = a - b" << "\n"
+            << "b = a * a" << std::endl;
+  a = a - b;
+  b = a * a;
+  print(a, av);
+  print(b, av);
+  print(get_derivs(a));
+  print(get_derivs(b));
+
+  std::cout << "\n"
+            << "a = b" << std::endl;
+  a = b;
+  print(a, av);
+  print(b, av);
+  print(get_derivs(a));
+  print(get_derivs(b));
+
+  std::cout << "\n"
+            << "a = a / b" << std::endl;
+  a = a / scalarDeriv<3>(av, 3.14);
+  print(a, av);
+  print(b, av);
+  print(get_derivs(a));
+  print(get_derivs(b));
+  */
 }

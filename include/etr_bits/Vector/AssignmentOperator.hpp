@@ -174,24 +174,52 @@ Vec &operator=(const Vec<T2, R2, Trait2> &otherVec) {
     using tD = decltype(otherVec.d);
     using tDRaw = std::remove_reference<decltype(otherVec)>::type;
     using typeExpr = std::remove_reference<ExtractedTypeD<tDRaw>>::type;
-    if constexpr (!IsVarPointer<tD>) {
-      constexpr auto res = walkTD<typeExpr>();
+    // NOTE: a constant
+    if constexpr (IsConstant<decltype(otherVec)>) {
       d.resize(otherVec.size());
       for (std::size_t i = 0; i < otherVec.size(); i++) {
-        d.AllVarsRef.varBuffer[d.I][i] = otherVec[i];
+        d.AllVarsRef.varBuffer[d.I][i] = otherVec.d[i];
+      }
+      d.AllVarsRef.resizeDerivs(R::I, R::TIdx, otherVec.size());
+      if (d.AllVarsRef.IndepVarIdx == d.I) {
+        for (std::size_t i = 0; i < otherVec.size(); i++) {
+          d.setDeriv(d.AllVarsRef, i, 1.0);
+        }
+      } else {
+        for (std::size_t i = 0; i < otherVec.size(); i++) {
+          d.setDeriv(d.AllVarsRef, i, 0.0);
+        }
+      }
+
+    }
+    // NOTE: an expression
+    else if constexpr (!IsVarPointer<tD>) {
+      constexpr auto res = walkTD<typeExpr>();
+      temp.resize(otherVec.size());
+
+      for (std::size_t i = 0; i < otherVec.size(); i++) {
+        temp[i] = otherVec.d[i];
       }
       d.AllVarsRef.resizeDerivs(R::I, R::TIdx, otherVec.size());
       for (std::size_t i = 0; i < res.getSize(d.AllVarsRef); i++) {
         d.setDeriv(d.AllVarsRef, i, res.getDeriv(d.AllVarsRef, i));
       }
-    } else {
 
+      d.resize(otherVec.size());
+      for (std::size_t i = 0; i < otherVec.size(); i++) {
+        d.AllVarsRef.varBuffer[d.I][i] = temp[i];
+      }
+
+    }
+    // NOTE: a variable
+    else {
       d.resize(otherVec.size());
       for (std::size_t i = 0; i < d.size(); i++) {
         d.setVal(otherVec.d.AllVarsRef, i,
                  tD::getVal(otherVec.d.AllVarsRef, i));
       }
       if constexpr (is<Trait2, VariableTypeTrait>) {
+        d.AllVarsRef.resizeDerivs(R::I, R::TIdx, otherVec.size());
         for (std::size_t i = 0; i < d.size(); i++) {
           d.setDeriv(d.AllVarsRef, i,
                      otherVec.d.getDeriv(otherVec.d.AllVarsRef, i));

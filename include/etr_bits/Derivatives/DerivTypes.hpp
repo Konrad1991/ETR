@@ -129,6 +129,24 @@ template <typename T, int Idx, typename Trait> struct Constants {
   using Type = T;
   using RetType = T;
   static constexpr int I = Idx;
+  template <typename AV> static std::size_t getSize(AV &av) {
+    using Ty = typename std::remove_reference<Type>::type;
+    return Ty::template getSize<AV>(av);
+  }
+
+  template <typename AV> static auto getVal(AV &av, std::size_t VecIdx) {
+    using Ty = typename std::remove_reference<Type>::type;
+    if constexpr (IsBinary<Ty>) {
+      return Ty::template getVal<AV>(av, VecIdx);
+    } else {
+      return Ty::template getVal<AV>(av, VecIdx);
+    }
+  }
+
+  template <typename AV> static auto getDeriv(AV &av, std::size_t VecIdx) {
+    using Ty = typename std::remove_reference<Type>::type;
+    return Ty::template getDeriv<AV>(av, VecIdx);
+  }
 };
 
 // TODO: an additional type is required which encapsulates scalar constants

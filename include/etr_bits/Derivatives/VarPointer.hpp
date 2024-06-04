@@ -89,13 +89,13 @@ template <typename T, int Idx, int TypeIdx, typename Trait> struct VarPointer {
 
   template <typename AV> static auto getVal(AV &av, std::size_t VecIdx) {
     if constexpr (TypeIdx == -1) {
-      return av.varConstants[Idx][VecIdx];
+      return av.varConstants[Idx][VecIdx % av.varConstants[Idx].size()];
     } else if constexpr (TypeIdx == 0) {
-      return av.varBuffer[Idx][VecIdx];
+      return av.varBuffer[Idx][VecIdx % av.varBuffer[Idx].size()];
     } else if constexpr (TypeIdx == 1) {
-      return av.varBorrow[Idx][VecIdx];
+      return av.varBorrow[Idx][VecIdx % av.varBorrow[Idx].size()];
     } else if constexpr (TypeIdx == 2) {
-      return av.varBorrowSEXP[Idx][VecIdx];
+      return av.varBorrowSEXP[Idx][VecIdx % av.varBorrowSEXP[Idx].size()];
     } else {
       ass(false, "Unknown variable index found");
     }
@@ -132,6 +132,8 @@ template <typename T, int Idx, int TypeIdx, typename Trait> struct VarPointer {
   template <typename AV> static auto getDeriv(AV &av, std::size_t VecIdx) {
     if constexpr (TypeIdx == -1) {
       return 0.0;
+      // av.varConstants[Idx][VecIdx %
+      //                         av.varConstants[Idx].size()]; // return 0.0;
     } else if constexpr (TypeIdx == 0) {
       if (av.varBufferDerivs[Idx].size() != av.varBuffer[Idx].size()) {
         av.varBufferDerivs[Idx].resize(av.varBuffer[Idx].size());
@@ -140,7 +142,7 @@ template <typename T, int Idx, int TypeIdx, typename Trait> struct VarPointer {
           av.DerivInit = true;
         }
       }
-      return av.varBufferDerivs[Idx][VecIdx];
+      return av.varBufferDerivs[Idx][VecIdx % av.varBufferDerivs[Idx].size()];
     } else if constexpr (TypeIdx == 1) {
       if (av.varBorrowDerivs[Idx].size() != av.varBorrow[Idx].size()) {
         av.varBorrowDerivs[Idx].resize(av.varBorrow[Idx].size());
@@ -149,7 +151,7 @@ template <typename T, int Idx, int TypeIdx, typename Trait> struct VarPointer {
           av.DerivInit = true;
         }
       }
-      return av.varBorrowDerivs[Idx][VecIdx];
+      return av.varBorrowDerivs[Idx][VecIdx % av.varBorrowDerivs[Idx].size()];
     } else if constexpr (TypeIdx == 2) {
       if (av.varBorrowSEXPDerivs[Idx].size() != av.varBorrowSEXP[Idx].size()) {
         av.varBorrowSEXPDerivs[Idx].resize(av.varBorrowSEXP[Idx].size());
@@ -158,7 +160,8 @@ template <typename T, int Idx, int TypeIdx, typename Trait> struct VarPointer {
           av.DerivInit = true;
         }
       }
-      return av.varBorrowSEXPDerivs[Idx][VecIdx];
+      return av.varBorrowSEXPDerivs[Idx][VecIdx %
+                                         av.varBorrowSEXPDerivs[Idx].size()];
     } else {
       ass(false, "Unknown variable index found");
     }

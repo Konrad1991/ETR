@@ -42,7 +42,7 @@ static constexpr auto walkTD() -> VariableType<TD> {
 template <typename TD>
   requires IsConstant<TD>
 static constexpr auto walkTD() {
-  return Constants<typename TD::Type, TD::I, ConstantTypeTrait>{};
+  return Constants<TD, TD::I, ConstantTypeTrait>{};
 }
 
 template <typename TRaw>
@@ -68,9 +68,17 @@ static constexpr auto walkTD() {
   constexpr auto RT = produceVariableType<typename TDDivision::typeTraitR>();
   constexpr auto LDeriv = walkTD<typename TDDivision::typeTraitL>();
   constexpr auto RDeriv = walkTD<typename TDDivision::typeTraitR>();
-  return produceQuarternyType<decltype(LT), decltype(RT), decltype(LDeriv),
-                              decltype(RDeriv), QuarternaryTrait,
-                              DivideDerivTrait>();
+  if constexpr (is<typename TDDivision::typeTraitR::TypeTrait,
+                   ConstantTypeTrait>) {
+    return produceQuarternyType<decltype(LT), decltype(RT), decltype(LDeriv),
+                                decltype(RDeriv), QuarternaryTrait,
+                                DivideByConstantDerivTrait>();
+
+  } else {
+    return produceQuarternyType<decltype(LT), decltype(RT), decltype(LDeriv),
+                                decltype(RDeriv), QuarternaryTrait,
+                                DivideDerivTrait>();
+  }
 }
 
 template <typename TD>

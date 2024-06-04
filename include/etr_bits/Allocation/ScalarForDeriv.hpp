@@ -10,7 +10,9 @@ template <int Idx, typename AV, typename T>
 inline auto scalarDeriv(AV &av, T s) {
   av.varConstants[Idx].resize(1);
   av.varConstants[Idx][0] = s;
-  Vec<T, VarPointer<decltype(av), Idx, -1>, ConstantTypeTrait> ret(av);
+  Vec<T, VarPointer<decltype(av), Idx, -1, ConstantTypeTrait>,
+      ConstantTypeTrait>
+      ret(av);
   return ret;
 }
 

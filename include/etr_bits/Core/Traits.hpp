@@ -102,6 +102,30 @@ struct DivideDerivTrait {
   }
 };
 
+struct DivideByConstantDerivTrait {
+  template <typename L = BaseType, typename R = BaseType>
+  static inline auto f(L l, R r) {
+    if constexpr (std::is_integral_v<L> && std::is_integral_v<R>) {
+      return static_cast<BaseType>(static_cast<BaseType>(l) /
+                                   static_cast<BaseType>(r));
+    } else if constexpr (std::is_integral_v<L> && !std::is_integral_v<R>) {
+      return static_cast<BaseType>(l) / r;
+    } else if constexpr (!std::is_integral_v<L> && std::is_integral_v<R>) {
+      return l / static_cast<BaseType>(r);
+    } else {
+      static_assert(std::is_arithmetic_v<L> && std::is_arithmetic_v<R>,
+                    "Type not supported by operation /");
+      return l / r;
+    }
+  }
+
+  template <typename L, typename R, typename LDeriv, typename RDeriv>
+  static inline std::common_type<L, R>::type fDeriv(L l, R r, LDeriv ld,
+                                                    RDeriv rd) {
+    return ld / r;
+  }
+};
+
 struct PowDerivTrait {
   template <typename L = BaseType, typename R = BaseType>
   static inline std::common_type<L, R>::type f(L l, R r) {
