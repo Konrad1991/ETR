@@ -75,7 +75,7 @@ template <typename Deriv, typename Trait, typename OpTrait> struct UnaryType {
   }
 
   template <typename AV> static auto getVal(AV &av, std::size_t idx) {
-    return sin(Deriv::getVal(av, idx)); // issue: wrong wrong wrongcorrect?
+    return sin(Deriv::getVal(av, idx));
   }
 
   template <typename AV> static auto getDeriv(AV &av, std::size_t idx) {
@@ -85,7 +85,7 @@ template <typename Deriv, typename Trait, typename OpTrait> struct UnaryType {
 
 template <typename I, typename Trait, typename OpTrait>
 inline constexpr UnaryType<I, Trait, OpTrait> produceUnaryType() {
-  return UnaryType<I, Trait, OpTrait>(); // issue: wrong wrong wrong
+  return UnaryType<I, Trait, OpTrait>();
 }
 
 template <typename T, typename Trait> struct VariableType {
