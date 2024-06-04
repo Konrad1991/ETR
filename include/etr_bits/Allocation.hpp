@@ -5,6 +5,7 @@
 #include "Allocation/Colon.hpp"
 #include "Allocation/Matrix.hpp"
 #include "Allocation/Rep.hpp"
+#include "Allocation/ScalarForDeriv.hpp"
 #include "Allocation/Vector.hpp"
 
 #endif
