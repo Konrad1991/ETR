@@ -33,7 +33,7 @@ int main() {
   // NOTE: test minus
   {
     std::cout << "test minus" << std::endl;
-    AllVars<2, 0, 0, 2> av(0, 0);
+    AllVars<2, 0, 0, 3> av(0, 0);
     Vec<double, VarPointer<decltype(av), 0, 0>, VariableTypeTrait> a(av);
     Vec<double, VarPointer<decltype(av), 1, 0>, VariableTypeTrait> b(av);
 
@@ -69,7 +69,7 @@ int main() {
 
     std::cout << "\n"
               << "a = a / b" << std::endl;
-    a = a / b;
+    a = a / scalarDeriv<3>(av, 3.14);
     print(a, av);
     print(b, av);
     print(get_derivs(a));
