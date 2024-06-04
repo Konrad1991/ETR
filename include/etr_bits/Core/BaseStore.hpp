@@ -59,7 +59,7 @@ template <typename T, typename BaseTrait> struct BaseStore {
       this->p = nullptr;
     }
 
-    if constexpr (is<RetRetType, double>) {
+    if constexpr (is<RetType, double>) {
       ass(Rf_isReal(s), "R object is not of type numeric");
       sz = static_cast<std::size_t>(Rf_length(s));
       capacity = static_cast<std::size_t>(sz);
@@ -71,7 +71,7 @@ template <typename T, typename BaseTrait> struct BaseStore {
         p[i] = REAL(s)[i];
       }
       allocated = true;
-    } else if constexpr (is<RetRetType, int>) {
+    } else if constexpr (is<RetType, int>) {
       ass(Rf_isInteger(s), "R object is not of type integer");
       sz = static_cast<std::size_t>(Rf_length(s));
       capacity = static_cast<std::size_t>(sz);
@@ -83,7 +83,7 @@ template <typename T, typename BaseTrait> struct BaseStore {
         p[i] = INTEGER(s)[i];
       }
       allocated = true;
-    } else if constexpr (is<RetRetType, bool>) {
+    } else if constexpr (is<RetType, bool>) {
       ass(Rf_isLogical(s), "R object is not of type logical");
       sz = static_cast<std::size_t>(Rf_length(s));
       capacity = static_cast<std::size_t>(sz);
@@ -191,7 +191,7 @@ template <typename T, typename BaseTrait> struct BaseStore {
       delete[] p;
       this->p = nullptr;
     }
-    if constexpr (is<RetRetType, double>) {
+    if constexpr (is<RetType, double>) {
       ass(Rf_isReal(s), "R object is not of type numeric");
       sz = static_cast<std::size_t>(Rf_length(s));
       capacity = static_cast<std::size_t>(sz);
@@ -203,7 +203,7 @@ template <typename T, typename BaseTrait> struct BaseStore {
         p[i] = REAL(s)[i];
       }
       allocated = true;
-    } else if constexpr (is<RetRetType, int>) {
+    } else if constexpr (is<RetType, int>) {
       ass(Rf_isInteger(s), "R object is not of type integer");
       sz = static_cast<std::size_t>(Rf_length(s));
       capacity = static_cast<std::size_t>(sz);
@@ -215,7 +215,7 @@ template <typename T, typename BaseTrait> struct BaseStore {
         p[i] = INTEGER(s)[i];
       }
       allocated = true;
-    } else if constexpr (is<RetRetType, bool>) {
+    } else if constexpr (is<RetType, bool>) {
       ass(Rf_isLogical(s), "R object is not of type logical");
       sz = static_cast<std::size_t>(Rf_length(s));
       capacity = static_cast<std::size_t>(sz);
