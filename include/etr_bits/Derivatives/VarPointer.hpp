@@ -71,6 +71,20 @@ template <typename T, int Idx, int TypeIdx, typename Trait> struct VarPointer {
     }
   }
 
+  auto getDerivObj() const {
+    if constexpr (TypeIdx == -1) {
+      static_assert(sizeof(T) == 0, "There is no deriv for constants");
+    } else if constexpr (TypeIdx == 0) {
+      return AllVarsRef.varBufferDerivs[Idx];
+    } else if constexpr (TypeIdx == 1) {
+      return AllVarsRef.varBorrowDerivs[Idx];
+    } else if constexpr (TypeIdx == 2) {
+      return AllVarsRef.varBorrowSEXPDerivs[Idx];
+    } else {
+      ass(false, "Unknown variable index found");
+    }
+  }
+
   // TODO: change BaseType to the correct type
   // TODO: remove method
   template <typename AV> static auto getPtr(AV &av, BaseType **ptr) {

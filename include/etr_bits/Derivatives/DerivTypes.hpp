@@ -79,7 +79,7 @@ template <typename Deriv, typename Trait, typename OpTrait> struct UnaryType {
   }
 
   template <typename AV> static auto getDeriv(AV &av, std::size_t idx) {
-    return cos(Deriv::getDeriv(av, idx));
+    return cos(Deriv::getVal(av, idx));
   }
 };
 
