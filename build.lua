@@ -1,10 +1,10 @@
 local function build_project()
-	local build_cmd = "g++ ./ETR/tests/BaseStore_Tests.cpp -std=c++20 2>&1"
+	local build_cmd = "g++ ./tests/Derivatives_Tests.cpp -std=c++20 2>&1"
 	local handle = io.popen(build_cmd)
 	local result = handle:read("*a")
 	local test = handle:close()
 	if #result == 0 then
-		build_cmd = "g++ ./ETR/tests/BaseStore_Tests.cpp -std=c++20 && ./a.out 2>&1"
+		build_cmd = "./a.out 2>&1"
 		handle = io.popen(build_cmd)
 		result = handle:read("*a")
 		handle:close()
