@@ -5,123 +5,97 @@
 #include <type_traits>
 
 template <typename TD>
-  requires std::is_same_v<TD, T>
+  requires std::is_arithmetic_v<TD>
 Vec &operator=(const TD inp) {
-  // std::cout << "test1" << std::endl;
   static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
   static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
-  if constexpr (isSubset::value) {
-    for (std::size_t i = 0; i < d.ind.size(); i++) {
-      d[i] = inp;
+  static_assert(!isRVec::value,
+                "Cannot assign to an r value. E.g. c(1, 2, 3) <- 1");
+  if constexpr (is<TD, T>) {
+    if constexpr (isSubset::value) {
+      for (std::size_t i = 0; i < d.ind.size(); i++) {
+        d[i] = inp;
+      }
+    } else if constexpr (isBorrow::value) {
+      d.sz = 1;
+      d[0] = inp;
+    } else {
+      d.resize(1);
+      d[0] = inp;
     }
-  } else if constexpr (isBorrow::value) {
-    d.sz = 1;
-    d[0] = inp;
+    return *this;
   } else {
-    d.resize(1);
-    d[0] = inp;
-  }
-  return *this;
-}
-
-template <typename TD>
-  requires std::is_same_v<TD, int>
-Vec &operator=(const TD inp) {
-  // std::cout << "operator= test2" << std::endl;
-  static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
-  static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
-  if constexpr (isSubset::value) {
-    for (std::size_t i = 0; i < d.ind.size(); i++) {
-      d[i] = static_cast<BaseType>(inp);
+    if constexpr (isSubset::value) {
+      for (std::size_t i = 0; i < d.ind.size(); i++) {
+        d[i] = static_cast<T>(inp);
+      }
+    } else if constexpr (isBorrow::value) {
+      d.sz = 1;
+      d[0] = static_cast<T>(inp);
+    } else {
+      d.resize(1);
+      d[0] = static_cast<T>(inp);
     }
-  } else if constexpr (isBorrow::value) {
-    d.sz = 1;
-    d[0] = static_cast<BaseType>(inp);
-  } else if constexpr (isVarPointer::value) {
-    d.resize(1);
-    d[0] = inp;
-  } else {
-    d.resize(1);
-    d[0] = static_cast<BaseType>(inp);
+    return *this;
   }
-  return *this;
-}
-
-template <typename TD>
-  requires std::is_same_v<TD, bool>
-Vec &operator=(const TD inp) {
-  // std::cout << "operator= test3" << std::endl;
-  static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
-  static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
-  if constexpr (isSubset::value) {
-    for (std::size_t i = 0; i < d.ind.size(); i++) {
-      d[i] = static_cast<BaseType>(inp);
-    }
-  } else if constexpr (isBorrow::value) {
-    d.sz = 1;
-    d[0] = static_cast<BaseType>(inp);
-  } else {
-    d.resize(1);
-    d[0] = static_cast<BaseType>(inp);
-  }
-  return *this;
-}
-
-Vec &operator=(Vec<BaseType> &other) {
-  // std::cout << "test4" << std::endl;
-  static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
-  static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
-  if constexpr (isSubset::value) {
-    ass(other.size() == d.ind.size(),
-        "number of items to replace is not a multiple of replacement length");
-    for (std::size_t i = 0; i < d.ind.size(); i++) {
-      d[i] = other[i];
-    }
-  } else {
-    if (size() != other.size()) {
-      resize(other.size());
-      for (std::size_t i = 0; i < other.size(); i++)
-        d[i] = other[i];
-    }
-  }
-  if (other.d.im()) {
-    d.setMatrix(true, other.d.nr(), other.d.nc()); // issue: correct?
-  }
-  return *this;
 }
 
 Vec &operator=(const Vec<T, R, Trait> &otherVec) {
-  // std::cout << "test5" << std::endl;
-  // printTAST<decltype(otherVec)>();
   static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
   static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
+  static_assert(!isRVec::value,
+                "Cannot assign to an r value. E.g. c(1, 2, 3) <- 1");
+
+  using DataTypeOtherVec = typename etr::ExtractDataType<
+      std::remove_reference_t<decltype(otherVec)>>::RetType;
   if constexpr (isBuffer::value) {
-    Buffer<T> temp(otherVec.size()); // issue: create Buffer<T> as attribute
-    for (std::size_t i = 0; i < otherVec.size(); i++)
-      temp[i] = otherVec[i];
+    temp.resize(otherVec.size());
+    for (std::size_t i = 0; i < otherVec.size(); i++) {
+      if constexpr (is<DataTypeOtherVec, T>) {
+        temp[i] = otherVec[i];
+      } else {
+        temp[i] = static_cast<T>(otherVec[i]);
+      }
+    }
     d.moveit(temp);
   } else if constexpr (isBorrow::value) {
     ass(otherVec.size() <= d.capacity,
         "number of items to replace is not a multiple of replacement length");
-    Buffer<T> temp(otherVec.size());
-    for (std::size_t i = 0; i < otherVec.size(); i++)
-      temp[i] = otherVec[i];
+    temp.resize(otherVec.size());
+    for (std::size_t i = 0; i < otherVec.size(); i++) {
+      if constexpr (is<DataTypeOtherVec, T>) {
+        temp[i] = otherVec[i];
+      } else {
+        temp[i] = static_cast<T>(otherVec[i]);
+      }
+    }
+    ass(d.sz <= otherVec.size(),
+        "size cannot be increased above the size of the borrowed object");
     d.sz = otherVec.size();
     for (std::size_t i = 0; i < otherVec.size(); i++)
       d[i] = temp[i];
   } else if constexpr (isBorrowSEXP::value) {
-    Buffer<T> temp(otherVec.size());
-    for (std::size_t i = 0; i < otherVec.size(); i++)
-      temp[i] = otherVec[i];
+    temp.resize(otherVec.size());
+    for (std::size_t i = 0; i < otherVec.size(); i++) {
+      if constexpr (is<DataTypeOtherVec, T>) {
+        temp[i] = otherVec[i];
+      } else {
+        temp[i] = static_cast<T>(otherVec[i]);
+      }
+    }
     if (otherVec.size() > this->size())
       d.resize(otherVec.size());
     d.moveit(temp);
   } else if constexpr (isSubset::value) {
     ass(otherVec.size() == d.ind.size(),
         "number of items to replace is not a multiple of replacement length");
-    Buffer<T> temp(otherVec.size());
+    temp.resize(otherVec.size());
     for (std::size_t i = 0; i < otherVec.size(); i++) {
-      temp[i] = otherVec[i];
+      if constexpr (is<DataTypeOtherVec, T>) {
+        temp[i] = otherVec[i];
+      } else {
+        temp[i] = static_cast<T>(otherVec[i]);
+      }
     }
     if (d.p->size() < temp.size())
       d.resize(temp.size());
@@ -129,7 +103,7 @@ Vec &operator=(const Vec<T, R, Trait> &otherVec) {
       d[i % d.ind.size()] = temp[i];
     }
   }
-  if (otherVec.d.im()) { // issue:  && !d.im() missing?
+  if (otherVec.d.im()) {
     d.setMatrix(true, otherVec.d.nr(), otherVec.d.nc());
   }
   return *this;
@@ -137,45 +111,45 @@ Vec &operator=(const Vec<T, R, Trait> &otherVec) {
 
 template <typename T2, typename R2, typename Trait2>
 Vec &operator=(const Vec<T2, R2, Trait2> &otherVec) {
-  // std::cout << "test6" << std::endl;
   static_assert(!isUnaryOP::value, "Cannot assign to unary calculation");
   static_assert(!isBinaryOP::value, "Cannot assign to binary calculation");
+  static_assert(!isRVec::value,
+                "Cannot assign to an r value. E.g. c(1, 2, 3) <- 1");
+  using DataTypeOtherVec = typename etr::ExtractDataType<
+      std::remove_reference_t<decltype(otherVec)>>::RetType;
   if constexpr (isBuffer::value) {
-    Buffer<T> temp(otherVec.size()); // issue: define temp as own attribute!
-    using RetTypeOtherVec =
-        std::remove_reference<decltype(otherVec.d)>::type::RetType;
-    using isBaseTypeRet = std::is_same<RetTypeOtherVec, BaseType>;
-    if constexpr (isBaseTypeRet::value) {
-      for (std::size_t i = 0; i < otherVec.size(); i++) {
+    temp.resize(otherVec.size());
+    for (std::size_t i = 0; i < otherVec.size(); i++) {
+      if constexpr (is<DataTypeOtherVec, T>) {
         temp[i] = otherVec[i];
-      }
-    } else {
-      for (std::size_t i = 0; i < otherVec.size(); i++) {
-        temp[i] = static_cast<BaseType>(otherVec[i]);
+      } else {
+        temp[i] = static_cast<T>(otherVec[i]);
       }
     }
     d.moveit(temp);
   } else if constexpr (isBorrow::value) {
     ass(otherVec.size() <= d.capacity,
         "number of items to replace is not a multiple of replacement length");
-    Buffer<T> temp(otherVec.size());
-    for (std::size_t i = 0; i < otherVec.size(); i++)
-      temp[i] = otherVec[i];
+    temp.resize(otherVec.size());
+    for (std::size_t i = 0; i < otherVec.size(); i++) {
+      if constexpr (is<DataTypeOtherVec, T>) {
+        temp[i] = otherVec[i];
+      } else {
+        temp[i] = static_cast<T>(otherVec[i]);
+      }
+    }
+    ass(d.sz <= otherVec.size(),
+        "size cannot be increased above the size of the borrowed object");
     d.sz = otherVec.size();
     for (std::size_t i = 0; i < otherVec.size(); i++)
       d[i] = temp[i];
   } else if constexpr (isBorrowSEXP::value) {
-    Buffer<T> temp(otherVec.size());
-    using RetTypeOtherVec =
-        std::remove_reference<decltype(otherVec.d)>::type::RetType;
-    using isBaseTypeRet = std::is_same<RetTypeOtherVec, BaseType>;
-    if constexpr (isBaseTypeRet::value) {
-      for (std::size_t i = 0; i < otherVec.size(); i++) {
+    temp.resize(otherVec.size());
+    for (std::size_t i = 0; i < otherVec.size(); i++) {
+      if constexpr (is<DataTypeOtherVec, T>) {
         temp[i] = otherVec[i];
-      }
-    } else {
-      for (std::size_t i = 0; i < otherVec.size(); i++) {
-        temp[i] = static_cast<BaseType>(otherVec[i]);
+      } else {
+        temp[i] = static_cast<T>(otherVec[i]);
       }
     }
     if (otherVec.size() > this->size())
@@ -184,25 +158,55 @@ Vec &operator=(const Vec<T2, R2, Trait2> &otherVec) {
   } else if constexpr (isSubset::value) {
     ass(otherVec.size() == d.ind.size(),
         "number of items to replace is not a multiple of replacement length");
-    Buffer<T> temp(otherVec.size());
-    using RetTypeOtherVec =
-        std::remove_reference<decltype(otherVec.d)>::type::RetType;
-    using isBaseTypeRet = std::is_same<RetTypeOtherVec, BaseType>;
-    if constexpr (isBaseTypeRet::value) {
-      for (std::size_t i = 0; i < otherVec.size(); i++) {
+    temp.resize(otherVec.size());
+    for (std::size_t i = 0; i < otherVec.size(); i++) {
+      if constexpr (is<DataTypeOtherVec, T>) {
         temp[i] = otherVec[i];
-      }
-    } else {
-      for (std::size_t i = 0; i < otherVec.size(); i++) {
-        temp[i] = static_cast<BaseType>(otherVec[i]);
+      } else {
+        temp[i] = static_cast<T>(otherVec[i]);
       }
     }
     for (std::size_t i = 0; i < d.ind.size(); i++) {
       d[i % d.ind.size()] = temp[i];
     }
+  } else if constexpr (isVariableType::value) {
+    // TODO: temp has to be used instead of writing directly in d
+    using tD = decltype(otherVec.d);
+    using tDRaw = std::remove_reference<decltype(otherVec)>::type;
+    using typeExpr = std::remove_reference<ExtractedTypeD<tDRaw>>::type;
+    if constexpr (!IsVarPointer<tD>) {
+      constexpr auto res = walkTD<typeExpr>();
+      d.resize(otherVec.size());
+      for (std::size_t i = 0; i < otherVec.size(); i++) {
+        d.AllVarsRef.varBuffer[d.I][i] = otherVec[i];
+      }
+      d.AllVarsRef.resizeDerivs(R::I, R::TIdx, otherVec.size());
+      for (std::size_t i = 0; i < res.getSize(d.AllVarsRef); i++) {
+        d.setDeriv(d.AllVarsRef, i, res.getDeriv(d.AllVarsRef, i));
+      }
+    } else {
+
+      d.resize(otherVec.size());
+      for (std::size_t i = 0; i < d.size(); i++) {
+        d.setVal(otherVec.d.AllVarsRef, i,
+                 tD::getVal(otherVec.d.AllVarsRef, i));
+      }
+      if constexpr (is<Trait2, VariableTypeTrait>) {
+        for (std::size_t i = 0; i < d.size(); i++) {
+          d.setDeriv(d.AllVarsRef, i,
+                     otherVec.d.getDeriv(otherVec.d.AllVarsRef, i));
+        }
+      }
+    }
   }
-  if (otherVec.d.im()) {
-    d.setMatrix(true, otherVec.d.nr(), otherVec.d.nc());
+  if constexpr (isVariableType::value) {
+    if (otherVec.d.im()) {
+      d.setMatrix(d.AllVarsRef, true, otherVec.d.nr(), otherVec.d.nc());
+    }
+  } else {
+    if (otherVec.d.im()) {
+      d.setMatrix(true, otherVec.d.nr(), otherVec.d.nc());
+    }
   }
   return *this;
 }
@@ -215,122 +219,3 @@ Vec &operator=(SEXP s) {
 }
 #endif
 #endif
-
-template <typename LT, typename RT, typename LDeriv, typename RDeriv,
-          typename TraitTD, typename OpTrait>
-static constexpr QuarternyType<LT, RT, LDeriv, RDeriv, TraitTD, OpTrait>
-produceQuarternyType() {
-  return QuarternyType<LT, RT, LDeriv, RDeriv, TraitTD, OpTrait>();
-}
-
-template <typename LDeriv, typename RDeriv, typename TraitTD, typename OpTrait>
-static constexpr BinaryType<LDeriv, RDeriv, TraitTD, OpTrait>
-produceBinaryType() {
-  return BinaryType<LDeriv, RDeriv, TraitTD, OpTrait>();
-}
-
-template <typename I, typename TraitTD, typename OpTrait>
-static constexpr UnaryType<I, TraitTD, OpTrait> produceUnaryType() {
-  return UnaryType<I, TraitTD, OpTrait>(); // issue: wrong wrong wrong
-}
-
-template <typename TRaw> static constexpr auto produceVariableType() {
-  using TD = std::remove_reference_t<TRaw>;
-  if constexpr (IsVec<TD>) {
-    using tD = ExtractedTypeD<TD>;
-    return VariableType<tD>();
-  } else {
-    return VariableType<TRaw>();
-  }
-}
-
-template <typename TD>
-  requires IsVarPointer<TD>
-static constexpr auto walkTD() -> VariableType<TD> {
-  static_assert(!IsVec<TD>, "Cannot create derivative expression tree");
-  return VariableType<TD>();
-}
-
-template <typename TD>
-  requires IsConstant<TD>
-static constexpr auto walkTD() {
-  return Constants<typename TD::Type, TD::I, ConstantTypeTrait>{};
-}
-
-template <typename TRaw>
-  requires IsMultiplication<TRaw>
-static constexpr auto walkTD() {
-  using TDMultiplication = std::remove_const_t<std::remove_reference_t<TRaw>>;
-  constexpr auto LT =
-      produceVariableType<typename TDMultiplication::typeTraitL>();
-  constexpr auto RT =
-      produceVariableType<typename TDMultiplication::typeTraitR>();
-  constexpr auto LDeriv = walkTD<typename TDMultiplication::typeTraitL>();
-  constexpr auto RDeriv = walkTD<typename TDMultiplication::typeTraitR>();
-  return produceQuarternyType<decltype(LT), decltype(RT), decltype(LDeriv),
-                              decltype(RDeriv), QuarternaryTrait,
-                              TimesDerivTrait>();
-}
-
-template <typename TD>
-  requires IsAddition<TD>
-static constexpr auto walkTD() {
-  constexpr auto LDeriv = walkTD<typename TD::typeTraitL>();
-  constexpr auto RDeriv = walkTD<typename TD::typeTraitR>();
-  return produceBinaryType<decltype(LDeriv), decltype(RDeriv), BinaryTrait,
-                           PlusDerivTrait>();
-}
-
-template <typename TD>
-  requires IsSinus<TD>
-static constexpr auto walkTD() {
-  constexpr auto obj = walkTD<typename TD::typeTraitObj>();
-  return produceUnaryType<decltype(obj), UnaryTrait, SinusDerivTrait>();
-}
-
-template <typename TD>
-  requires(IsVec<TD> && !IsVariable<TD>)
-static constexpr auto walkTD() {
-  using TDVec = ExtractedTypeD<TD>;
-  constexpr auto res = walkTD<TDVec>();
-  return res;
-}
-
-// TODO: finish this
-template <typename T2, typename R2, typename Trait2>
-Vec &operator<<(const Vec<T2, R2, Trait2> &otherVec) {
-  using tD = decltype(otherVec.d);
-  if constexpr (IsVarPointer<tD> && IsVarPointer<DType>) {
-    d.resize(otherVec.size());
-    for (std::size_t i = 0; i < d.size(); i++) {
-      d.setVal(otherVec.d.AllVarsRef, i, tD::getVal(otherVec.d.AllVarsRef, i));
-    }
-  } else if constexpr (IsVarPointer<tD> && !IsVarPointer<DType>) {
-    d.resize(otherVec.size());
-    for (std::size_t i = 0; i < d.size(); i++) {
-      d[i] = otherVec[i];
-    }
-  } else if constexpr (!IsVarPointer<tD> && IsVarPointer<DType>) {
-    using tDRaw = std::remove_reference<decltype(otherVec)>::type;
-    using typeExpr = std::remove_reference<ExtractedTypeD<tDRaw>>::type;
-    /* printTAST<typeExpr>(); */
-    constexpr auto res = walkTD<typeExpr>();
-    /* printTAST<decltype(res)>(); */
-    d.resize(otherVec.size());
-    for (std::size_t i = 0; i < otherVec.size(); i++) {
-      d.AllVarsRef.varBuffer[d.I][i] = otherVec[i];
-    }
-
-    d.AllVarsRef.resizeDerivs(R::I, R::TIdx, otherVec.size());
-    for (std::size_t i = 0; i < res.getSize(d.AllVarsRef); i++) {
-      d.setDeriv(d.AllVarsRef, i, res.getDeriv(d.AllVarsRef, i));
-    }
-
-  } else if constexpr (!IsVarPointer<tD> && !IsVarPointer<DType>) {
-    d.resize(otherVec.size());
-    for (std::size_t i = 0; i < otherVec.size(); i++) {
-      d[i] = otherVec[i];
-    }
-  }
-  return *this;
-}

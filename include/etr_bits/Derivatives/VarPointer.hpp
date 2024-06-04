@@ -42,6 +42,21 @@ template <typename T, int Idx, int TypeIdx, typename Trait> struct VarPointer {
     }
   }
 
+  template <typename AV>
+  void setMatrix(AV &av, bool is, std::size_t rows, std::size_t cols) {
+    if constexpr (TypeIdx == -1) {
+      av.varConstants[Idx].d.mp.setMatrix(is, rows, cols);
+    } else if constexpr (TypeIdx == 0) {
+      av.varBuffer[Idx].d.mp.setMatrix(is, rows, cols);
+    } else if constexpr (TypeIdx == 1) {
+      av.varBorrow[Idx].d.mp.setMatrix(is, rows, cols);
+    } else if constexpr (TypeIdx == 2) {
+      av.varBorrowSEXP[Idx].d.mp.setMatrix(is, rows, cols);
+    } else {
+      ass(false, "Unknown variable index found");
+    }
+  }
+
   auto get() const {
     if constexpr (TypeIdx == -1) {
       return AllVarsRef.varConstants[Idx];

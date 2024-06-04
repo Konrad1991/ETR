@@ -52,6 +52,18 @@ struct PlusDerivTrait {
   }
 };
 
+struct MinusDerivTrait {
+  template <typename L, typename R>
+  static inline std::common_type<L, R>::type f(L l, R r) {
+    return l - r;
+  }
+
+  template <typename L, typename R>
+  static inline std::common_type<L, R>::type fDeriv(L l, R r) {
+    return l - r;
+  }
+};
+
 struct TimesDerivTrait {
   template <typename L, typename R>
   static inline std::common_type<L, R>::type f(L l, R r) {
@@ -65,8 +77,116 @@ struct TimesDerivTrait {
   }
 };
 
+struct DivideDerivTrait {
+  template <typename L = BaseType, typename R = BaseType>
+  static inline auto f(L l, R r) {
+    if constexpr (std::is_integral_v<L> && std::is_integral_v<R>) {
+      return static_cast<BaseType>(static_cast<BaseType>(l) /
+                                   static_cast<BaseType>(r));
+    } else if constexpr (std::is_integral_v<L> && !std::is_integral_v<R>) {
+      return static_cast<BaseType>(l) / r;
+    } else if constexpr (!std::is_integral_v<L> && std::is_integral_v<R>) {
+      return l / static_cast<BaseType>(r);
+    } else {
+      static_assert(std::is_arithmetic_v<L> && std::is_arithmetic_v<R>,
+                    "Type not supported by operation /");
+      return l / r;
+    }
+  }
+
+  template <typename L, typename R, typename LDeriv, typename RDeriv>
+  static inline std::common_type<L, R>::type fDeriv(L l, R r, LDeriv ld,
+                                                    RDeriv rd) {
+    return (ld * r - l * rd) /
+           std::pow(rd, 2); // TODO: add check for integral ...
+  }
+};
+
+struct PowDerivTrait {
+  template <typename L = BaseType, typename R = BaseType>
+  static inline std::common_type<L, R>::type f(L l, R r) {
+    return std::pow(l, r);
+  }
+
+  template <typename L, typename R, typename LDeriv, typename RDeriv>
+  static inline std::common_type<L, R>::type fDeriv(L l, R r, LDeriv ld,
+                                                    RDeriv rd) {
+    return r * std::pow(l, r - 1) * ld;
+  }
+};
+
+struct EqualDerivTrait {
+  template <typename L = BaseType, typename R = BaseType>
+  static inline bool
+  f(L a,
+    R b) { // issue: add this to documentationion for package authors
+    if (fabs(a - b) < 1E-3) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  static inline bool fDeriv() { return false; }
+};
+struct SmallerDerivTrait {
+  template <typename L = BaseType, typename R = BaseType>
+  static bool f(L a, R b) {
+    if (a < b) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  static inline bool fDeriv() { return false; }
+};
+struct SmallerEqualDerivTrait {
+  template <typename L = BaseType, typename R = BaseType>
+  static bool f(L a, R b) {
+    if (a <= b) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  static inline bool fDeriv() { return false; }
+};
+struct LargerDerivTrait {
+  template <typename L = BaseType, typename R = BaseType>
+  static bool f(L a, R b) {
+    if (a > b) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  static inline bool fDeriv() { return false; }
+};
+struct LargerEqualDerivTrait {
+  template <typename L = BaseType, typename R = BaseType>
+  static bool f(L a, R b) {
+    if (a >= b) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+};
+struct UnEqualDerivTrait {
+  template <typename L = BaseType, typename R = BaseType>
+  static bool f(L a, R b) {
+    if (fabs(a - b) > 1E-3) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  static inline bool fDeriv() { return false; }
+};
+
 struct SinusDerivTrait {
   template <typename L> static inline L f(L l) { return sin(l); }
+  template <typename L> static inline L fDeriv(L l) { return cos(l); }
 };
 
 struct PlusTrait {

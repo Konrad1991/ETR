@@ -2,6 +2,7 @@
 #define CONCEPTS_ETR_H
 
 #include "Header.hpp"
+#include "Traits.hpp"
 #include <type_traits>
 
 template <typename T> struct AddConst {
@@ -160,6 +161,42 @@ concept IsAddition = requires(T t) {
   requires std::is_same<
       typename std::remove_reference<decltype(t)>::type::TypeTrait,
       PlusTrait>::value;
+};
+
+template <typename T>
+concept IsSubtraction = requires(T t) {
+  typename std::remove_reference<decltype(t)>::type::CaseTrait;
+  typename std::remove_reference<decltype(t)>::type::TypeTrait;
+  requires std::is_same<
+      typename std::remove_reference<decltype(t)>::type::CaseTrait,
+      BinaryTrait>::value;
+  requires std::is_same<
+      typename std::remove_reference<decltype(t)>::type::TypeTrait,
+      MinusTrait>::value;
+};
+
+template <typename T>
+concept IsDivide = requires(T t) {
+  typename std::remove_reference<decltype(t)>::type::CaseTrait;
+  typename std::remove_reference<decltype(t)>::type::TypeTrait;
+  requires std::is_same<
+      typename std::remove_reference<decltype(t)>::type::CaseTrait,
+      BinaryTrait>::value;
+  requires std::is_same<
+      typename std::remove_reference<decltype(t)>::type::TypeTrait,
+      DivideTrait>::value;
+};
+
+template <typename T>
+concept IsTimes = requires(T t) {
+  typename std::remove_reference<decltype(t)>::type::CaseTrait;
+  typename std::remove_reference<decltype(t)>::type::TypeTrait;
+  requires std::is_same<
+      typename std::remove_reference<decltype(t)>::type::CaseTrait,
+      BinaryTrait>::value;
+  requires std::is_same<
+      typename std::remove_reference<decltype(t)>::type::TypeTrait,
+      TimesTrait>::value;
 };
 
 template <typename T>

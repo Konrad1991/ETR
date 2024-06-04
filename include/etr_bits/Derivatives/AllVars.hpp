@@ -85,7 +85,9 @@ struct AllVars {
   }
 
   bool im(std::size_t Idx, int TypeIdx) const {
-    if (TypeIdx == 0) {
+    if (TypeIdx == -1) {
+      return varConstants[Idx].im();
+    } else if (TypeIdx == 0) {
       return varBuffer[Idx].im();
     } else if (TypeIdx == 1) {
       return varBorrow[Idx].im();
