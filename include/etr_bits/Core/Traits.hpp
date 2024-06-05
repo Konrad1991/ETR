@@ -229,10 +229,7 @@ struct UnEqualDerivTrait {
 
 struct SinusDerivTrait {
   template <typename L> static inline L f(L l) { return sin(l); }
-  template <typename L> static inline L fDeriv(L l) {
-    std::cout << l << std::endl;
-    return cos(l);
-  }
+  template <typename L> static inline L fDeriv(L l) { return cos(l); }
 };
 
 struct PlusTrait {

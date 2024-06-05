@@ -132,6 +132,12 @@ concept IsVecRorCalc = requires {
 
 // NOTE: Concepts for Derivs
 template <typename T>
+concept IsVariableType = requires {
+  typename T::TypeTrait;
+  requires std::is_same_v<typename T::TypeTrait, VariableTypeTrait>;
+};
+
+template <typename T>
 concept IsVariableTypeTrait = requires(T t) {
   typename std::remove_reference<decltype(t)>::type::CaseTrait;
   requires std::is_same<
@@ -291,6 +297,10 @@ concept IsConstant = requires(T t) {
       typename std::remove_reference<decltype(t)>::type::TypeTrait,
       ConstantTypeTrait>::value;
 };
+
+template <typename T>
+concept IsExpression =
+    requires(T t) { requires !IsConstant<T> && !IsVariableType<T>; };
 
 /*
 issue:

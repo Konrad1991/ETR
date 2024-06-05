@@ -19,7 +19,7 @@ produceBinaryType() {
 
 template <typename I, typename TraitTD, typename OpTrait>
 static constexpr UnaryType<I, TraitTD, OpTrait> produceUnaryType() {
-  return UnaryType<I, TraitTD, OpTrait>(); // issue: wrong wrong wrong
+  return UnaryType<I, TraitTD, OpTrait>();
 }
 
 template <typename TRaw> static constexpr auto produceVariableType() {
@@ -53,6 +53,26 @@ static constexpr auto walkTD() {
       produceVariableType<typename TDMultiplication::typeTraitL>();
   constexpr auto RT =
       produceVariableType<typename TDMultiplication::typeTraitR>();
+  if constexpr (IsVariableType<decltype(LT)> && IsVariableType<decltype(RT)>) {
+  } else if constexpr (IsVariableType<decltype(LT)> &&
+                       IsConstant<decltype(RT)>) {
+  } else if constexpr (IsVariableType<decltype(LT)> &&
+                       IsExpression<decltype(RT)>) {
+  } else if constexpr (IsConstant<decltype(LT)> && IsConstant<decltype(RT)>) {
+
+  } else if constexpr (IsConstant<decltype(LT)> &&
+                       IsVariableType<decltype(RT)>) {
+
+  } else if constexpr (IsConstant<decltype(RT)> && IsExpression<decltype(RT)>) {
+
+  } else if constexpr (IsExpression<decltype(LT)> && IsConstant<decltype(RT)>) {
+
+  } else if constexpr (IsExpression<decltype(LT)> &&
+                       IsVariableType<decltype(RT)>) {
+
+  } else if constexpr (IsExpression<decltype(RT)> &&
+                       IsExpression<decltype(RT)>) {
+  }
   constexpr auto LDeriv = walkTD<typename TDMultiplication::typeTraitL>();
   constexpr auto RDeriv = walkTD<typename TDMultiplication::typeTraitR>();
   return produceQuarternyType<decltype(LT), decltype(RT), decltype(LDeriv),
@@ -166,45 +186,6 @@ static constexpr auto walkTD() {
   using TDVec = ExtractedTypeD<TD>;
   constexpr auto res = walkTD<TDVec>();
   return res;
-}
-
-// TODO: finish this
-template <typename T2, typename R2, typename Trait2>
-Vec &operator<<(const Vec<T2, R2, Trait2> &otherVec) {
-  using tD = decltype(otherVec.d);
-  if constexpr (IsVarPointer<tD> && IsVarPointer<DType>) {
-    d.resize(otherVec.size());
-    for (std::size_t i = 0; i < d.size(); i++) {
-      d.setVal(otherVec.d.AllVarsRef, i, tD::getVal(otherVec.d.AllVarsRef, i));
-    }
-  } else if constexpr (IsVarPointer<tD> && !IsVarPointer<DType>) {
-    d.resize(otherVec.size());
-    for (std::size_t i = 0; i < d.size(); i++) {
-      d[i] = otherVec[i];
-    }
-  } else if constexpr (!IsVarPointer<tD> && IsVarPointer<DType>) {
-    using tDRaw = std::remove_reference<decltype(otherVec)>::type;
-    using typeExpr = std::remove_reference<ExtractedTypeD<tDRaw>>::type;
-    /* printTAST<typeExpr>(); */
-    constexpr auto res = walkTD<typeExpr>();
-    /* printTAST<decltype(res)>(); */
-    d.resize(otherVec.size());
-    for (std::size_t i = 0; i < otherVec.size(); i++) {
-      d.AllVarsRef.varBuffer[d.I][i] = otherVec[i];
-    }
-
-    d.AllVarsRef.resizeDerivs(R::I, R::TIdx, otherVec.size());
-    for (std::size_t i = 0; i < res.getSize(d.AllVarsRef); i++) {
-      d.setDeriv(d.AllVarsRef, i, res.getDeriv(d.AllVarsRef, i));
-    }
-
-  } else if constexpr (!IsVarPointer<tD> && !IsVarPointer<DType>) {
-    d.resize(otherVec.size());
-    for (std::size_t i = 0; i < otherVec.size(); i++) {
-      d[i] = otherVec[i];
-    }
-  }
-  return *this;
 }
 
 #endif

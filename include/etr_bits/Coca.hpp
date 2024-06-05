@@ -5,6 +5,7 @@
 #include "Core.hpp"
 #include "Core/Concepts.hpp"
 #include "Core/Reflection.hpp"
+#include "Core/Traits.hpp"
 #include "Core/Types.hpp"
 #include <type_traits>
 
@@ -175,7 +176,10 @@ inline auto coca(AV &av, Args &&...args) {
       },
       args...);
 
-  Vec<double, VarPointer<decltype(av), Idx, -1>, ConstantTypeTrait> ret(av);
+  Vec<double, VarPointer<decltype(av), Idx, -1, ConstantTypeTrait>,
+      ConstantTypeTrait>
+      ret(av); // TODO: add ConstantTypeTrait to each VarPointer in fct such as
+               // coca
   return ret;
 }
 
